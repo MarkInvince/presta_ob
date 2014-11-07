@@ -30,6 +30,7 @@ if (!defined('_PS_VERSION_'))
 class Quotes extends Module
 {
 	protected $config_form = false;
+    // test
 	public function __construct()
 	{
 		$this->name = 'quotes';
@@ -49,7 +50,7 @@ class Quotes extends Module
 
 	/**
 	 * Don't forget to create update methods if needed:
-	 * http://doc.prestashop.com/display/PS16/Enabling+the+Auto-Update
+	 *
 	 */
 	public function install()
 	{
