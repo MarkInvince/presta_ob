@@ -76,17 +76,17 @@ class Quotes extends Module
         Configuration::updateValue('MAIN_GUEST_CHECK_OUT', '1'); // Quantity fields trigger
         Configuration::updateValue('MAIN_TERMS_AND_COND', '0'); // Quantity fields trigger
         Configuration::updateValue('MAIN_CMS_PAGE', '0'); // Quantity fields trigger
-        
-		return parent::install() &&
-			$this->registerHook('header') &&
-            $this->registerHook('extraRight') &&
-			$this->registerHook('extraLeft') &&
-			$this->registerHook('myAccountBlock') &&
-			$this->registerHook('CustomerAccount') &&
-			$this->registerHook('top') &&
-			$this->registerHook('Header') &&
-			$this->registerHook('displayMyAccountBlockfooter') &&
-			$this->registerHook('displayBackOfficeHeader');
+
+        return parent::install() &&
+        $this->registerHook('header') &&
+        $this->registerHook('extraRight') &&
+        $this->registerHook('extraLeft') &&
+        $this->registerHook('myAccountBlock') &&
+        $this->registerHook('CustomerAccount') &&
+        $this->registerHook('top') &&
+        $this->registerHook('Header') &&
+        $this->registerHook('displayMyAccountBlockfooter') &&
+        $this->registerHook('displayBackOfficeHeader');
 
 	}
 
@@ -243,19 +243,19 @@ class Quotes extends Module
 		);
 		
 		$helper = new HelperForm();
-		$helper->show_toolbar = false;
-		$lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
-		$helper->default_form_language = $lang->id;
-		$helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
-		$helper->identifier = $this->identifier;
-		$helper->submit_action = 'submitMainSettings';
-		$helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
-		$helper->token = Tools::getAdminTokenLite('AdminModules');
-		$helper->tpl_vars = array(
-			'fields_value' => $this->getConfigFormValues(),
-			'languages' => $this->context->controller->getLanguages(),
-			'id_language' => $this->context->language->id
-		);
+        $helper->show_toolbar = false;
+        $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+        $helper->default_form_language = $lang->id;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+        $helper->identifier = $this->identifier;
+        $helper->submit_action = 'submitMainSettings';
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->tpl_vars = array(
+            'fields_value' => $this->getConfigFormValues(),
+            'languages' => $this->context->controller->getLanguages(),
+            'id_language' => $this->context->language->id
+        );
 
 		return $helper->generateForm(array($fields_form));
 	}
