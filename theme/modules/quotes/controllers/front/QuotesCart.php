@@ -38,6 +38,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     public function initContent()
 	{
 		parent::initContent();
+        $this->assign();
     }
 
 	public function assign()
@@ -48,7 +49,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->context->smarty->assign('isLogged', '0');
 
         $this->context->smarty->assign('empty','true');
-        return $this->display(__FILE__, 'quotes_cart.tpl');
+
+        $this->setTemplate('quotes_cart.tpl');
     }
     private function ajaxAddToQuotesCart() {
 

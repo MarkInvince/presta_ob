@@ -13,4 +13,4 @@
             <input type="submit" name="submitbox" id="submitbox" value="{l s='Submit Quote' mod='quotes'}" class="button exclusive" />
         </form>
     {/if}
-{else}
+{/if}
