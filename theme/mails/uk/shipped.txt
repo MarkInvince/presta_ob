@@ -1,0 +1,22 @@
+
+[{shop_url}] 
+
+Привіт, {firstname} {lastname},
+
+Дякуємо за покупку у {shop_name}! 
+
+Your order with the reference {order_name} has been shipped.
+
+You will soon receive a link to track the delivery progress of your
+package. 		 
+
+Ви можете переглянути замовлення і
+завантажити рахунок-фактуру в розділі
+"Мої замовлення" [{history_url}]
+вашого клієнтського кабінету
+натиснувши "Мій Профіль"
+[{my_account_url}] в нашому магазині. 
+
+{shop_name} [{shop_url}] працює на
+PrestaShop(tm) [http://www.prestashop.com/] 
+

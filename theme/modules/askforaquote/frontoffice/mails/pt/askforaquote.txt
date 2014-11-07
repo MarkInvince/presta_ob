@@ -1,0 +1,11 @@
+﻿Olá {firstname} {lastname}, obrigado pelo seu pedido em {shop_name}!
+
+Detalhes do pedido
+
+	Realizado em {date}
+	
+	{products}
+	
+	Número total de produtos {total_products}
+	
+{shop_url} desenvolvido em PrestaShop™

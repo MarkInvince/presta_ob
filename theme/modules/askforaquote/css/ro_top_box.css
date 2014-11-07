@@ -1,0 +1,35 @@
+/*
+Special styles for Ask for a quote module
+Request Offer Box in right column
+*/
+#topquotecontainer {
+	float:right;
+	position:relative;
+}
+#header .topquotes {
+	margin:0 0 0 5px;
+	padding:2px 6px 1px 20px;
+	display:block;
+	background:url(../img/quotes.gif) 2px top no-repeat #EEE;
+	-moz-border-bottom-right-radius: 3px;
+	-moz-border-bottom-left-radius: 3px;
+	-webkit-border-bottom-right-radius: 3px;
+	-webkit-border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+#header #quote_block {
+	position:absolute;
+	right:0;
+	top:auto;
+	width:180px;
+	padding:5px;
+	background:#EEE;
+	-moz-border-bottom-right-radius: 3px;
+	-moz-border-bottom-left-radius: 3px;
+	-webkit-border-bottom-right-radius: 3px;
+	-webkit-border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
+	border-bottom:1px solid #CCC;
+}

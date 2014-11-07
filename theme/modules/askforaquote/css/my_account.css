@@ -1,0 +1,13 @@
+/*
+Special styles for Ask for a quote module
+My account overrides and styles
+*/
+
+#footer li.account_askforquote img {
+	display:none;
+}
+
+#center_column li.account_askforquote {
+	padding-left:22px;
+	background:url(../img/quotes.gif) left no-repeat;
+}

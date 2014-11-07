@@ -1,0 +1,1 @@
+ rel="{$group_attribute|escape:'htmlall':'UTF-8'}"

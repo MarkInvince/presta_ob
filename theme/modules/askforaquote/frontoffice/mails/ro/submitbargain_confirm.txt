@@ -1,0 +1,14 @@
+﻿Bună {submitter}. Negociere preţ şi comentariu trimis cu succes la {shop_name}.
+ 
+Detalii negociere
+-----------------------------------------------------------------------------------------
+ 
+Trimis în: {date}
+
+Preţ nou: {price} {currency} 
+
+Comentariut:
+{comment}
+
+-----------------------------------------------------------------------------------------
+{shop_url} powered by PrestaShop™

@@ -1,0 +1,9 @@
+{firstname} {lastname} placed a request on {date}
+
+Request details
+	
+	{products}
+	
+	Total number of products {total_products}
+	
+{shop_url} powered by PrestaShop™

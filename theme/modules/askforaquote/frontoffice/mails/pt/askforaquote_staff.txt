@@ -1,0 +1,9 @@
+{firstname} {lastname} pedido realizado em {date}
+
+Detalhes do pedido
+	
+	{products}
+	
+	Número total de produtos {total_products}
+	
+{shop_url} desenvolvido em PrestaShop™

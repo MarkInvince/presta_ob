@@ -1,0 +1,11 @@
+﻿Hello {firstname} {lastname}, thank you for your order on {shop_name}!
+
+Request details
+
+	Placed on {date}
+	
+	{products}
+	
+	Total number of products {total_products}
+	
+{shop_url} powered by PrestaShop™

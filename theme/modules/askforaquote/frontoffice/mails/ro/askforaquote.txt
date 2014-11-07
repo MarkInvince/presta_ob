@@ -1,0 +1,11 @@
+﻿Bună ziua {firstname} {lastname}. Vă mulțumim pentru oferta depusă la {shop_name}!
+
+Detalii ofertă
+
+	Data: {date}
+	
+	{products}
+	
+	In total {total_products} produs(e)
+	
+{shop_url} powered by PrestaShop™

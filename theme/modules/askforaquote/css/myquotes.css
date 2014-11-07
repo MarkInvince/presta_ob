@@ -1,0 +1,136 @@
+/*
+Special styles for Ask for a quote module
+My submitted quotes list
+*/
+
+p.numberinfo {
+	padding-bottom:10px;
+}
+
+.quotegroup {
+	background:#EEE;
+	border:1px solid #CCC;
+	padding:5px;
+	border-radius:5px;
+	margin-bottom:20px;
+}
+.quotegroup h4 {
+	font-weight:bold;
+}
+.quotegroup h4 span.date {
+	font-weight:normal;
+	float:right;
+	font-size:13px;
+}
+.quotegroup .comment {
+	margin-bottom:10px;
+}
+
+.quote_summary th.first_item {
+	width:20px;
+}
+.quote_summary th.last_item {
+	width:50px;
+}
+.quote_summary th.bargaincol {
+	width:1px;
+}
+.quote_summary th.lastprice {
+	width:25%;
+}
+.quote_summary td.footer_price {
+	text-align:right;
+}
+
+.quote_summary a.prodname {
+	font-weight:bold;
+}
+.quote_summary .agree, .quote_summary .notagree {
+	background:url(../img/notagreed.png) center 5px no-repeat;
+	font-size:9px;
+	color:#999;
+	text-align:center;
+	padding-top:35px;
+	vertical-align:top;
+}
+.quote_summary .agree {
+	background:url(../img/agreed.png) center 5px no-repeat;
+	color:#060;
+	padding-top:40px;
+	font-weight:bold;
+}
+
+a.editname {
+	font-size:10px;
+	cursor:pointer;
+}
+div.newname {
+	background:#FFF;
+	border:1px solid #DDD;
+	margin:5px 0;
+	border-radius:5px;
+	padding:5px;
+}
+
+/* bargain form */
+.bargainform {
+}
+.bargainform fieldset {
+	padding:5px;
+	background:#F9F9F9;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px; /* future proofing */
+	margin:0 !important;
+}
+.bargainform label {
+	width:100%;
+}
+.bargainform .form-control {
+	float:none;
+}
+
+.bargainform, .bargaindetails {
+	position:absolute;
+	background:#F4F8FB;
+	border:1px solid #CCC;
+	border-radius:5px;
+	padding:5px;
+	box-shadow:0 0 5px 0 #CCC;
+	min-width:400px;
+	max-width:70%;
+	z-index:1000;
+}
+.bargaindetails h2, .bargainform h2 {
+	margin-bottom:1px!important;
+	padding:10px 0;
+}
+.bargaindetails table {
+	background:#FFF;
+}
+.bargaindetails table td {
+	border-bottom:1px dotted #CCC;
+	vertical-align:top;
+	padding:4px;
+}
+.bargaindetails table thead td {
+	background:#DDD;
+	font-weight:bold;
+}
+.bargaindetails table td.price {
+	white-space:nowrap;
+	text-align:right;
+	font-weight:bold;
+}
+
+a.close {
+	float:right;
+}
+.bargainform h4, .bargaindetails h4 {
+	cursor:move;
+}
+
+span.heading-counter {
+	float:right;
+	font-size:12px;
+}
