@@ -42,5 +42,6 @@ class cartModuleFrontController extends ModuleFrontController {
 
 	public function assign()
 	{
+        echo 'ok';
     }
 }
