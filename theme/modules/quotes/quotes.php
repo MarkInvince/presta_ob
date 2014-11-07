@@ -48,6 +48,8 @@ class Quotes extends Module
 		$this->description = $this->l('Ask for quotes module');
 	}
 
+	//dfhkehfujdehfdr
+
 	/**
 	 * Don't forget to create update methods if needed:
 	 *
