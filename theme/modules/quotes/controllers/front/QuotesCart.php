@@ -48,7 +48,12 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         else
             $this->context->smarty->assign('isLogged', '0');
 
-        $this->context->smarty->assign('empty','true');
+        $tpl_path = $this->module->getLocalPath()."views/templates/front";
+
+        $this->context->smarty->assign(array(
+            'quotesNumber' => 1,
+            'tpl_path' => $tpl_path
+        ));
 
         $this->setTemplate('quotes_cart.tpl');
     }

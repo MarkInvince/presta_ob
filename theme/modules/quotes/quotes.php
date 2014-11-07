@@ -290,6 +290,7 @@ class Quotes extends Module
 	public function hookHeader()
 	{
 		$this->context->controller->addJS($this->_path.'/js/front.js');
+		$this->context->controller->addJS($this->_path.'/js/quotes_cart.js');
 		$this->context->controller->addCSS($this->_path.'/css/front.css');
 	}
     /**

@@ -1,16 +1,26 @@
 {capture name=path}{l s='Ask for a Quote' mod='quotes'}{/capture}
+<h2 class="page-heading">{l s='Your quotes cart'}</h2>
 
-{if isset($empty)}
-    <p class="alert alert-warning">{l s='No quotes' mod='quotes'}</p>
-{else}
-    {if isset($isLogged) AND $isLogged == 1}
-        <a id="qsubmitnow" class="button" href="{$base_dir}modules/askforaquote/frontoffice/askforaquote.php?gofinal=1" title="{l s='Submit without preview' mod='askforaquote'}">{l s='Submit now' mod='quotes'}</a>
+{if isset($quotesNumber) && $quotesNumber > 0}
+
+    {include file="$tpl_path./quote_product_list.tpl"}
+
+    {if isset($isLogged) && $isLogged == 1}
+        <a id="qsubmitnow" class="button" href="{$base_dir}modules/askforaquote/frontoffice/askforaquote.php?gofinal=1" title="{l s='Submit without preview' mod='quotes'}">{l s='Submit now' mod='quotes'}</a>
         <form method="post" action="{$base_dir}modules/askforaquote/frontoffice/askforaquote.php">
-            <input type="submit" name="submitbox" id="submitbox" title="{l s='View detailed list before submit' mod='askforaquote'}" value="{l s='View list' mod='askforaquote'}" class="button exclusive" />
+            <input type="submit" name="submitbox" id="submitbox" title="{l s='View detailed list before submit' mod='quotes'}" value="{l s='View list' mod='quotes'}" class="button exclusive" />
         </form>
     {else}
-        <form method="post" action="{$base_dir}modules/askforaquote/frontoffice/askforaquote.php">
-            <input type="submit" name="submitbox" id="submitbox" value="{l s='Submit Quote' mod='quotes'}" class="button exclusive" />
-        </form>
+        {include file="$tpl_path./quotes_new_account.tpl"}
     {/if}
+
+{else}
+    <p class="alert alert-warning">{l s='No quotes' mod='quotes'}</p>
 {/if}
+
+{strip}
+    {addJsDef authenticationUrl=$link->getPageLink("authentication", true)|escape:'quotes':'UTF-8'}
+    {addJsDefL name=txtThereis}{l s='There is' js=1}{/addJsDefL}
+    {addJsDefL name=txtErrors}{l s='Error(s)' js=1}{/addJsDefL}
+    {addJsDef orderQuoteUrl=$link->getModuleLink('quotes', 'QuotesCart', array(), true)|escape:'html':'UTF-8'}
+{/strip}
