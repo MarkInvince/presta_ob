@@ -24,10 +24,10 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-class cartModuleFrontController extends ModuleFrontController {
+class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     
     public $ssl = true;
-	public $display_column_left = false;
+	public $display_column_left = true;
 
 	public function __construct()
 	{
@@ -38,9 +38,21 @@ class cartModuleFrontController extends ModuleFrontController {
     public function initContent()
 	{
 		parent::initContent();
+        $this->assign();
     }
 
 	public function assign()
 	{
+        if ($this->context->customer->isLogged())
+            $this->context->smarty->assign('isLogged', '1');
+        else
+            $this->context->smarty->assign('isLogged', '0');
+
+        $this->context->smarty->assign('empty','true');
+
+        $this->setTemplate('quotes_cart.tpl');
+    }
+    private function ajaxAddToQuotesCart() {
+
     }
 }

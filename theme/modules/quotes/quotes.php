@@ -30,8 +30,7 @@ if (!defined('_PS_VERSION_'))
 class Quotes extends Module
 {
 	protected $config_form = false;
-    // test ttesfgdfgd dfhjkdfd 54545 sddhkshd
-    // test ttesfgdfgd fdsdssddfdsfs
+    
 	public function __construct()
 	{
 		$this->name = 'quotes';
@@ -49,7 +48,6 @@ class Quotes extends Module
 		$this->description = $this->l('Ask for quotes module');
 	}
 
-	//dfhkehfujdehfdr
 
 	/**
 	 * Don't forget to create update methods if needed:
