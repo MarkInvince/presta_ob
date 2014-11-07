@@ -30,7 +30,15 @@ $sql = array();
     `id_quotes` int(11) NOT NULL AUTO_INCREMENT,
     PRIMARY KEY  (`id_quotes`)
 ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';*/
-
+$sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_box`(
+            `id_request` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			`id_customer` INT(11) NOT NULL,
+			`id_product` VARCHAR(100) NOT NULL,
+			`id_shop` INT(11) NOT NULL,
+			`qty` INT(10) NOT NULL,
+			`id_product_attribute` INT NOT NULL,
+		    `date` TEXT
+		) ENGINE = '._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 foreach ($sql as $query)
 	if (Db::getInstance()->execute($query) == false)
 		return false;

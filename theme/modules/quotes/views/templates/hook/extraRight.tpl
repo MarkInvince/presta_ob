@@ -1,6 +1,7 @@
 <div class="ask_offer clearfix">
     <form id="quote_ask_form" action="{$actionAddQuotes}" method="post">
         <input type="hidden" name="action" value="add" />
+        <input type="hidden" name="ajax" value="true" />
         <input type="hidden" name="pid" value="{$product->id|intval}" />
 		{if $PS_CATALOG_MODE}
     	    <label for="quantity_wanted_ask">{l s='Quantity' mod='quotes'}:</label>

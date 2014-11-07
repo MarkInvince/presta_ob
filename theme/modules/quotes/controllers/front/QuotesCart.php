@@ -55,10 +55,55 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     }
     public function postProcess()
     {
-
+        $action = Tools::getIsset('action') ? Tools::getValue('action') : false;
+        if($action) {
+            switch($action) {
+                case 'add':
+                    $this->ajaxAddToQuotesCart();
+                    break;
+                case 'delete':
+                default:
+                    break;
+            }
+        }
     }
     protected function ajaxAddToQuotesCart() {
         if (Tools::getValue('pqty') == 0)
             $this->errors[] = Tools::displayError($this->l('Null quantity!!'), !Tools::getValue('ajax'));
+        elseif (!$this->id_product)
+            $this->errors[] = Tools::displayError('Product not found', !Tools::getValue('ajax'));
+
+        $product = new Product($this->id_product, true, $this->context->language->id);
+        if (!$product->id || !$product->active)
+        {
+            $this->errors[] = Tools::displayError('This product is no longer available.', !Tools::getValue('ajax'));
+            return;
+        }
+
+        $qty_to_check = $this->qty;
+        $cart_products = $this->context->cart->getProducts();
+
+        $qty_to_check = $this->qty;
+        $cart_products = $this->getQuotesProducts();
+
+        if (is_array($cart_products))
+            foreach ($cart_products as $cart_product)
+            {
+                if ((!isset($this->id_product_attribute) || $cart_product['id_product_attribute'] == $this->id_product_attribute) &&
+                    (isset($this->id_product) && $cart_product['id_product'] == $this->id_product))
+                {
+                    $qty_to_check = $cart_product['cart_quantity'];
+
+                    if (Tools::getValue('op', 'up') == 'down')
+                        $qty_to_check -= $this->qty;
+                    else
+                        $qty_to_check += $this->qty;
+
+                    break;
+                }
+            }
+    }
+    protected function getQuotesProducts() {
+
     }
 }
