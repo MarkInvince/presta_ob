@@ -38,6 +38,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     public function initContent()
 	{
 		parent::initContent();
+        $this->postProcess();
         $this->assign();
     }
 
@@ -52,7 +53,12 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
         $this->setTemplate('quotes_cart.tpl');
     }
-    private function ajaxAddToQuotesCart() {
+    public function postProcess()
+    {
 
+    }
+    protected function ajaxAddToQuotesCart() {
+        if (Tools::getValue('pqty') == 0)
+            $this->errors[] = Tools::displayError($this->l('Null quantity!!'), !Tools::getValue('ajax'));
     }
 }

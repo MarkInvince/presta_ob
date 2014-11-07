@@ -31,4 +31,9 @@ $(document).ready(function(){
         alert('add');
         return false;
     });
+
+	$('body').on('click','.ajax_add_to_quote_cart_button', function(){
+		alert('add');
+		return false;
+	});
 });
