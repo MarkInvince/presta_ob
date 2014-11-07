@@ -30,7 +30,7 @@ if (!defined('_PS_VERSION_'))
 class Quotes extends Module
 {
 	protected $config_form = false;
-    // test ttesfgdfgd fdsdssddfdsfs
+    // test ttesfgdfgd 
 	public function __construct()
 	{
 		$this->name = 'quotes';
