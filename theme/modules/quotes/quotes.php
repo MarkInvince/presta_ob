@@ -31,6 +31,7 @@ class Quotes extends Module
 {
 	protected $config_form = false;
     // test ttesfgdfgd dfhjkdfd 54545 sddhkshd
+    // test ttesfgdfgd fdsdssddfdsfs
 	public function __construct()
 	{
 		$this->name = 'quotes';
