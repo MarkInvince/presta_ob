@@ -68,7 +68,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
     }
     protected function ajaxAddToQuotesCart() {
-        if (Tools::getValue('pqty') == 0)
+        if (Tools::getValue('pqty') <= 0)
             $this->errors[] = Tools::displayError($this->l('Null quantity!!'), !Tools::getValue('ajax'));
         elseif (!$this->id_product)
             $this->errors[] = Tools::displayError('Product not found', !Tools::getValue('ajax'));
@@ -80,30 +80,17 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             return;
         }
 
-        $qty_to_check = $this->qty;
-        $cart_products = $this->context->cart->getProducts();
+        if ($this->context->customer->isLogged()) {
+            // add basket to DB
 
-        $qty_to_check = $this->qty;
-        $cart_products = $this->getQuotesProducts();
+        }
+        else {
+            // add basket into session
 
-        if (is_array($cart_products))
-            foreach ($cart_products as $cart_product)
-            {
-                if ((!isset($this->id_product_attribute) || $cart_product['id_product_attribute'] == $this->id_product_attribute) &&
-                    (isset($this->id_product) && $cart_product['id_product'] == $this->id_product))
-                {
-                    $qty_to_check = $cart_product['cart_quantity'];
+        }
 
-                    if (Tools::getValue('op', 'up') == 'down')
-                        $qty_to_check -= $this->qty;
-                    else
-                        $qty_to_check += $this->qty;
-
-                    break;
-                }
-            }
     }
-    protected function getQuotesProducts() {
+    private function updateQuantityForProduct($id_product, $pqty) {
 
     }
 }
