@@ -17,7 +17,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes` (
           `date_add` datetime NOT NULL,
           `date_upd` datetime NOT NULL,
           PRIMARY KEY (`id_request`),
-        ) ENGINE='._MYSQL_ENGINE_.'  DEFAULT CHARSET=utf8 AUTO_INCREMENT ;';
+        ) ENGINE='._MYSQL_ENGINE_.'  DEFAULT CHARSET=utf8 ;';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_product` (
           `id_cart` int(10) unsigned NOT NULL,
