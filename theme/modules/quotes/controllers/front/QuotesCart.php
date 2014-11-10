@@ -82,15 +82,36 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
         if ($this->context->customer->isLogged()) {
             // add basket to DB
+            if(!Tools::getIsset($_SESSION['id_request'])) {
+                Db::getInstance()->insert('quotes', array(
+                    'id_shop'      => $this->context->shop->id,
+                    'id_lang'      => $this->context->language->id,
+                    'id_customer'  => $this->context->customer->id,
+                    'id_guest'     => 0,
+                    'date_add'     => date('Y-m-d H:i:s'),
+                ));
+                $_SESSION['id_request'] = Db::getInstance()->Insert_ID();
 
+                //insert product for current basket
+                $quantity = $this->getProductQuantity(Tools::getValue('pid'), Tools::getValue('pqty'), Db::getInstance()->Insert_ID());
+                Db::getInstance()->insert('quotes_product', array(
+                    'id_cart'      => Db::getInstance()->Insert_ID(),
+                    'id_product'   => Tools::getValue('pid'),
+                    'id_shop'      => $this->context->shop->id,
+                    'quantity'     => $quantity,
+                    'date_add'     => date('Y-m-d H:i:s'),
+                ));
+            }
+            else {
+
+            }
         }
         else {
-            // add basket into session
-
+            // add basket from guest
+            $id_guest = new Guest(Context::getContext()->cookie->id_guest);
         }
-
     }
-    private function updateQuantityForProduct($id_product, $pqty) {
+    private function getProductQuantity($pid, $quantity, $id_request) {
 
     }
 }
