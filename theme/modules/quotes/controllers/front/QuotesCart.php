@@ -37,7 +37,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     
     public function initContent()
 	{
-        include_once(dirname(__FILE__).'/classes/Quotes.php');
+        include_once($this->module->_path.'classes/Quotes.php');
 
 		parent::initContent();
         // post process
