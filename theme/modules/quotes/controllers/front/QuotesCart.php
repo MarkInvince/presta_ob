@@ -23,6 +23,7 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
+
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     
     public $ssl = true;
@@ -36,6 +37,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     
     public function initContent()
 	{
+        include_once(dirname(__FILE__).'/classes/Quotes.php');
+
 		parent::initContent();
         // post process
         $this->postProcess();
