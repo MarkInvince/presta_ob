@@ -23,7 +23,6 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     
     public $ssl = true;
@@ -64,24 +63,24 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
     protected function ajaxAddToQuotesCart() {
         if (Tools::getValue('pqty') <= 0) {
-            print json_encode(array('message' => Tools::displayError('Null quantity!!'),'hasError' => true));
+            print json_encode(array('message' => Tools::displayError($this->module->l('Null quantity!!')),'hasError' => true));
             return;
         }
         elseif (!Tools::getValue('pid')) {
-            print json_encode(array('message' => Tools::displayError('Product not found'),'hasError' => true));
+            print json_encode(array('message' => Tools::displayError($this->module->l'Product not found'),'hasError' => true));
             return;
         }
 
         $product = new Product(Tools::getValue('pid'), true, $this->context->language->id);
         if (!$product->id || !$product->active)
         {
-            print json_encode(array('message' => Tools::displayError('This product is no longer available.'),'hasError' => true));
+            print json_encode(array('message' => Tools::displayError($this->module->l'This product is no longer available.'),'hasError' => true));
             return;
         }
 
         if ($this->context->customer->isLogged()) {
             // add basket to DB
-            if(!Tools::getIsset($_SESSION['id_request'])) {
+            if(!Tools::getIsset($this->context->cookie->__get('id_request'))) {
                 Db::getInstance()->insert('quotes', array(
                     'id_shop'      => $this->context->shop->id,
                     'id_lang'      => $this->context->language->id,
@@ -89,8 +88,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                     'id_guest'     => 0,
                     'date_add'     => date('Y-m-d H:i:s'),
                 ));
-                $_SESSION['id_request'] = Db::getInstance()->Insert_ID();
-
+                $this->context->cookie->__set('id_request',Db::getInstance()->Insert_ID());
                 //insert product for current basket
                 $quantity = $this->getProductQuantity(Tools::getValue('pid'), Tools::getValue('pqty'), Db::getInstance()->Insert_ID());
                 Db::getInstance()->insert('quotes_product', array(
@@ -104,19 +102,19 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             else {
                 $quantity = $this->getProductQuantity(Tools::getValue('pid'), Tools::getValue('pqty'), Db::getInstance()->Insert_ID());
                 Db::getInstance()->insert('quotes_product', array(
-                    'id_cart'      => $_SESSION['id_request'],
+                    'id_cart'      => $this->context->cookie->__get('id_request'),
                     'id_product'   => Tools::getValue('pid'),
                     'id_shop'      => $this->context->shop->id,
                     'quantity'     => $quantity,
                     'date_add'     => date('Y-m-d H:i:s'),
                 ));
             }
-            return $this->generateAnswer($this->l('Your product was successfuly added to quote'), false);
+            return $this->generateAnswer($this->module->l('Your product was successfuly added to quote'), false);
         }
         else {
             // add basket from guest
             $guest = new Guest(Context::getContext()->cookie->id_guest);
-            if(!Tools::getIsset($_SESSION['id_request'])) {
+            if(!Tools::getIsset($this->context->cookie->__get('id_request'))) {
                 Db::getInstance()->insert('quotes', array(
                     'id_shop'      => $this->context->shop->id,
                     'id_lang'      => $this->context->language->id,
@@ -124,7 +122,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                     'id_guest'     => $guest->id_customer,
                     'date_add'     => date('Y-m-d H:i:s'),
                 ));
-                $_SESSION['id_request'] = Db::getInstance()->Insert_ID();
+                $this->context->cookie->__set('id_request',Db::getInstance()->Insert_ID());
 
                 //insert product for current basket
                 $quantity = $this->getProductQuantity(Tools::getValue('pid'), Tools::getValue('pqty'), Db::getInstance()->Insert_ID());
@@ -139,19 +137,24 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             else {
                 $quantity = $this->getProductQuantity(Tools::getValue('pid'), Tools::getValue('pqty'), Db::getInstance()->Insert_ID());
                 Db::getInstance()->insert('quotes_product', array(
-                    'id_cart'      => $_SESSION['id_request'],
+                    'id_cart'      => $this->context->cookie->__get('id_request'),
                     'id_product'   => Tools::getValue('pid'),
                     'id_shop'      => $this->context->shop->id,
                     'quantity'     => $quantity,
                     'date_add'     => date('Y-m-d H:i:s'),
                 ));
             }
-            return $this->generateAnswer($this->l('Your product was successfuly added to quote'), false);
+            return $this->generateAnswer($this->module->l('Your product was successfuly added to quote'), false);
         }
     }
     private function getProductQuantity($pid, $quantity, $id_request) {
-        $row = Db::getInstance()->ExecuteS('SELECT `quantity` FROM '._DB_PREFIX_.'quotes_product WHERE `id_cart` = '.$id_request.' AND `id_product` ='.$pid);
-        return $row[0]['quantity'] + $quantity;
+        if($row = Db::getInstance()->ExecuteS('SELECT `quantity` FROM '._DB_PREFIX_.'quotes_product WHERE `id_cart` = '.$id_request.' AND `id_product` ='.$pid)) {
+            $rw = Db::getInstance()->getRow($row);
+                return (int)($rw['quantity'] + $quantity);
+        }
+        else
+            return $quantity;
+
     }
     private function generateAnswer($message = '', $hasError = false) {
         print json_encode(array('hasError' => $hasError, 'message' => $message));
