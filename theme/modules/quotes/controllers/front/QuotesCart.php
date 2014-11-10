@@ -38,10 +38,19 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     public function initContent()
 	{
 		parent::initContent();
+        // post process
         $this->postProcess();
+        // default template
         $this->assign();
     }
 
+    public function postProcess() {
+        if(Tools::getValue('action')) {
+            if(Tools::getValue('action') == 'add') {
+                echo $this->ajaxAddToQuotesCart();
+            }
+        }
+    }
 	public function assign()
 	{
         if ($this->context->customer->isLogged())
@@ -50,33 +59,23 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->context->smarty->assign('isLogged', '0');
 
         $this->context->smarty->assign('empty','true');
-
         $this->setTemplate('quotes_cart.tpl');
     }
-    public function postProcess()
-    {
-        $action = Tools::getIsset('action') ? Tools::getValue('action') : false;
-        if($action) {
-            switch($action) {
-                case 'add':
-                    $this->ajaxAddToQuotesCart();
-                    break;
-                case 'delete':
-                default:
-                    break;
-            }
-        }
-    }
-    protected function ajaxAddToQuotesCart() {
-        if (Tools::getValue('pqty') <= 0)
-            $this->errors[] = Tools::displayError($this->l('Null quantity!!'), !Tools::getValue('ajax'));
-        elseif (!$this->id_product)
-            $this->errors[] = Tools::displayError('Product not found', !Tools::getValue('ajax'));
 
-        $product = new Product($this->id_product, true, $this->context->language->id);
+    protected function ajaxAddToQuotesCart() {
+        if (Tools::getValue('pqty') <= 0) {
+            print json_encode(array('message' => Tools::displayError('Null quantity!!'),'hasError' => true));
+            return;
+        }
+        elseif (!Tools::getValue('pid')) {
+            print json_encode(array('message' => Tools::displayError('Product not found'),'hasError' => true));
+            return;
+        }
+
+        $product = new Product(Tools::getValue('pid'), true, $this->context->language->id);
         if (!$product->id || !$product->active)
         {
-            $this->errors[] = Tools::displayError('This product is no longer available.', !Tools::getValue('ajax'));
+            print json_encode(array('message' => Tools::displayError('This product is no longer available.'),'hasError' => true));
             return;
         }
 
@@ -103,16 +102,58 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 ));
             }
             else {
-
+                $quantity = $this->getProductQuantity(Tools::getValue('pid'), Tools::getValue('pqty'), Db::getInstance()->Insert_ID());
+                Db::getInstance()->insert('quotes_product', array(
+                    'id_cart'      => $_SESSION['id_request'],
+                    'id_product'   => Tools::getValue('pid'),
+                    'id_shop'      => $this->context->shop->id,
+                    'quantity'     => $quantity,
+                    'date_add'     => date('Y-m-d H:i:s'),
+                ));
             }
+            return $this->generateAnswer($this->l('Your product was successfuly added to quote'), false);
         }
         else {
             // add basket from guest
-            $id_guest = new Guest(Context::getContext()->cookie->id_guest);
+            $guest = new Guest(Context::getContext()->cookie->id_guest);
+            if(!Tools::getIsset($_SESSION['id_request'])) {
+                Db::getInstance()->insert('quotes', array(
+                    'id_shop'      => $this->context->shop->id,
+                    'id_lang'      => $this->context->language->id,
+                    'id_customer'  => 0,
+                    'id_guest'     => $guest->id_customer,
+                    'date_add'     => date('Y-m-d H:i:s'),
+                ));
+                $_SESSION['id_request'] = Db::getInstance()->Insert_ID();
+
+                //insert product for current basket
+                $quantity = $this->getProductQuantity(Tools::getValue('pid'), Tools::getValue('pqty'), Db::getInstance()->Insert_ID());
+                Db::getInstance()->insert('quotes_product', array(
+                    'id_cart'      => Db::getInstance()->Insert_ID(),
+                    'id_product'   => Tools::getValue('pid'),
+                    'id_shop'      => $this->context->shop->id,
+                    'quantity'     => $quantity,
+                    'date_add'     => date('Y-m-d H:i:s'),
+                ));
+            }
+            else {
+                $quantity = $this->getProductQuantity(Tools::getValue('pid'), Tools::getValue('pqty'), Db::getInstance()->Insert_ID());
+                Db::getInstance()->insert('quotes_product', array(
+                    'id_cart'      => $_SESSION['id_request'],
+                    'id_product'   => Tools::getValue('pid'),
+                    'id_shop'      => $this->context->shop->id,
+                    'quantity'     => $quantity,
+                    'date_add'     => date('Y-m-d H:i:s'),
+                ));
+            }
+            return $this->generateAnswer($this->l('Your product was successfuly added to quote'), false);
         }
     }
     private function getProductQuantity($pid, $quantity, $id_request) {
         $row = Db::getInstance()->ExecuteS('SELECT `quantity` FROM '._DB_PREFIX_.'quotes_product WHERE `id_cart` = '.$id_request.' AND `id_product` ='.$pid);
         return $row[0]['quantity'] + $quantity;
+    }
+    private function generateAnswer($message = '', $hasError = false) {
+        print json_encode(array('hasError' => $hasError, 'message' => $message));
     }
 }

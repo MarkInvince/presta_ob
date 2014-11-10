@@ -1,4 +1,7 @@
 <div class="ask_offer clearfix">
+    <script type="text/javascript">
+        var quotesCart = "{$actionAddQuotes}";
+    </script>
     <form id="quote_ask_form" action="{$actionAddQuotes}" method="post">
         <input type="hidden" name="action" value="add" />
         <input type="hidden" name="ajax" value="true" />

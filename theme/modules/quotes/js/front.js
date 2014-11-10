@@ -28,12 +28,28 @@
 
 $(document).ready(function(){
     $('body').on('click','.fly_to_quote_cart_button', function(){
-        alert('add');
+		$.ajax({
+			url: quotesCart,
+			method:'post',
+			data: $('#quote_ask_form').serialize(),
+			dataType:'json',
+			success: function(response) {
+				console.log(response);
+			}
+		});
         return false;
     });
 
 	$('body').on('click','.ajax_add_to_quote_cart_button', function(){
-		alert('add');
+		$.ajax({
+			url: quotesCart,
+			method:'post',
+			data: $('#quote_ask_form').serialize(),
+			dataType:'json',
+			success: function(response) {
+				console.log(response);
+			}
+		});
 		return false;
 	});
 });
