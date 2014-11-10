@@ -112,6 +112,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
     }
     private function getProductQuantity($pid, $quantity, $id_request) {
-
+        $row = Db::getInstance()->ExecuteS('SELECT `quantity` FROM '._DB_PREFIX_.'quotes_product WHERE `id_cart` = '.$id_request.' AND `id_product` ='.$pid);
+        return $row[0]['quantity'] + $quantity;
     }
 }
