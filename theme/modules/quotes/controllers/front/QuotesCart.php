@@ -67,20 +67,23 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             return;
         }
         elseif (!Tools::getValue('pid')) {
-            print json_encode(array('message' => Tools::displayError($this->module->l'Product not found'),'hasError' => true));
+            print json_encode(array('message' => Tools::displayError($this->module->l('Product not found')),'hasError' => true));
             return;
         }
 
         $product = new Product(Tools::getValue('pid'), true, $this->context->language->id);
         if (!$product->id || !$product->active)
         {
-            print json_encode(array('message' => Tools::displayError($this->module->l'This product is no longer available.'),'hasError' => true));
+            print json_encode(array('message' => Tools::displayError($this->module->l('This product is no longer available.')),'hasError' => true));
             return;
         }
 
-        if ($this->context->customer->isLogged()) {
+        //check if product already in box
+
+
+        /*if ($this->context->customer->isLogged()) {
             // add basket to DB
-            if(!Tools::getIsset($this->context->cookie->__get('id_request'))) {
+            if(!$this->context->cookie->__get('id_request')) {
                 Db::getInstance()->insert('quotes', array(
                     'id_shop'      => $this->context->shop->id,
                     'id_lang'      => $this->context->language->id,
@@ -111,15 +114,14 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             }
             return $this->generateAnswer($this->module->l('Your product was successfuly added to quote'), false);
         }
-        else {
+        elseif($this->context->cookie->id_guest) {
             // add basket from guest
-            $guest = new Guest(Context::getContext()->cookie->id_guest);
-            if(!Tools::getIsset($this->context->cookie->__get('id_request'))) {
+            if(!$this->context->cookie->__get('id_request')) {
                 Db::getInstance()->insert('quotes', array(
                     'id_shop'      => $this->context->shop->id,
                     'id_lang'      => $this->context->language->id,
                     'id_customer'  => 0,
-                    'id_guest'     => $guest->id_customer,
+                    'id_guest'     => $this->context->cookie->id_guest,
                     'date_add'     => date('Y-m-d H:i:s'),
                 ));
                 $this->context->cookie->__set('id_request',Db::getInstance()->Insert_ID());
@@ -144,8 +146,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                     'date_add'     => date('Y-m-d H:i:s'),
                 ));
             }
-            return $this->generateAnswer($this->module->l('Your product was successfuly added to quote'), false);
-        }
+            return $this->generateAnswer($this->module->l('Your product was successfuly added to quote1'), false);
+        }*/
     }
     private function getProductQuantity($pid, $quantity, $id_request) {
         if($row = Db::getInstance()->ExecuteS('SELECT `quantity` FROM '._DB_PREFIX_.'quotes_product WHERE `id_cart` = '.$id_request.' AND `id_product` ='.$pid)) {
