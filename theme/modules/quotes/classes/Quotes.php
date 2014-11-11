@@ -17,7 +17,7 @@ class QuotesCart extends ObjectModel
     protected $_products = null;
 
     public static $definition = array(
-        'table' => 'quotes_product',
+        'table' => 'quotes',
         'primary' => 'id',
         'fields' => array(
             'id_shop_group' => 		array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
