@@ -83,7 +83,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             return;
         }
 
-        // process add or update product to cart
+        // process add quote request to cart
         $quote = new QuotesCart;
         $quote->id_shop_group = $this->context->shop->id_shop_group;
         $quote->id_shop = $this->context->shop->id;
@@ -92,8 +92,10 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         $quote->id_guest = (int)Context::getContext()->cookie->id_guest;
         $quote->date_add = date('Y-m-d H:i:s', time());
         $quote->secure_key = '';
-        // save product into cart
-        $quote->save();
+        // save new quote request into db
+        $quote->add();
+        $this->addProductToBox($quote->id);
+
         // Add cart if no cart found
         /*if (!$this->context->cart->id)
         {
@@ -181,15 +183,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             }
             return $this->generateAnswer($this->module->l('Your product was successfuly added to quote1'), false);
         }*/
-    }
-    private function getProductQuantity($pid, $quantity, $id_request) {
-        if($row = Db::getInstance()->ExecuteS('SELECT `quantity` FROM '._DB_PREFIX_.'quotes_product WHERE `id_cart` = '.$id_request.' AND `id_product` ='.$pid)) {
-            $rw = Db::getInstance()->getRow($row);
-                return (int)($rw['quantity'] + $quantity);
-        }
-        else
-            return $quantity;
-
     }
     private function generateAnswer($message = '', $hasError = false) {
         print json_encode(array('hasError' => $hasError, 'message' => $message));

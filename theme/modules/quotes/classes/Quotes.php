@@ -20,12 +20,12 @@ class QuotesCart extends ObjectModel
         'table' => 'quotes',
         'primary' => 'id',
         'fields' => array(
-            'id_shop_group' => 		array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
-            'id_shop'       => 		array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
-            'id_customer'   => 		array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
-            'id_guest'      => 		array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
-            'id_lang'       => 		array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
-            'date_add'      => 		array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
+            'id_shop_group' => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
+            'id_shop'       => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
+            'id_customer'   => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
+            'id_guest'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
+            'id_lang'       => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
+            'date_add'      => 	array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
         ),
     );
 
@@ -42,12 +42,6 @@ class QuotesCart extends ObjectModel
                 $customer = Context::getContext()->customer;
             else
                 $customer = new Customer((int)$this->id_customer);
-
-            if ((!$this->secure_key || $this->secure_key == '-1') && $customer->secure_key)
-            {
-                $this->secure_key = $customer->secure_key;
-                $this->save();
-            }
         }
     }
 
@@ -59,7 +53,6 @@ class QuotesCart extends ObjectModel
             $this->id_shop = Context::getContext()->shop->id;
 
         $return = parent::add($autodate);
-
         return $return;
     }
 
@@ -73,7 +66,7 @@ class QuotesCart extends ObjectModel
 
         $this->_products = null;
         $return = parent::update();
-
+        Hook::exec('actionCartSave');
         return $return;
     }
 
