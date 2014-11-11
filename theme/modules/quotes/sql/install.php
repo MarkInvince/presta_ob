@@ -19,7 +19,9 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes` (
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_product` (
+          `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
           `id_quote` int(10) unsigned NOT NULL,
+          `id_shop_group` int(11) unsigned NOT NULL DEFAULT "1",
           `id_product` int(10) unsigned NOT NULL,
           `quantity` int(10) unsigned NOT NULL DEFAULT "0",
           `date_add` datetime NOT NULL,
