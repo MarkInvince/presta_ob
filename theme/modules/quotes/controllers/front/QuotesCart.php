@@ -23,15 +23,23 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-
+include_once(_PS_MODULE_DIR_.'quotes/classes/Quotes.php');
+include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     
     public $ssl = true;
 	public $display_column_left = true;
 
+    public $quote;
+    public $quote_product;
+
 	public function __construct()
 	{
 		parent::__construct();
+
+        $this->quote = new QuotesCart;
+        $this->quote_product = new QuotesProductCart;
+
 		$this->context = Context::getContext();
 	}
     
@@ -66,7 +74,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     }
 
     protected function ajaxAddToQuotesCart() {
-        include_once(_PS_MODULE_DIR_.'quotes/classes/Quotes.php');
         if (Tools::getValue('pqty') <= 0) {
             print json_encode(array('message' => Tools::displayError($this->module->l('Null quantity!!')),'hasError' => true));
             return;
@@ -84,17 +91,23 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
 
         // process add quote request to cart
-        $quote = new QuotesCart;
-        $quote->id_shop_group = $this->context->shop->id_shop_group;
-        $quote->id_shop = $this->context->shop->id;
-        $quote->id_lang = $this->context->language->id;
-        $quote->id_customer = (int)$this->context->customer->id;
-        $quote->id_guest = (int)Context::getContext()->cookie->id_guest;
-        $quote->date_add = date('Y-m-d H:i:s', time());
-        $quote->secure_key = '';
-        // save new quote request into db
-        $quote->add();
-        $this->addProductToBox($quote->id);
+        if(!Tools::getIsset($this->context->cookie->__isset('id_request'))) {
+            $quote = new QuotesCart;
+            $quote->id_shop_group = $this->context->shop->id_shop_group;
+            $quote->id_shop = $this->context->shop->id;
+            $quote->id_lang = $this->context->language->id;
+            $quote->id_customer = (int)$this->context->customer->id;
+            $quote->id_guest = (int)Context::getContext()->cookie->id_guest;
+            $quote->date_add = date('Y-m-d H:i:s', time());
+            $quote->secure_key = '';
+            // save new quote request into db
+            $quote->add();
+
+            // set id_quote request to cookie
+            $this->context->cookie->__set('id_request', $quote->id);
+        }
+        // add product to cart table
+
 
         // Add cart if no cart found
         /*if (!$this->context->cart->id)
