@@ -846,7 +846,7 @@ class QuotesProductCart extends ObjectModel
                     false,
                     (int)$this->id_customer ? (int)$this->id_customer : null,
                     (int)$this->id,
-                    null,
+                    0,
                     $null,
                     true,
                     true,

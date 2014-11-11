@@ -105,8 +105,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             // set id_quote request to cookie
             $this->context->cookie->__set('id_request', $this->quote->id);
         }
-        // add product to cart table
 
+        // add product to cart table
         $this->quote_product->id_quote = $this->quote->id;
         $this->quote_product->id_shop = $this->context->shop->id;
         $this->quote_product->id_product = $product->id;
