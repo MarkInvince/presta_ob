@@ -9,6 +9,7 @@ class QuotesProductCart extends ObjectModel
     public $id_quote;
     public $id_shop;
     public $id_product;
+    public $id_customer;
     public $quantity;
     public $date_add;
 

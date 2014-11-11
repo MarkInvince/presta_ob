@@ -91,7 +91,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
 
         // process add quote request to cart
-        if(!Tools::getIsset($this->context->cookie->__isset('id_request'))) {
+        if(!$this->context->cookie->__get('id_request') OR empty($this->context->cookie->__get('id_request'))) {
             $this->quote->id_shop_group = $this->context->shop->id_shop_group;
             $this->quote->id_shop = $this->context->shop->id;
             $this->quote->id_lang = $this->context->language->id;
@@ -106,7 +106,15 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->context->cookie->__set('id_request', $this->quote->id);
         }
         // add product to cart table
-
+        $this->quote_product->id_quote = $this->context->cookie->__get('id_request');
+        $this->quote_product->id_shop = $this->context->shop->id;
+        $this->quote_product->id_product = $product->id;
+        $this->quote_product->id_customer = (int)$this->context->customer->id;
+        $this->quote_product->date_add = date('Y-m-d H:i:s', time());
+        //add product
+        $this->quote_product->add();
+        // update product qty
+        $this->quote_product->quote_product->updateQty((int)Tools::getValue('pqty'), $product->id);
 
         // Add cart if no cart found
         /*if (!$this->context->cart->id)
