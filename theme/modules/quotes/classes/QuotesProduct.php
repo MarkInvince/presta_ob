@@ -8,43 +8,38 @@ class QuotesProductCart extends ObjectModel
     public $id;
     public $id_quote;
     public $id_shop;
-    public $id_product;
+    public $id_shop_group;
+    public $id_lang;
+    public $id_guest;
     public $id_customer;
+    public $id_product;
     public $quantity;
     public $date_add;
-
-    protected $_products = null;
-    protected static $_nbProducts = array();
-    protected static $_totalWeight = array();
-    protected static $_attributesLists = array();
-    protected $_taxCalculationMethod = PS_TAX_EXC;
+    public $date_upd;
 
     public static $definition = array(
         'table' => 'quotes_product',
         'primary' => 'id',
         'fields' => array(
             'id_quote'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
-            'id_shop'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
+            'id_shop'       => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
+            'id_shop_group' => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
+            'id_lang'       => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
             'id_product'    => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
+            'id_guest'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
+            'id_customer'   => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
             'quantity'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
             'date_add'      => 	array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
+            'date_upd'      => 	array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
         ),
     );
 
     public function __construct($id = null, $id_lang = null)
     {
         parent::__construct($id);
-
         if (!is_null($id_lang))
             $this->id_lang = (int)(Language::getLanguage($id_lang) !== false) ? $id_lang : Configuration::get('PS_LANG_DEFAULT');
 
-        if ($this->id_customer)
-        {
-            if (isset(Context::getContext()->customer) && Context::getContext()->customer->id == $this->id_customer)
-                $customer = Context::getContext()->customer;
-            else
-                $customer = new Customer((int)$this->id_customer);
-        }
     }
 
     public function add($autodate = true, $null_values = false)
@@ -68,14 +63,12 @@ class QuotesProductCart extends ObjectModel
 
         $this->_products = null;
         $return = parent::update();
-        Hook::exec('actionCartSave');
         return $return;
     }
 
     public function delete()
     {
-
-        if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes_product` WHERE `id` = '.(int)$this->id))
+        if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes_product` WHERE `id` = '.(int)$this->id.' AND `id_quote` LIKE "'.$id_quote.'"'))
             return false;
 
         return parent::delete();

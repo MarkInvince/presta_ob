@@ -23,7 +23,6 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-include_once(_PS_MODULE_DIR_.'quotes/classes/Quotes.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
@@ -33,14 +32,20 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     public $quote;
     public $quote_product;
 
+    private $user_token;
+
     public function __construct()
     {
         parent::__construct();
 
-        $this->quote = new QuotesCart;
-        $this->quote_product = new QuotesProductCart;
-
         $this->context = Context::getContext();
+
+        $this->quote = new QuotesProductCart;
+        $this->user_token = uniqid();
+        //set user unique key
+        if(!$this->context->cookie->__isset('request_id')) {
+            $this->context->cookie->__set('request_id', $this->user_token);
+        }
     }
 
     public function initContent()
@@ -88,13 +93,23 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             return;
         }
 
-        // process add quote request to cart
+        // update model if user is logged in system
+        if ($this->context->customer->isLogged()) {
+            $this->quote->update();
+        }
+        if($this->context->cookie->__isset('request_id')) {
+            //add product to shop cart
+
+        }
+
+
+        /*// process add quote request to cart
         if(!isset($_SESSION['current_request'])) {
             $this->quote->id_shop_group = $this->context->shop->id_shop_group;
             $this->quote->id_shop = $this->context->shop->id;
             $this->quote->id_lang = $this->context->language->id;
             $this->quote->id_customer = (int)$this->context->customer->id;
-            $this->quote->id_guest = (int)Context::getContext()->cookie->id_guest;
+            $this->quote->id_guest = (int)$this->context->cookie->id_guest;
             $this->quote->date_add = date('Y-m-d H:i:s', time());
             $this->quote->secure_key = '';
             // save new quote request into db and save into session current request_id
@@ -102,8 +117,9 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
 
         // add product to cart table
-        if(isset($_SESSION['current_request'])) {
-            $this->quote_product->id_quote =$_SESSION['current_request'];
+        $sql = 'SELECT `id` FROM `'._DB_PREFIX_.'quotes` WHERE `id_customer` = '.(isset($this->context->customer->id) ? $this->context->customer->id : 0).' AND `id_guest` = '.(isset($this->context->cookie->id_guest) ? $this->context->cookie->id_guest : 0).' LIMIT 0';
+        if ($request_id = Db::getInstance()->getValue($sql)) {
+            $this->quote_product->id_quote = $request_id;
             $this->quote_product->id_shop = $this->context->shop->id;
             $this->quote_product->id_product = $product->id;
             $this->quote_product->id_customer = (int)$this->context->customer->id;
@@ -117,7 +133,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             else {
                 $this->quote_product->save();
             }
-        }
+        }*/
         // Add cart if no cart found
         /*if (!$this->context->cart->id)
         {
