@@ -50,9 +50,6 @@ class AdminQuotesController extends ModuleAdminController
 		$this->postProcess();
 	}
 
-    private function ndisplayQuotes() {
-        
-    }
 	public function postProcess()
 	{
 		
