@@ -114,7 +114,7 @@ class QuotesProductCart extends ObjectModel
         elseif (!$product->available_for_order || Configuration::get('PS_CATALOG_MODE'))
             return false;
         else
-        {
+        { 
         }
         //update current product in cart
         Db::getInstance()->execute('
