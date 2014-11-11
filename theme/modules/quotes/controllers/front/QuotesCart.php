@@ -92,19 +92,18 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
         // process add quote request to cart
         if(!Tools::getIsset($this->context->cookie->__isset('id_request'))) {
-            $quote = new QuotesCart;
-            $quote->id_shop_group = $this->context->shop->id_shop_group;
-            $quote->id_shop = $this->context->shop->id;
-            $quote->id_lang = $this->context->language->id;
-            $quote->id_customer = (int)$this->context->customer->id;
-            $quote->id_guest = (int)Context::getContext()->cookie->id_guest;
-            $quote->date_add = date('Y-m-d H:i:s', time());
-            $quote->secure_key = '';
+            $this->quote->id_shop_group = $this->context->shop->id_shop_group;
+            $this->quote->id_shop = $this->context->shop->id;
+            $this->quote->id_lang = $this->context->language->id;
+            $this->quote->id_customer = (int)$this->context->customer->id;
+            $this->quote->id_guest = (int)Context::getContext()->cookie->id_guest;
+            $this->quote->date_add = date('Y-m-d H:i:s', time());
+            $this->quote->secure_key = '';
             // save new quote request into db
-            $quote->add();
+            $this->quote->add();
 
             // set id_quote request to cookie
-            $this->context->cookie->__set('id_request', $quote->id);
+            $this->context->cookie->__set('id_request', $this->quote->id);
         }
         // add product to cart table
 
