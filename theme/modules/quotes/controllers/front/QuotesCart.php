@@ -36,10 +36,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     public function __construct()
     {
         parent::__construct();
-        if($this->context->cookie->__get('id_request'))
-            $this->quote = new QuotesCart($this->context->cookie->__get('id_request'));
-        else
-            $this->quote = new QuotesCart;
+
+        $this->quote = new QuotesCart;
         $this->quote_product = new QuotesProductCart;
 
         $this->context = Context::getContext();
@@ -91,7 +89,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
 
         // process add quote request to cart
-        if(!$this->context->cookie->__get('id_request') OR empty($this->context->cookie->__get('id_request'))) {
+        if(!isset($_SESSION['current_request'])) {
             $this->quote->id_shop_group = $this->context->shop->id_shop_group;
             $this->quote->id_shop = $this->context->shop->id;
             $this->quote->id_lang = $this->context->language->id;
@@ -99,27 +97,26 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->quote->id_guest = (int)Context::getContext()->cookie->id_guest;
             $this->quote->date_add = date('Y-m-d H:i:s', time());
             $this->quote->secure_key = '';
-            // save new quote request into db
-            $this->quote->save();
-
-            // set id_quote request to cookie
-            $this->context->cookie->__set('id_request', $this->quote->id);
+            // save new quote request into db and save into session current request_id
+            $_SESSION['current_request'] = $this->quote->save();
         }
 
         // add product to cart table
-        $this->quote_product->id_quote = $this->quote->id;
-        $this->quote_product->id_shop = $this->context->shop->id;
-        $this->quote_product->id_product = $product->id;
-        $this->quote_product->id_customer = (int)$this->context->customer->id;
-        $this->quote_product->quantity = 1;
-        $this->quote_product->date_add = date('Y-m-d H:i:s', time());
-        //add product
-        if($this->quote_product->containsProduct($product->id)) {
-            // update product qty
-            $this->quote_product->updateQty((int)Tools::getValue('pqty'), $product->id);
-        }
-        else {
-            $this->quote_product->save();
+        if(isset($_SESSION['current_request'])) {
+            $this->quote_product->id_quote =$_SESSION['current_request'];
+            $this->quote_product->id_shop = $this->context->shop->id;
+            $this->quote_product->id_product = $product->id;
+            $this->quote_product->id_customer = (int)$this->context->customer->id;
+            $this->quote_product->quantity = 1;
+            $this->quote_product->date_add = date('Y-m-d H:i:s', time());
+            //add product
+            if($this->quote_product->containsProduct($product->id)) {
+                // update product qty
+                $this->quote_product->updateQty((int)Tools::getValue('pqty'), $product->id);
+            }
+            else {
+                $this->quote_product->save();
+            }
         }
         // Add cart if no cart found
         /*if (!$this->context->cart->id)

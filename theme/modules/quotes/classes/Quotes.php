@@ -72,7 +72,7 @@ class QuotesCart extends ObjectModel
     public function delete()
     {
 
-        if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes_product` WHERE `id` = '.(int)$this->id))
+        if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes` WHERE `id` = '.(int)$this->id))
             return false;
 
         return parent::delete();

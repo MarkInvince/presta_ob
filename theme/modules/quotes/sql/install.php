@@ -26,7 +26,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_product` (
           `id_product` int(10) unsigned NOT NULL,
           `quantity` int(10) unsigned NOT NULL DEFAULT "0",
           `date_add` datetime NOT NULL,
-          PRIMARY KEY `cart_product_index` (`id`,`id_quote`)
+          PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
 
 foreach ($sql as $query)
