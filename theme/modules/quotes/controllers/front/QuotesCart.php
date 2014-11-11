@@ -37,7 +37,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     
     public function initContent()
 	{
-        include_once($this->module->_path.'classes/Quotes.php');
+        // Send noindex to avoid ghost carts by bots
+        header("X-Robots-Tag: noindex, nofollow", true);
 
 		parent::initContent();
         // post process
@@ -65,6 +66,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     }
 
     protected function ajaxAddToQuotesCart() {
+        include_once(_PS_MODULE_DIR_.'quotes/classes/Quotes.php');
         if (Tools::getValue('pqty') <= 0) {
             print json_encode(array('message' => Tools::displayError($this->module->l('Null quantity!!')),'hasError' => true));
             return;
@@ -81,8 +83,36 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             return;
         }
 
-        //check if product already in box
-
+        // process add or update product to cart
+        $quote = new QuotesCart;
+        $quote->id_shop_group = $this->context->shop->id_shop_group;
+        $quote->id_shop = $this->context->shop->id;
+        $quote->id_lang = $this->context->language->id;
+        $quote->id_customer = (int)$this->context->customer->id;
+        $quote->id_guest = (int)Context::getContext()->cookie->id_guest;
+        $quote->date_add = date('Y-m-d H:i:s', time());
+        $quote->secure_key = '';
+        // save product into cart
+        $quote->save();
+        // Add cart if no cart found
+        /*if (!$this->context->cart->id)
+        {
+            $guest = new Guest(Context::getContext()->cookie->id_guest);
+            if ($this->context->cart->id)
+                $this->context->cookie->id_cart = (int)$this->context->cart->id;
+        }
+        $update_quantity = $this->context->cart->updateQty(Tools::getValue('pqty'), $product->id, 0, 0, Tools::getValue('op', 'up'));
+        if ($update_quantity < 0)
+        {
+            // If product has attribute, minimal quantity is set with minimal quantity of attribute
+            $minimal_quantity = ($this->id_product_attribute) ? Attribute::getAttributeMinimalQty($this->id_product_attribute) : $product->minimal_quantity;
+            print json_encode(array('message' => Tools::displayError($this->module->l('You must add %d minimum quantity')),'hasError' => true));
+            return;
+        }
+        elseif (!$update_quantity) {
+            print json_encode(array('message' => Tools::displayError($this->module->l('You already have the maximum quantity available for this product.')),'hasError' => true));
+            return;
+        }*/
 
         /*if ($this->context->customer->isLogged()) {
             // add basket to DB
