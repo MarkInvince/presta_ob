@@ -51,7 +51,7 @@ class QuotesProductCart extends ObjectModel
         if(!$this->checkForContains())
             $return = parent::add($autodate);
         else {
-            $this->recountProduct()
+            $this->recountProduct();
         }
         return $return;
     }
@@ -78,7 +78,7 @@ class QuotesProductCart extends ObjectModel
     }
 
     public function checkForContains() {
-        if (!$this->id || !this->id_product || !this->id_quote)
+        if (!$this->id || !$this->id_product || !$this->id_quote)
             return false;
         return Db::getInstance()->getRow('
 			SELECT *
@@ -87,7 +87,7 @@ class QuotesProductCart extends ObjectModel
         );
     }
     public function recountProduct() {
-        if (!$this->id || !this->id_product || !this->id_quote)
+        if (!$this->id || !$this->id_product || !$this->id_quote)
             return false;
         $row = Db::getInstance()->getRow('
 			SELECT qp.`quantity`
