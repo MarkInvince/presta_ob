@@ -21,7 +21,7 @@ class QuotesProductCart extends ObjectModel
         'table' => 'quotes_product',
         'primary' => 'id',
         'fields' => array(
-            'id_quote'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
+            'id_quote'      => 	array('type' => self::TYPE_STRING, 'required' => true),
             'id_shop'       => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
             'id_shop_group' => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
             'id_lang'       => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
@@ -47,9 +47,12 @@ class QuotesProductCart extends ObjectModel
         if (!$this->id_lang)
             $this->id_lang = Configuration::get('PS_LANG_DEFAULT');
         if (!$this->id_shop)
-            $this->id_shop = Context::getContext()->shop->id;
-
-        $return = parent::add($autodate);
+            $this->id_shop = $this->context->shop->id;
+        if(!$this->checkForContains())
+            $return = parent::add($autodate);
+        else {
+            $this->recountProduct()
+        }
         return $return;
     }
 
@@ -68,31 +71,23 @@ class QuotesProductCart extends ObjectModel
 
     public function delete()
     {
-        if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes_product` WHERE `id` = '.(int)$this->id.' AND `id_quote` LIKE "'.$id_quote.'"'))
+        if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes_product` WHERE `id` = '.(int)$this->id.' AND `id_quote` LIKE "'.$this->id_quote.'"'))
             return false;
 
         return parent::delete();
     }
 
-    public function getLastProduct()
-    {
-        $sql = '
-			SELECT `id_product`, `id_product_attribute`, id_shop
-			FROM `'._DB_PREFIX_.'quotes_product`
-			WHERE `id` = '.(int)$this->id.'
-			ORDER BY `date_add` DESC';
-
-        $result = Db::getInstance()->getRow($sql);
-        if ($result && isset($result['id_product']) && $result['id_product'])
-            foreach ($this->getProducts() as $product)
-                if ($result['id_product'] == $product['id_product']
-                    && (
-                        !$result['id_product_attribute']
-                        || $result['id_product_attribute'] == $product['id_product_attribute']
-                    ))
-                    return $product;
-
-        return false;
+    public function checkForContains() {
+        if (!$this->id || !this->id_product || !this->id_quote)
+            return false;
+        return Db::getInstance()->getRow('
+			SELECT *
+			FROM `'._DB_PREFIX_.'quotes_product` qp
+			WHERE qp.`id_product` = '.(int)$this->id_product.' AND qp.`id_quote` LIKE "'.$this->id_quote.'"'
+        );
+    }
+    public function recountProduct() {
+        
     }
 
     /**
@@ -369,7 +364,7 @@ class QuotesProductCart extends ObjectModel
         return $this->_products;
     }
 
-    public function deleteProduct($id_product, $id_product_attribute = null, $id_customization = null)
+    public function deleteProduct($id_product)
     {
         if (isset(self::$_nbProducts[$this->id]))
             unset(self::$_nbProducts[$this->id]);
@@ -377,166 +372,22 @@ class QuotesProductCart extends ObjectModel
         if (isset(self::$_totalWeight[$this->id]))
             unset(self::$_totalWeight[$this->id]);
 
-        if ((int)$id_customization)
-        {
-            $product_total_quantity = (int)Db::getInstance()->getValue(
-                'SELECT `quantity`
-                FROM `'._DB_PREFIX_.'quotes_product`
-				WHERE `id_product` = '.(int)$id_product.'
-				AND `id` = '.(int)$this->id.'
-				AND `id_product_attribute` = '.(int)$id_product_attribute);
-
-            $customization_quantity = (int)Db::getInstance()->getValue('
-			SELECT `quantity`
-			FROM `'._DB_PREFIX_.'customization`
-			WHERE `id_cart` = '.(int)$this->id.'
-			AND `id_product` = '.(int)$id_product.'
-			AND `id_product_attribute` = '.(int)$id_product_attribute);
-
-            if (!$this->_deleteCustomization((int)$id_customization, (int)$id_product, (int)$id_product_attribute))
-                return false;
-
-            // refresh cache of self::_products
-            $this->_products = $this->getProducts(true);
-            return ($customization_quantity == $product_total_quantity && $this->deleteProduct((int)$id_product, (int)$id_product_attribute));
-        }
-
-        /* Get customization quantity */
-        $result = Db::getInstance()->getRow('
-			SELECT SUM(`quantity`) AS \'quantity\'
-			FROM `'._DB_PREFIX_.'customization`
-			WHERE `id_cart` = '.(int)$this->id.'
-			AND `id_product` = '.(int)$id_product.'
-			AND `id_product_attribute` = '.(int)$id_product_attribute);
-
-        if ($result === false)
-            return false;
-
-        /* If the product still possesses customization it does not have to be deleted */
-        if (Db::getInstance()->NumRows() && (int)$result['quantity'])
-            return Db::getInstance()->execute('
-				UPDATE `'._DB_PREFIX_.'quotes_product`
-				SET `quantity` = '.(int)$result['quantity'].'
-				WHERE `id` = '.(int)$this->id.'
-				AND `id_product` = '.(int)$id_product.
-                ($id_product_attribute != null ? ' AND `id_product_attribute` = '.(int)$id_product_attribute : '')
-            );
-
         /* Product deletion */
         $result = Db::getInstance()->execute('
 		DELETE FROM `'._DB_PREFIX_.'quotes_product`
-		WHERE `id_product` = '.(int)$id_product.'
-		'.(!is_null($id_product_attribute) ? ' AND `id_product_attribute` = '.(int)$id_product_attribute : '').'
-		AND `id` = '.(int)$this->id);
+		WHERE `id_product` = '.(int)$id_product.' AND `id_quote` = '.(int)$this->id_quote);
 
         if ($result)
         {
             $return = $this->update(true);
             // refresh cache of self::_products
             $this->_products = $this->getProducts(true);
-
             return $return;
         }
-
         return false;
     }
-    public static function cacheSomeAttributesLists($ipa_list, $id_lang)
-    {
-        if (!Combination::isFeatureActive())
-            return;
 
-        $pa_implode = array();
 
-        foreach ($ipa_list as $id_product_attribute)
-            if ((int)$id_product_attribute && !array_key_exists($id_product_attribute.'-'.$id_lang, self::$_attributesLists))
-            {
-                $pa_implode[] = (int)$id_product_attribute;
-                self::$_attributesLists[(int)$id_product_attribute.'-'.$id_lang] = array('attributes' => '', 'attributes_small' => '');
-            }
-
-        if (!count($pa_implode))
-            return;
-
-        $result = Db::getInstance()->executeS('
-			SELECT pac.`id_product_attribute`, agl.`public_name` AS public_group_name, al.`name` AS attribute_name
-			FROM `'._DB_PREFIX_.'product_attribute_combination` pac
-			LEFT JOIN `'._DB_PREFIX_.'attribute` a ON a.`id_attribute` = pac.`id_attribute`
-			LEFT JOIN `'._DB_PREFIX_.'attribute_group` ag ON ag.`id_attribute_group` = a.`id_attribute_group`
-			LEFT JOIN `'._DB_PREFIX_.'attribute_lang` al ON (
-				a.`id_attribute` = al.`id_attribute`
-				AND al.`id_lang` = '.(int)$id_lang.'
-			)
-			LEFT JOIN `'._DB_PREFIX_.'attribute_group_lang` agl ON (
-				ag.`id_attribute_group` = agl.`id_attribute_group`
-				AND agl.`id_lang` = '.(int)$id_lang.'
-			)
-			WHERE pac.`id_product_attribute` IN ('.implode(',', $pa_implode).')
-			ORDER BY agl.`public_name` ASC'
-        );
-
-        foreach ($result as $row)
-        {
-            self::$_attributesLists[$row['id_product_attribute'].'-'.$id_lang]['attributes'] .= $row['public_group_name'].' : '.$row['attribute_name'].', ';
-            self::$_attributesLists[$row['id_product_attribute'].'-'.$id_lang]['attributes_small'] .= $row['attribute_name'].', ';
-        }
-
-        foreach ($pa_implode as $id_product_attribute)
-        {
-            self::$_attributesLists[$id_product_attribute.'-'.$id_lang]['attributes'] = rtrim(
-                self::$_attributesLists[$id_product_attribute.'-'.$id_lang]['attributes'],
-                ', '
-            );
-
-            self::$_attributesLists[$id_product_attribute.'-'.$id_lang]['attributes_small'] = rtrim(
-                self::$_attributesLists[$id_product_attribute.'-'.$id_lang]['attributes_small'],
-                ', '
-            );
-        }
-    }
-    public function nbProducts()
-    {
-        if (!$this->id)
-            return 0;
-
-        return $this->getNbProducts($this->id);
-    }
-
-    public static function getNbProducts($id)
-    {
-        // Must be strictly compared to NULL, or else an empty cart will bypass the cache and add dozens of queries
-        if (isset(self::$_nbProducts[$id]) && self::$_nbProducts[$id] !== null)
-            return self::$_nbProducts[$id];
-
-        self::$_nbProducts[$id] = (int)Db::getInstance()->getValue('
-			SELECT SUM(`quantity`)
-			FROM `'._DB_PREFIX_.'quotes_product`
-			WHERE `id` = '.(int)$id
-        );
-
-        return self::$_nbProducts[$id];
-    }
-
-    public function containsProduct($id_product, $id_product_attribute = 0, $id_customization = 0)
-    {
-        $sql = 'SELECT cp.`quantity` FROM `'._DB_PREFIX_.'quotes_product`  cp';
-
-        if ($id_customization)
-            $sql .= '
-				LEFT JOIN `'._DB_PREFIX_.'customization` c ON (
-					c.`id_product` = cp.`id_product`
-					AND c.`id_product_attribute` = cp.`id_product_attribute`
-				)';
-
-        $sql .= '
-			WHERE cp.`id_product` = '.(int)$id_product.'
-			AND cp.`id_product_attribute` = '.(int)$id_product_attribute.'
-			AND cp.`id` = '.(int)$this->id;
-
-        if ($id_customization)
-            $sql .= ' AND c.`id_customization` = '.(int)$id_customization;
-
-        return Db::getInstance()->getRow($sql);
-    }
 
     /**
      * Update product quantity
@@ -681,73 +532,6 @@ class QuotesProductCart extends ObjectModel
             return true;
     }
 
-    public function getProductCustomization($id_product, $type = null, $not_in_cart = false)
-    {
-        if (!Customization::isFeatureActive())
-            return array();
-
-        $result = Db::getInstance()->executeS('
-			SELECT cu.id_customization, cd.index, cd.value, cd.type, cu.in_cart, cu.quantity
-			FROM `'._DB_PREFIX_.'customization` cu
-			LEFT JOIN `'._DB_PREFIX_.'customized_data` cd ON (cu.`id_customization` = cd.`id_customization`)
-			WHERE cu.id_cart = '.(int)$this->id.'
-			AND cu.id_product = '.(int)$id_product.
-            ($type === Product::CUSTOMIZE_FILE ? ' AND type = '.(int)Product::CUSTOMIZE_FILE : '').
-            ($type === Product::CUSTOMIZE_TEXTFIELD ? ' AND type = '.(int)Product::CUSTOMIZE_TEXTFIELD : '').
-            ($not_in_cart ? ' AND in_cart = 0' : '')
-        );
-        return $result;
-    }
-    /**
-     * Delete a customization from the cart. If customization is a Picture,
-     * then the image is also deleted
-     *
-     * @param integer $id_customization
-     * @return boolean result
-     */
-    protected function _deleteCustomization($id_customization, $id_product, $id_product_attribute)
-    {
-        $result = true;
-        $customization = Db::getInstance()->getRow('SELECT *
-			FROM `'._DB_PREFIX_.'customization`
-			WHERE `id_customization` = '.(int)$id_customization);
-
-        if ($customization)
-        {
-            $cust_data = Db::getInstance()->getRow('SELECT *
-				FROM `'._DB_PREFIX_.'customized_data`
-				WHERE `id_customization` = '.(int)$id_customization);
-
-            // Delete customization picture if necessary
-            if (isset($cust_data['type']) && $cust_data['type'] == 0)
-                $result &= (@unlink(_PS_UPLOAD_DIR_.$cust_data['value']) && @unlink(_PS_UPLOAD_DIR_.$cust_data['value'].'_small'));
-
-            $result &= Db::getInstance()->execute(
-                'DELETE FROM `'._DB_PREFIX_.'customized_data`
-				WHERE `id_customization` = '.(int)$id_customization
-            );
-
-            if ($result)
-                $result &= Db::getInstance()->execute(
-                    'UPDATE `'._DB_PREFIX_.'quotes_product`
-					SET `quantity` = `quantity` - '.(int)$customization['quantity'].'
-					WHERE `id` = '.(int)$this->id.'
-					AND `id_product` = '.(int)$id_product.
-                    ((int)$id_product_attribute ? ' AND `id_product_attribute` = '.(int)$id_product_attribute : '')
-                );
-
-            if (!$result)
-                return false;
-
-            return Db::getInstance()->execute(
-                'DELETE FROM `'._DB_PREFIX_.'customization`
-				WHERE `id_customization` = '.(int)$id_customization
-            );
-        }
-
-        return true;
-    }
-
     public static function getTotalCart($id_cart, $use_tax_display = false, $type = Cart::BOTH)
     {
         $cart = new QuotesCart($id_cart);
@@ -756,155 +540,5 @@ class QuotesProductCart extends ObjectModel
 
         $with_taxes = $use_tax_display ? $cart->_taxCalculationMethod != PS_TAX_EXC : true;
         return Tools::displayPrice($cart->getOrderTotal($with_taxes, $type), Currency::getCurrencyInstance((int)$cart->id_currency), false);
-    }
-
-
-    public static function getOrderTotalUsingTaxCalculationMethod($id_cart)
-    {
-        return $this->getTotalCart($id_cart, true);
-    }
-
-    /**
-     * This function returns the total cart amount
-     *
-     * Possible values for $type:
-     * Cart::ONLY_PRODUCTS
-     * Cart::ONLY_DISCOUNTS
-     * Cart::BOTH
-     * Cart::BOTH_WITHOUT_SHIPPING
-     * Cart::ONLY_SHIPPING
-     * Cart::ONLY_WRAPPING
-     * Cart::ONLY_PRODUCTS_WITHOUT_SHIPPING
-     * Cart::ONLY_PHYSICAL_PRODUCTS_WITHOUT_SHIPPING
-     *
-     * @param boolean $withTaxes With or without taxes
-     * @param integer $type Total type
-     * @param boolean $use_cache Allow using cache of the method CartRule::getContextualValue
-     * @return float Order total
-     */
-    public function getOrderTotal($with_taxes = true, $type = Cart::BOTH, $products = null, $id_carrier = null, $use_cache = true)
-    {
-        if (!$this->id)
-            return 0;
-
-        $type = (int)$type;
-        $array_type = array(
-            Cart::ONLY_PRODUCTS,
-            Cart::ONLY_DISCOUNTS,
-            Cart::BOTH,
-            Cart::BOTH_WITHOUT_SHIPPING,
-            Cart::ONLY_SHIPPING,
-            Cart::ONLY_WRAPPING,
-            Cart::ONLY_PRODUCTS_WITHOUT_SHIPPING,
-            Cart::ONLY_PHYSICAL_PRODUCTS_WITHOUT_SHIPPING,
-        );
-
-        // Define virtual context to prevent case where the cart is not the in the global context
-        $virtual_context = Context::getContext()->cloneContext();
-        $virtual_context->cart = $this;
-
-        if (!in_array($type, $array_type))
-            die(Tools::displayError());
-
-        $shipping_fees = 0;
-
-        $param_product = true;
-        if (is_null($products))
-        {
-            $param_product = false;
-            $products = $this->getProducts();
-        }
-
-        $order_total = 0;
-        if (Tax::excludeTaxeOption())
-            $with_taxes = false;
-
-        foreach ($products as $product) // products refer to the cart details
-        {
-            if ($virtual_context->shop->id != $product['id_shop'])
-                $virtual_context->shop = new Shop((int)$product['id_shop']);
-
-            if ($this->_taxCalculationMethod == PS_TAX_EXC)
-            {
-                // Here taxes are computed only once the quantity has been applied to the product price
-                $price = Product::getPriceStatic(
-                    (int)$product['id_product'],
-                    false,
-                    (int)$product['id_product_attribute'],
-                    2,
-                    null,
-                    false,
-                    true,
-                    $product['cart_quantity'],
-                    false,
-                    (int)$this->id_customer ? (int)$this->id_customer : null,
-                    (int)$this->id,
-                    0,
-                    null,
-                    true,
-                    true,
-                    $virtual_context
-                );
-
-                $total_ecotax = $product['ecotax'] * (int)$product['cart_quantity'];
-                $total_price = $price * (int)$product['cart_quantity'];
-
-                if ($with_taxes)
-                {
-                    $product_tax_rate = (float)Tax::getProductTaxRate((int)$product['id_product'], (int)$address_id, $virtual_context);
-                    $product_eco_tax_rate = Tax::getProductEcotaxRate((int)$address_id);
-
-                    $total_price = ($total_price - $total_ecotax) * (1 + $product_tax_rate / 100);
-                    $total_ecotax = $total_ecotax * (1 + $product_eco_tax_rate / 100);
-                    $total_price = Tools::ps_round($total_price + $total_ecotax, 2);
-                }
-            }
-            else
-            {
-                if ($with_taxes)
-                    $price = Product::getPriceStatic(
-                        (int)$product['id_product'],
-                        true,
-                        (int)$product['id_product_attribute'],
-                        2,
-                        null,
-                        false,
-                        true,
-                        $product['cart_quantity'],
-                        false,
-                        ((int)$this->id_customer ? (int)$this->id_customer : null),
-                        (int)$this->id,
-                        ((int)$address_id ? (int)$address_id : null),
-                        $null,
-                        true,
-                        true,
-                        $virtual_context
-                    );
-                else
-                    $price = Product::getPriceStatic(
-                        (int)$product['id_product'],
-                        false,
-                        (int)$product['id_product_attribute'],
-                        2,
-                        null,
-                        false,
-                        true,
-                        $product['cart_quantity'],
-                        false,
-                        ((int)$this->id_customer ? (int)$this->id_customer : null),
-                        (int)$this->id,
-                        ((int)$address_id ? (int)$address_id : null),
-                        $null,
-                        true,
-                        true,
-                        $virtual_context
-                    );
-
-                $total_price = Tools::ps_round($price * (int)$product['cart_quantity'], 2);
-            }
-            $order_total += $total_price;
-        }
-
-        return Tools::ps_round((float)$order_total, 2);
     }
 };

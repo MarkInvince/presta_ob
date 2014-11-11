@@ -99,7 +99,16 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
         if($this->context->cookie->__isset('request_id')) {
             //add product to shop cart
-
+            $this->quote->id_quote = $this->context->cookie->__get('request_id');
+            $this->quote->id_shop = $this->context->shop->id;
+            $this->quote->id_shop_group = $this->context->shop->id_shop_group;
+            $this->quote->id_lang = $this->context->language->id;
+            $this->quote->id_product = $product->id;
+            $this->quote->id_guest = (int)$this->context->cookie->id_guest;
+            $this->quote->id_customer = (int)$this->context->customer->id;
+            $this->quote->quantity = (int)pSQL(Tools::getValue('pqty'));
+            $this->quote->date_add = date('Y-m-d H:i:s', time());
+            $this->quote->add();
         }
 
 

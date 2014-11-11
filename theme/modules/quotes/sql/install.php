@@ -19,7 +19,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_product` (
           `id_customer` int(11) unsigned NOT NULL DEFAULT "0",
           `quantity` int(10) unsigned NOT NULL DEFAULT "0",
           `date_add` datetime NOT NULL,
-          `date_upd` datetime NOT NULL DEFAULT "0",
+          `date_upd` datetime NOT NULL ,
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
 
