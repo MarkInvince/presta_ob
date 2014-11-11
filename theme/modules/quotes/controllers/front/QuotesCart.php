@@ -26,31 +26,31 @@
 include_once(_PS_MODULE_DIR_.'quotes/classes/Quotes.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
-    
+
     public $ssl = true;
-	public $display_column_left = true;
+    public $display_column_left = true;
 
     public $quote;
     public $quote_product;
 
-	public function __construct()
-	{
-		parent::__construct();
-
-        $this->quote = new QuotesCart;
+    public function __construct()
+    {
+        parent::__construct();
+        if($this->context->cookie->__get('id_request'))
+            $this->quote = new QuotesCart($this->context->cookie->__get('id_request'));
+        else
+            $this->quote = new QuotesCart;
         $this->quote_product = new QuotesProductCart;
 
-		$this->context = Context::getContext();
-	}
-    
+        $this->context = Context::getContext();
+    }
+
     public function initContent()
-	{
+    {
         // Send noindex to avoid ghost carts by bots
         header("X-Robots-Tag: noindex, nofollow", true);
 
-		parent::initContent();
-        // post process
-        $this->postProcess();
+        parent::initContent();
         // default template
         $this->assign();
     }
@@ -62,8 +62,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             }
         }
     }
-	public function assign()
-	{
+    public function assign()
+    {
         if ($this->context->customer->isLogged())
             $this->context->smarty->assign('isLogged', '1');
         else
@@ -100,22 +100,27 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->quote->date_add = date('Y-m-d H:i:s', time());
             $this->quote->secure_key = '';
             // save new quote request into db
-            $this->quote->add();
+            $this->quote->save();
 
             // set id_quote request to cookie
             $this->context->cookie->__set('id_request', $this->quote->id);
         }
         // add product to cart table
-        $this->quote_product->id_quote = $this->context->cookie->__get('id_request');
+
+        $this->quote_product->id_quote = $this->quote->id;
         $this->quote_product->id_shop = $this->context->shop->id;
         $this->quote_product->id_product = $product->id;
         $this->quote_product->id_customer = (int)$this->context->customer->id;
+        $this->quote_product->quantity = 1;
         $this->quote_product->date_add = date('Y-m-d H:i:s', time());
         //add product
-        $this->quote_product->add();
-        // update product qty
-        $this->quote_product->quote_product->updateQty((int)Tools::getValue('pqty'), $product->id);
-
+        if($this->quote_product->containsProduct($product->id)) {
+            // update product qty
+            $this->quote_product->updateQty((int)Tools::getValue('pqty'), $product->id);
+        }
+        else {
+            $this->quote_product->save();
+        }
         // Add cart if no cart found
         /*if (!$this->context->cart->id)
         {

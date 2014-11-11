@@ -14,9 +14,13 @@ class QuotesProductCart extends ObjectModel
     public $date_add;
 
     protected $_products = null;
+    protected static $_nbProducts = array();
+    protected static $_totalWeight = array();
+    protected static $_attributesLists = array();
+    protected $_taxCalculationMethod = PS_TAX_EXC;
 
     public static $definition = array(
-        'table' => 'quotes',
+        'table' => 'quotes_product',
         'primary' => 'id',
         'fields' => array(
             'id_quote'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
@@ -82,7 +86,7 @@ class QuotesProductCart extends ObjectModel
         $sql = '
 			SELECT `id_product`, `id_product_attribute`, id_shop
 			FROM `'._DB_PREFIX_.'quotes_product`
-			WHERE `id_cart` = '.(int)$this->id.'
+			WHERE `id` = '.(int)$this->id.'
 			ORDER BY `date_add` DESC';
 
         $result = Db::getInstance()->getRow($sql);
@@ -131,7 +135,7 @@ class QuotesProductCart extends ObjectModel
 						product_shop.`available_for_order`, product_shop.`price`, product_shop.`active`, product_shop.`unity`, product_shop.`unit_price_ratio`,
 						stock.`quantity` AS quantity_available, p.`width`, p.`height`, p.`depth`, stock.`out_of_stock`, p.`weight`,
 						p.`date_add`, p.`date_upd`, IFNULL(stock.quantity, 0) as quantity, pl.`link_rewrite`, cl.`link_rewrite` AS category,
-						CONCAT(LPAD(cp.`id_product`, 10, 0), LPAD(IFNULL(cp.`id_product_attribute`, 0), 10, 0), IFNULL(cp.`id_address_delivery`, 0)) AS unique_id, cp.id_address_delivery,
+						CONCAT(LPAD(cp.`id_product`, 10, 0), LPAD(IFNULL(cp.`id_product_attribute`, 0), 10, 0)) AS unique_id,
 						product_shop.`wholesale_price`, product_shop.advanced_stock_management, ps.product_supplier_reference supplier_reference, IFNULL(sp.`reduction_type`, 0) AS reduction_type');
 
         // Build FROM
@@ -158,7 +162,7 @@ class QuotesProductCart extends ObjectModel
         $sql->join(Product::sqlStock('cp', 'cp'));
 
         // Build WHERE clauses
-        $sql->where('cp.`id_cart` = '.(int)$this->id);
+        $sql->where(' cp.`id` = '.(int)$this->id);
         if ($id_product)
             $sql->where('cp.`id_product` = '.(int)$id_product);
         $sql->where('p.`id_product` IS NOT NULL');
@@ -232,12 +236,7 @@ class QuotesProductCart extends ObjectModel
             if (isset($row['id_product_attribute']) && (int)$row['id_product_attribute'] && isset($row['weight_attribute']))
                 $row['weight'] = (float)$row['weight_attribute'];
 
-            if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_invoice')
-                $address_id = (int)$this->id_address_invoice;
-            else
-                $address_id = (int)$row['id_address_delivery'];
-            if (!Address::addressExists($address_id))
-                $address_id = null;
+            $address_id = null;
 
             if ($cart_shop_context->shop->id != $row['id_shop'])
                 $cart_shop_context->shop = new Shop((int)$row['id_shop']);
@@ -377,7 +376,7 @@ class QuotesProductCart extends ObjectModel
         return $this->_products;
     }
 
-    public function deleteProduct($id_product, $id_product_attribute = null, $id_customization = null, $id_address_delivery = 0)
+    public function deleteProduct($id_product, $id_product_attribute = null, $id_customization = null)
     {
         if (isset(self::$_nbProducts[$this->id]))
             unset(self::$_nbProducts[$this->id]);
@@ -391,7 +390,7 @@ class QuotesProductCart extends ObjectModel
                 'SELECT `quantity`
                 FROM `'._DB_PREFIX_.'quotes_product`
 				WHERE `id_product` = '.(int)$id_product.'
-				AND `id_cart` = '.(int)$this->id.'
+				AND `id` = '.(int)$this->id.'
 				AND `id_product_attribute` = '.(int)$id_product_attribute);
 
             $customization_quantity = (int)Db::getInstance()->getValue('
@@ -399,15 +398,14 @@ class QuotesProductCart extends ObjectModel
 			FROM `'._DB_PREFIX_.'customization`
 			WHERE `id_cart` = '.(int)$this->id.'
 			AND `id_product` = '.(int)$id_product.'
-			AND `id_product_attribute` = '.(int)$id_product_attribute.'
-			'.((int)$id_address_delivery ? 'AND `id_address_delivery` = '.(int)$id_address_delivery : ''));
+			AND `id_product_attribute` = '.(int)$id_product_attribute);
 
-            if (!$this->_deleteCustomization((int)$id_customization, (int)$id_product, (int)$id_product_attribute, (int)$id_address_delivery))
+            if (!$this->_deleteCustomization((int)$id_customization, (int)$id_product, (int)$id_product_attribute))
                 return false;
 
             // refresh cache of self::_products
             $this->_products = $this->getProducts(true);
-            return ($customization_quantity == $product_total_quantity && $this->deleteProduct((int)$id_product, (int)$id_product_attribute, null, (int)$id_address_delivery));
+            return ($customization_quantity == $product_total_quantity && $this->deleteProduct((int)$id_product, (int)$id_product_attribute));
         }
 
         /* Get customization quantity */
@@ -426,7 +424,7 @@ class QuotesProductCart extends ObjectModel
             return Db::getInstance()->execute('
 				UPDATE `'._DB_PREFIX_.'quotes_product`
 				SET `quantity` = '.(int)$result['quantity'].'
-				WHERE `id_cart` = '.(int)$this->id.'
+				WHERE `id` = '.(int)$this->id.'
 				AND `id_product` = '.(int)$id_product.
                 ($id_product_attribute != null ? ' AND `id_product_attribute` = '.(int)$id_product_attribute : '')
             );
@@ -436,8 +434,7 @@ class QuotesProductCart extends ObjectModel
 		DELETE FROM `'._DB_PREFIX_.'quotes_product`
 		WHERE `id_product` = '.(int)$id_product.'
 		'.(!is_null($id_product_attribute) ? ' AND `id_product_attribute` = '.(int)$id_product_attribute : '').'
-		AND `id_cart` = '.(int)$this->id.'
-		'.((int)$id_address_delivery ? 'AND `id_address_delivery` = '.(int)$id_address_delivery : ''));
+		AND `id` = '.(int)$this->id);
 
         if ($result)
         {
@@ -520,7 +517,7 @@ class QuotesProductCart extends ObjectModel
         self::$_nbProducts[$id] = (int)Db::getInstance()->getValue('
 			SELECT SUM(`quantity`)
 			FROM `'._DB_PREFIX_.'quotes_product`
-			WHERE `id_cart` = '.(int)$id
+			WHERE `id` = '.(int)$id
         );
 
         return self::$_nbProducts[$id];
@@ -528,7 +525,7 @@ class QuotesProductCart extends ObjectModel
 
     public function containsProduct($id_product, $id_product_attribute = 0, $id_customization = 0)
     {
-        $sql = 'SELECT cp.`quantity` FROM `'._DB_PREFIX_.'quotes_product` cp';
+        $sql = 'SELECT cp.`quantity` FROM `'._DB_PREFIX_.'quotes_product`  cp';
 
         if ($id_customization)
             $sql .= '
@@ -540,7 +537,7 @@ class QuotesProductCart extends ObjectModel
         $sql .= '
 			WHERE cp.`id_product` = '.(int)$id_product.'
 			AND cp.`id_product_attribute` = '.(int)$id_product_attribute.'
-			AND cp.`id_cart` = '.(int)$this->id;
+			AND cp.`id` = '.(int)$this->id;
 
         if ($id_customization)
             $sql .= ' AND c.`id_customization` = '.(int)$id_customization;
@@ -640,7 +637,7 @@ class QuotesProductCart extends ObjectModel
 						SET `quantity` = `quantity` '.$qty.', `date_add` = NOW()
 						WHERE `id_product` = '.(int)$id_product.
                         (!empty($id_product_attribute) ? ' AND `id_product_attribute` = '.(int)$id_product_attribute : '').'
-						AND `id_cart` = '.(int)$this->id.' LIMIT 1'
+						AND `id` = '.(int)$this->id.' LIMIT 1'
                     );
             }
             /* Add product to the cart */
@@ -686,7 +683,7 @@ class QuotesProductCart extends ObjectModel
         Cache::clean('getContextualValue_*');
 
         if ($product->customizable)
-            return $this->_updateCustomizationQuantity((int)$quantity, (int)$id_customization, (int)$id_product, (int)$id_product_attribute, (int)$id_address_delivery, $operator);
+            return $this->_updateCustomizationQuantity((int)$quantity, (int)$id_customization, (int)$id_product, (int)$id_product_attribute, $operator);
         else
             return true;
     }
@@ -715,7 +712,7 @@ class QuotesProductCart extends ObjectModel
      * @param integer $id_customization
      * @return boolean result
      */
-    protected function _deleteCustomization($id_customization, $id_product, $id_product_attribute, $id_address_delivery = 0)
+    protected function _deleteCustomization($id_customization, $id_product, $id_product_attribute)
     {
         $result = true;
         $customization = Db::getInstance()->getRow('SELECT *
@@ -741,10 +738,9 @@ class QuotesProductCart extends ObjectModel
                 $result &= Db::getInstance()->execute(
                     'UPDATE `'._DB_PREFIX_.'quotes_product`
 					SET `quantity` = `quantity` - '.(int)$customization['quantity'].'
-					WHERE `id_cart` = '.(int)$this->id.'
+					WHERE `id` = '.(int)$this->id.'
 					AND `id_product` = '.(int)$id_product.
-                    ((int)$id_product_attribute ? ' AND `id_product_attribute` = '.(int)$id_product_attribute : '').'
-					AND `id_address_delivery` = '.(int)$id_address_delivery
+                    ((int)$id_product_attribute ? ' AND `id_product_attribute` = '.(int)$id_product_attribute : '')
                 );
 
             if (!$result)
@@ -850,7 +846,7 @@ class QuotesProductCart extends ObjectModel
                     false,
                     (int)$this->id_customer ? (int)$this->id_customer : null,
                     (int)$this->id,
-                    $address_id,
+                    null,
                     $null,
                     true,
                     true,
