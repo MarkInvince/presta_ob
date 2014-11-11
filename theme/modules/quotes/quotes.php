@@ -76,6 +76,8 @@ class Quotes extends Module
         Configuration::updateValue('MAIN_GUEST_CHECK_OUT', '1'); // Quantity fields trigger
         Configuration::updateValue('MAIN_TERMS_AND_COND', '0'); // Quantity fields trigger
         Configuration::updateValue('MAIN_CMS_PAGE', '0'); // Quantity fields trigger
+		Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', '0');
+		Configuration::updateValue('ADDRESS_ENABLED', '0');
 
         return parent::install() &&
         $this->registerHook('header') &&
@@ -103,7 +105,9 @@ class Quotes extends Module
                                    AND Configuration::deleteByName('MAIN_ANIMATE')
                                    AND Configuration::deleteByName('MAIN_GUEST_CHECK_OUT')
                                    AND Configuration::deleteByName('MAIN_TERMS_AND_COND')
-                                   AND Configuration::deleteByName('MAIN_CMS_PAGE');
+                                   AND Configuration::deleteByName('MAIN_CMS_PAGE')
+									AND Configuration::deleteByName('PS_GUEST_QUOTES_ENABLED')
+									AND Configuration::deleteByName('ADDRESS_ENABLED');
 	}
 	/**
 	 * Load the configuration form
@@ -120,6 +124,8 @@ class Quotes extends Module
             Configuration::updateValue('MAIN_GUEST_CHECK_OUT', Tools::getValue('MAIN_GUEST_CHECK_OUT'));
             Configuration::updateValue('MAIN_TERMS_AND_COND', Tools::getValue('MAIN_TERMS_AND_COND'));
             Configuration::updateValue('MAIN_CMS_PAGE', Tools::getValue('MAIN_CMS_PAGE'));
+			Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', Tools::getValue('PS_GUEST_QUOTES_ENABLED'));
+			Configuration::updateValue('ADDRESS_ENABLED', Tools::getValue('ADDRESS_ENABLED'));
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
 		$this->context->smarty->assign('module_dir', $this->_path);
@@ -233,7 +239,40 @@ class Quotes extends Module
                         'options' => array('query' => $options,'id' => 'id','name' => 'name'),
                         'identifier' => 'id',
 					),
-                    
+					array(
+						'type' => 'switch',
+						'label' => $this->l('Guest option'),
+						'name' => 'PS_GUEST_QUOTES_ENABLED',
+						'values' => array(
+							array(
+								'id' => 'on',
+								'value' => 1,
+								'label' => $this->l('Yes')
+							),
+							array(
+								'id' => 'off',
+								'value' => 0,
+								'label' => $this->l('No')
+							),
+						)
+					),
+					array(
+						'type' => 'switch',
+						'label' => $this->l('Delivery address option'),
+						'name' => 'ADDRESS_ENABLED',
+						'values' => array(
+							array(
+								'id' => 'on',
+								'value' => 1,
+								'label' => $this->l('Yes')
+							),
+							array(
+								'id' => 'off',
+								'value' => 0,
+								'label' => $this->l('No')
+							),
+						)
+					)
 				),
                 'bottom' => '<script type="text/javascript">showBlock(element);hideBlock(element);</script>',
 				'submit' => array(
@@ -272,6 +311,8 @@ class Quotes extends Module
             'MAIN_GUEST_CHECK_OUT' => Configuration::get('MAIN_GUEST_CHECK_OUT'),
             'MAIN_TERMS_AND_COND' => Configuration::get('MAIN_TERMS_AND_COND'),
             'MAIN_CMS_PAGE' => Configuration::get('MAIN_CMS_PAGE'),
+			'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
+			'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED')
 		);
 	}
 
@@ -290,7 +331,6 @@ class Quotes extends Module
 	public function hookHeader()
 	{
 		$this->context->controller->addJS($this->_path.'/js/front.js');
-		$this->context->controller->addJS($this->_path.'/js/quotes_cart.js');
 		$this->context->controller->addCSS($this->_path.'/css/front.css');
 	}
     /**
