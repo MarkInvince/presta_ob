@@ -87,7 +87,44 @@ class QuotesProductCart extends ObjectModel
         );
     }
     public function recountProduct() {
-        
+        if (!$this->id || !this->id_product || !this->id_quote)
+            return false;
+        $row = Db::getInstance()->getRow('
+			SELECT qp.`quantity`
+			FROM `'._DB_PREFIX_.'quotes_product` qp
+			WHERE qp.`id_product` = '.(int)$this->id_product.' AND qp.`id_quote` LIKE "'.$this->id_quote.'"'
+        );
+
+        $quantity = (int)$quantity;
+		$id_product = (int)$id_product;
+		$id_product_attribute = (int)$id_product_attribute;
+		$product = new Product($id_product, false, Configuration::get('PS_LANG_DEFAULT'), $shop->id);
+
+        /* If we have a product combination, the minimal quantity is set with the one of this combination */
+		if (!empty($id_product_attribute))
+            $minimal_quantity = (int)Attribute::getAttributeMinimalQty($id_product_attribute);
+        else
+            $minimal_quantity = (int)$product->minimal_quantity;
+
+        if (!Validate::isLoadedObject($product))
+            die(Tools::displayError());
+
+        if ((int)$quantity <= 0)
+            return $this->deleteProduct($id_product);
+        elseif (!$product->available_for_order || Configuration::get('PS_CATALOG_MODE'))
+            return false;
+        else
+        {
+        }
+        //update current product in cart
+        Db::getInstance()->execute('
+						UPDATE `'._DB_PREFIX_.'cart_product`
+						SET `quantity` = `quantity` '.$qty.', `date_add` = NOW()
+						WHERE `id_product` = '.(int)$id_product.
+            (!empty($id_product_attribute) ? ' AND `id_product_attribute` = '.(int)$id_product_attribute : '').'
+						AND `id_cart` = '.(int)$this->id.(Configuration::get('PS_ALLOW_MULTISHIPPING') && $this->isMultiAddressDelivery() ? ' AND `id_address_delivery` = '.(int)$id_address_delivery : '').'
+						LIMIT 1'
+        );
     }
 
     /**
