@@ -7,6 +7,7 @@ class QuotesProductCart extends ObjectModel
 {
     public $id;
     public $id_quote;
+    public $id_shop;
     public $id_product;
     public $quantity;
     public $date_add;
@@ -18,7 +19,7 @@ class QuotesProductCart extends ObjectModel
         'primary' => 'id',
         'fields' => array(
             'id_quote'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
-            'id_shop'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
+            'id_shop'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
             'id_product'    => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
             'quantity'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
             'date_add'      => 	array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
