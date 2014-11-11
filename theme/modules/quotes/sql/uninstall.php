@@ -32,7 +32,6 @@
 
 $sql = array();
 
-$sql[] = 'DROP TABLE `'._DB_PREFIX_.'quotes`';
 $sql[] = 'DROP TABLE `'._DB_PREFIX_.'quotes_product`';
 
 foreach ($sql as $query)
