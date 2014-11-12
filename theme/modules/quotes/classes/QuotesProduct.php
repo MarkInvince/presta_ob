@@ -40,9 +40,11 @@ class QuotesProductCart extends ObjectModel
         if (!is_null($id_lang))
             $this->id_lang = (int)(Language::getLanguage($id_lang) !== false) ? $id_lang : Configuration::get('PS_LANG_DEFAULT');
 
+        $this->context = Context::getContext();
+
     }
 
-    public function add($autodate = true, $null_values = false)
+    public function add($quantity, $operator)
     {
         if (!$this->id_lang)
             $this->id_lang = Configuration::get('PS_LANG_DEFAULT');
@@ -51,7 +53,7 @@ class QuotesProductCart extends ObjectModel
         if(!$this->checkForContains())
             $return = parent::add($autodate);
         else {
-            $this->recountProduct();
+            $return = $this->recountProduct($quantity, $operator);
         }
         return $return;
     }
@@ -78,16 +80,20 @@ class QuotesProductCart extends ObjectModel
     }
 
     public function checkForContains() {
-        if (!$this->id || !$this->id_product || !$this->id_quote)
+        if (!$this->id_quote)
             return false;
-        return Db::getInstance()->getRow('
+        $result = Db::getInstance()->executeS('
 			SELECT *
 			FROM `'._DB_PREFIX_.'quotes_product` qp
 			WHERE qp.`id_product` = '.(int)$this->id_product.' AND qp.`id_quote` LIKE "'.$this->id_quote.'"'
         );
+        if(!empty($result))
+            return true;
+        else
+            return false;
     }
-    public function recountProduct() {
-        if (!$this->id || !$this->id_product || !$this->id_quote)
+    public function recountProduct($quantity, $operator) {
+        if (!$this->id_product || !$this->id_quote)
             return false;
         $row = Db::getInstance()->getRow('
 			SELECT qp.`quantity`
@@ -95,36 +101,39 @@ class QuotesProductCart extends ObjectModel
 			WHERE qp.`id_product` = '.(int)$this->id_product.' AND qp.`id_quote` LIKE "'.$this->id_quote.'"'
         );
 
-        $quantity = (int)$quantity;
+        $current_qty = (int)$row['quantity'];
 		$id_product = (int)$id_product;
-		$id_product_attribute = (int)$id_product_attribute;
 		$product = new Product($id_product, false, Configuration::get('PS_LANG_DEFAULT'), $shop->id);
-
-        /* If we have a product combination, the minimal quantity is set with the one of this combination */
-		if (!empty($id_product_attribute))
-            $minimal_quantity = (int)Attribute::getAttributeMinimalQty($id_product_attribute);
-        else
-            $minimal_quantity = (int)$product->minimal_quantity;
 
         if (!Validate::isLoadedObject($product))
             die(Tools::displayError());
 
-        if ((int)$quantity <= 0)
+        if ((int)$current_qty <= 0)
             return $this->deleteProduct($id_product);
         elseif (!$product->available_for_order || Configuration::get('PS_CATALOG_MODE'))
             return false;
         else
         {
+            switch($operator) {
+                case 'up':
+                    $current_qty = $current_qty + (int)$quantity;
+                    break;
+                case 'down':
+                    $current_qty = $current_qty - (int)$quantity;
+                    break;
+            }
+            if ((int)$current_qty <= 0)
+                return $this->deleteProduct($id_product);
+
+            //update current product in cart
+            $update = Db::getInstance()->execute('
+					UPDATE `'._DB_PREFIX_.'cart_product`
+					SET `quantity` = `quantity` '.$current_qty.', `date_upd` = NOW()
+					WHERE `id_product` = '.(int)$id_product. ' AND `id_quote` = '.(int)$this->id_quote.'
+					LIMIT 1'
+            );
+            return $update;
         }
-        //update current product in cart
-        Db::getInstance()->execute('
-						UPDATE `'._DB_PREFIX_.'cart_product`
-						SET `quantity` = `quantity` '.$qty.', `date_add` = NOW()
-						WHERE `id_product` = '.(int)$id_product.
-            (!empty($id_product_attribute) ? ' AND `id_product_attribute` = '.(int)$id_product_attribute : '').'
-						AND `id_cart` = '.(int)$this->id.(Configuration::get('PS_ALLOW_MULTISHIPPING') && $this->isMultiAddressDelivery() ? ' AND `id_address_delivery` = '.(int)$id_address_delivery : '').'
-						LIMIT 1'
-        );
     }
 
     /**
@@ -138,19 +147,27 @@ class QuotesProductCart extends ObjectModel
             return array();
 
         $products_ids = array();
-
+        $products = array();
         $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes_product` WHERE `id_quote` = '.(int)$this->id_quote);
         if (empty($result))
             return array();
 
         foreach ($result as $row) {
-
+            $product = array();
+            $p_obj = new Product($row['id_product'], true, $this->context->language->id);
+            if (Validate::isLoadedObject($p_obj)) {
+                $product['id'] = $p_obj->id;
+                $product['title'] = $p_obj->name;
+                $product['quantity'] = $row['quantity'];
+                $product['price'] = Tools::ps_round(Product::getPriceStatic($p_obj->id, true, NULL, 6),2);
+                $products[] = $product;
+            }
         }
 
         if(!empty($products_ids))
             Product::cacheProductsFeatures($products_ids);
 
-        return $this->_products;
+        return $products;
     }
 
     public function deleteProduct($id_product)

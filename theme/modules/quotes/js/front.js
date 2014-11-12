@@ -34,8 +34,9 @@ $(document).ready(function(){
 			data: $('#quote_ask_form').serialize(),
 			dataType:'json',
 			success: function(response) {
-				$('#product-list').empty();
-				$('#product-list').append(response.products);
+				/*$('#product-list').empty();
+				$('#product-list').append(response.products);*/
+				console.log(response);
 			}
 		});
         return false;
@@ -48,8 +49,9 @@ $(document).ready(function(){
 			data: $('#quote_ask_form').serialize(),
 			dataType:'json',
 			success: function(response) {
-				$('#product-list').empty();
-				$('#product-list').append(response.products);
+				/*$('#product-list').empty();
+				$('#product-list').append(response.products);*/
+				console.log(response);
 			}
 		});
 		return false;
