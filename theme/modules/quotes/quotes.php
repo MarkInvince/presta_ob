@@ -333,6 +333,17 @@ class Quotes extends Module
 		$this->context->controller->addJS($this->_path.'/js/front.js');
 		$this->context->controller->addCSS($this->_path.'/css/front.css');
 	}
+
+	public function hookTop()
+	{
+		$products = array();
+		// check for user cart session. Defined in QuotesCart if user add product to quote box
+		if($this->context->cookie->__isset('request_id')) {
+
+		}
+		if (Configuration::get('MAIN_STATE'))
+			return $this->display(__FILE__, 'quotesCart.tpl');
+	}
     /**
 	 * Add ask to quote button to product list
 	 */
