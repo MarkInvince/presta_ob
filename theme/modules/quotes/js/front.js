@@ -34,7 +34,8 @@ $(document).ready(function(){
 			data: $('#quote_ask_form').serialize(),
 			dataType:'json',
 			success: function(response) {
-				console.log(response);
+				$('#product-list').empty();
+				$('#product-list').append(response.products);
 			}
 		});
         return false;
@@ -47,9 +48,52 @@ $(document).ready(function(){
 			data: $('#quote_ask_form').serialize(),
 			dataType:'json',
 			success: function(response) {
-				console.log(response);
+				$('#product-list').empty();
+				$('#product-list').append(response.products);
 			}
 		});
 		return false;
 	});
+
+	// quotes cart actions
+	var cart_block = new showCart('#header .quotes_cart_block');
+	var cart_parent_block = new showCart('#header .quotes_cart');
+
+	$("#header .quotes_cart a:first").hover(
+		function(){
+				$("#header .quotes_cart_block").stop(true, true).slideDown(450);
+		},
+		function(){
+			setTimeout(function(){
+				if (!cart_parent_block.isHoveringOver() && !cart_block.isHoveringOver())
+					$("#header .quotes_cart_block").stop(true, true).slideUp(450);
+			}, 200);
+		}
+	);
+
+	$("#header .cart_block").hover(
+		function(){
+		},
+		function(){
+			setTimeout(function(){
+				if (!cart_parent_block.isHoveringOver())
+					$("#header .quotes_cart_block").stop(true, true).slideUp(450);
+			}, 200);
+		}
+	);
 });
+function showCart(selector)
+{
+	this.hovering = false;
+	var self = this;
+
+	this.isHoveringOver = function(){
+		return self.hovering;
+	}
+
+	$(selector).hover(function(){
+		self.hovering = true;
+	}, function(){
+		self.hovering = false;
+	})
+}

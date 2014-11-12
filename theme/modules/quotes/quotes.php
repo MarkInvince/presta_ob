@@ -341,6 +341,9 @@ class Quotes extends Module
 		if($this->context->cookie->__isset('request_id')) {
 
 		}
+		$this->context->smarty->assign('products', $products);
+		$this->context->smarty->assign('cartTotalProducts', count($products));
+		$this->context->smarty->assign('quotesCart',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__FILE__, 'quotesCart.tpl');
 	}

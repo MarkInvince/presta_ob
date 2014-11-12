@@ -168,7 +168,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->quote->add();
         }
 
-
+        print json_encode(array('products' => $this->quote->getProducts()));
         /*// process add quote request to cart
         if(!isset($_SESSION['current_request'])) {
             $this->quote->id_shop_group = $this->context->shop->id_shop_group;
