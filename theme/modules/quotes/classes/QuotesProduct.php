@@ -17,6 +17,15 @@ class QuotesProductCart extends ObjectModel
     public $date_add;
     public $date_upd;
 
+    private $operator = 'up';
+    private $addquantity = 1;
+
+    public function setOperator($operator) {
+        $this->operator = $operator;
+    }
+    public function setQuantity($quantity) {
+        $this->addquantity = $quantity;
+    }
     public static $definition = array(
         'table' => 'quotes_product',
         'primary' => 'id',
@@ -44,7 +53,7 @@ class QuotesProductCart extends ObjectModel
 
     }
 
-    public function add($quantity, $operator)
+    public function add($autodate = true, $null_values = false )
     {
         if (!$this->id_lang)
             $this->id_lang = Configuration::get('PS_LANG_DEFAULT');
@@ -53,7 +62,7 @@ class QuotesProductCart extends ObjectModel
         if(!$this->checkForContains())
             $return = parent::add($autodate);
         else {
-            $return = $this->recountProduct($quantity, $operator);
+            $return = $this->recountProduct();
         }
         return $return;
     }
@@ -92,7 +101,7 @@ class QuotesProductCart extends ObjectModel
         else
             return false;
     }
-    public function recountProduct($quantity, $operator) {
+    public function recountProduct() {
         if (!$this->id_product || !$this->id_quote)
             return false;
         $row = Db::getInstance()->getRow('
@@ -114,12 +123,12 @@ class QuotesProductCart extends ObjectModel
             return false;
         else
         {
-            switch($operator) {
+            switch($this->operator) {
                 case 'up':
-                    $current_qty = $current_qty + (int)$quantity;
+                    $current_qty = $current_qty + (int)$this->addquantity;
                     break;
                 case 'down':
-                    $current_qty = $current_qty - (int)$quantity;
+                    $current_qty = $current_qty - (int)$this->addquantity;
                     break;
             }
             if ((int)$current_qty <= 0)

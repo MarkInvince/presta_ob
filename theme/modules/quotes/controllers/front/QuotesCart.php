@@ -167,7 +167,9 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->quote->date_add = date('Y-m-d H:i:s', time());
             $operator = Tools::getIsset('operator') ? Tools::getValue('operator') : 'up';
 
-            $this->quote->add(Tools::getValue('pqty'), $operator);
+            $this->quote->setOperator($operator);
+            $this->quote->setOperator(pSql(Tools::getValue('pqty')));
+            $this->quote->add();
         }
 
         print json_encode(array('products' => $this->quote->getProducts()));
