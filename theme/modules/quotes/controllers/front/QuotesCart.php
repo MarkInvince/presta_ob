@@ -80,10 +80,15 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
         if(Tools::getValue('action')) {
             if(Tools::getValue('action') == 'add') {
-                echo $this->ajaxAddToQuotesCart();
+                $add = $this->ajaxAddToQuotesCart();
+
+                $this->context->smarty->assign('products', $this->quote->getProducts());
+                echo $this->context->smarty->display(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl");
             }
             if(Tools::getValue('action') == 'delete') {
-                echo $this->deleteQuoteById(Tools::getValue('item_id'));
+                $delete = $this->deleteQuoteById(Tools::getValue('item_id'));
+                $this->context->smarty->assign('products', $this->quote->getProducts());
+                echo $this->context->smarty->display(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl");
             }
         }
     }
@@ -152,12 +157,10 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->quote->id_customer = (int)$this->context->customer->id;
             $this->quote->quantity = 1;
             if($this->quote->deleteProduct($pid, $ipa)) {
-                print json_encode(array('hasError' => false));
-                return;
+                return true;
             }
             else {
-                print json_encode(array('hasError' => true));
-                return;
+                return false;
             }
         }
     }
@@ -173,9 +176,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
         $product = new Product((int)Tools::getValue('pid'));
         if (Validate::isLoadedObject($product)) {
-            if (!$product->available_for_order || !$product->active)
-            {
-                print json_encode(array('message' => Tools::displayError($this->module->l('This product is no longer available.')),'hasError' => true));
+            if (!$product->available_for_order || !$product->active) {
+                print json_encode(array('message' => Tools::displayError($this->module->l('This product is no longer available.')), 'hasError' => true));
                 return;
             }
 
@@ -202,7 +204,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $this->quote->add();
             }
         }
-        print json_encode(array('products' => $this->quote->getProducts()));
+        return true;
     }
 
     /**

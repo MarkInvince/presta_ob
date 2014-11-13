@@ -104,7 +104,7 @@ class QuotesProductCart extends ObjectModel
         $row = Db::getInstance()->getRow('
 			SELECT qp.`quantity`, qp.`id_product_attribute`
 			FROM `'._DB_PREFIX_.'quotes_product` qp
-			WHERE qp.`id_product` = '.(int)$this->id_product.' AND qp.`id_quote` LIKE "'.$this->id_quote.'"'
+			WHERE qp.`id_product` = '.(int)$this->id_product.' AND qp.`id_quote` LIKE "'.$this->id_quote.'" AND qp.`id_product_attribute` = '.$this->id_product_attribute
         );
 
         $current_qty = (int)$row['quantity'];

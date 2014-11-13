@@ -15,7 +15,7 @@
             <div class="block_content">
                 <div class="row product-list" id="product-list">
                     {if $cartTotalProducts > 0}
-                        <dl class="products">
+                        <dl class="products" id="quotes-products">
                         {foreach from=$products item='product' name='myLoop'}
                             {assign var='productId' value=$product.id}
                             <dt class="item">

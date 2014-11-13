@@ -487,3 +487,6 @@
     margin-top: 5px;
     margin-bottom: 10px;
 }
+.expanded {
+    display: block!important;
+}

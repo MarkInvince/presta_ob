@@ -33,15 +33,31 @@ $(document).ready(function(){
 			url: quotesCart,
 			method:'post',
 			data: $('#quote_ask_form').serialize(),
-			dataType:'json',
 			success: function(response) {
-				/*$('#product-list').empty();
-				$('#product-list').append(response.products);*/
-				console.log(response);
+				if(!$('#box-body').hasClass('expanded'))
+					$('#box-body').addClass('expanded');
+				$('#quotes-products').empty();
+				$('#quotes-products').html(response);
 			}
 		});
         return false;
     });
+	$('body').on('click','.ajax_add_to_quote_cart_button', function(){
+		$('#ipa').val($('#idCombination').val());
+		$.ajax({
+			url: quotesCart,
+			method:'post',
+			data: $('#quote_ask_form').serialize(),
+			success: function(response) {
+				if(!$('#box-body').hasClass('expanded'))
+					$('#box-body').addClass('expanded');
+				$('#quotes-products').empty();
+				$('#quotes-products').html(response);
+			}
+		});
+		return false;
+	});
+
 	$('body').on('click', '.remove-quote', function() {
 		var item = $(this).attr('rel');
 		var item_a = $(this);
@@ -56,21 +72,6 @@ $(document).ready(function(){
 			}
 		});
 	});
-	$('body').on('click','.ajax_add_to_quote_cart_button', function(){
-		$('#ipa').val($('#idCombination').val());
-		$.ajax({
-			url: quotesCart,
-			method:'post',
-			data: $('#quote_ask_form').serialize(),
-			dataType:'json',
-			success: function(response) {
-				/*$('#product-list').empty();
-				$('#product-list').append(response.products);*/
-				console.log(response);
-			}
-		});
-		return false;
-	});
 
 	// quotes cart actions
 	var cart_block = new showCart('#header .quotes_cart_block');
@@ -82,8 +83,12 @@ $(document).ready(function(){
 		},
 		function(){
 			setTimeout(function(){
-				if (!cart_parent_block.isHoveringOver() && !cart_block.isHoveringOver())
+				if (!cart_parent_block.isHoveringOver() && !cart_block.isHoveringOver()) {
 					$("#header .quotes_cart_block").stop(true, true).slideUp(450);
+					if($('#box-body').hasClass('expanded'))
+						$('#box-body').removeClass('expanded');
+				}
+
 			}, 200);
 		}
 	);
@@ -93,8 +98,11 @@ $(document).ready(function(){
 		},
 		function(){
 			setTimeout(function(){
-				if (!cart_parent_block.isHoveringOver())
+				if (!cart_parent_block.isHoveringOver()) {
 					$("#header .quotes_cart_block").stop(true, true).slideUp(450);
+					if($('#box-body').hasClass('expanded'))
+						$('#box-body').removeClass('expanded');
+				}
 			}, 200);
 		}
 	);
