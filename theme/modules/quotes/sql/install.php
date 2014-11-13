@@ -14,6 +14,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_product` (
           `id_shop_group` int(11) unsigned NOT NULL DEFAULT "1",
           `id_lang` int(11) unsigned NOT NULL DEFAULT "1",
           `id_product` int(10) unsigned NOT NULL,
+          `id_product_attribute` int(10) unsigned NOT NULL,
           `id_curreny` int(10) unsigned NOT NULL,
           `id_guest` int(11) unsigned NOT NULL DEFAULT "0",
           `id_customer` int(11) unsigned NOT NULL DEFAULT "0",

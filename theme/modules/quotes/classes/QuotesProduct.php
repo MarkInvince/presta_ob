@@ -13,6 +13,7 @@ class QuotesProductCart extends ObjectModel
     public $id_guest;
     public $id_customer;
     public $id_product;
+    public $id_product_attribute;
     public $quantity;
     public $date_add;
     public $date_upd;
@@ -35,6 +36,7 @@ class QuotesProductCart extends ObjectModel
             'id_shop_group' => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
             'id_lang'       => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
             'id_product'    => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
+            'id_product_attribute'    => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
             'id_guest'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
             'id_customer'   => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
             'quantity'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
@@ -69,7 +71,6 @@ class QuotesProductCart extends ObjectModel
 
     public function update($null_values = false)
     {
-        $this->_products = null;
         $return = parent::update();
         return $return;
     }
@@ -88,7 +89,7 @@ class QuotesProductCart extends ObjectModel
         $result = Db::getInstance()->executeS('
 			SELECT *
 			FROM `'._DB_PREFIX_.'quotes_product` qp
-			WHERE qp.`id_product` = '.(int)$this->id_product.' AND qp.`id_quote` LIKE "'.$this->id_quote.'"'
+			WHERE qp.`id_product` = '.(int)$this->id_product.' AND qp.`id_quote` LIKE "'.$this->id_quote.'" AND qp.`id_product_attribute` = '.$this->id_product_attribute
         );
         if(!empty($result))
             return true;
@@ -101,21 +102,21 @@ class QuotesProductCart extends ObjectModel
         }
 
         $row = Db::getInstance()->getRow('
-			SELECT qp.`quantity`
+			SELECT qp.`quantity`, qp.`id_product_attribute`
 			FROM `'._DB_PREFIX_.'quotes_product` qp
 			WHERE qp.`id_product` = '.(int)$this->id_product.' AND qp.`id_quote` LIKE "'.$this->id_quote.'"'
         );
 
         $current_qty = (int)$row['quantity'];
-        $id_product = (int)$id_product;
-        $product = new Product($id_product, false, Configuration::get('PS_LANG_DEFAULT'), $shop->id);
+        $id_product = (int)$this->id_product;
+        $product = new Product($id_product, false, Configuration::get('PS_LANG_DEFAULT'));
 
         if (!Validate::isLoadedObject($product))
             die(Tools::displayError());
 
-        if ((int)$current_qty <= 0)
-            return $this->deleteProduct($id_product);
-        elseif (!$product->available_for_order)
+        if ((int)$current_qty < 0)
+            return $this->deleteProduct($id_product, $row['id_product_attribute']);
+        elseif (!$product->available_for_order || !$product->active)
             return false;
         else
         {
@@ -130,14 +131,14 @@ class QuotesProductCart extends ObjectModel
                     break;
             }
 
-            if ((int)$current_qty <= 0)
-                return $this->deleteProduct($id_product);
+            if ((int)$current_qty < 0)
+                return $this->deleteProduct($id_product, $row['id_product_attribute']);
 
             //update current product in cart
             $update = Db::getInstance()->execute('
-					UPDATE `'._DB_PREFIX_.'cart_product`
-					SET `quantity` = `quantity` '.$current_qty.', `date_upd` = NOW()
-					WHERE `id_product` = '.(int)$id_product. ' AND `id_quote` = '.(int)$this->id_quote.'
+					UPDATE `'._DB_PREFIX_.'quotes_product`
+					SET `quantity` = '.(int)$current_qty.', `date_upd` = "'.date('Y-m-d H:i:s', time()).'"
+					WHERE `id_product` = '.(int)$this->id_product. ' AND `id_quote` LIKE "'.$this->id_quote.'" AND `id_product_attribute` = '.$this->id_product_attribute.'
 					LIMIT 1'
             );
             return $update;
@@ -156,7 +157,7 @@ class QuotesProductCart extends ObjectModel
 
         $products_ids = array();
         $products = array();
-        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes_product` WHERE `id_quote` = '.(int)$this->id_quote);
+        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes_product` WHERE `id_quote` LIKE "'.$this->id_quote.'"');
         if (empty($result))
             return array();
 
@@ -164,11 +165,19 @@ class QuotesProductCart extends ObjectModel
             $products_ids[] = $row['id_product'];
             $product = array();
             $p_obj = new Product($row['id_product'], true, $this->context->language->id);
+            $link = new Link;
             if (Validate::isLoadedObject($p_obj)) {
                 $product['id'] = $p_obj->id;
                 $product['title'] = $p_obj->name;
+                $product['id_shop'] = $this->id_shop;
+                $product['category'] = $p_obj->category;
+                $product['id_image'] = $p_obj->getCover($p_obj->id);
+                $product['id_attribute'] = $row['id_product_attribute'];
+                $product['link'] = $link->getProductLink($p_obj, $p_obj->link_rewrite, $p_obj->category, null, null, $p_obj->id_shop, $this->id_product_attribute);
+                $product['link_rewrite'] = $p_obj->link_rewrite;
+                $product['image'] = '';
                 $product['quantity'] = $row['quantity'];
-                $product['price'] = Tools::ps_round(Product::getPriceStatic($p_obj->id, true, NULL, 6),2);
+                $product['price'] = Tools::displayPrice(Tools::ps_round(Product::getPriceStatic($p_obj->id, true, NULL, 6),2), $this->context->currency);
                 $products[] = $product;
             }
         }
@@ -179,12 +188,12 @@ class QuotesProductCart extends ObjectModel
         return $products;
     }
 
-    public function deleteProduct($id_product)
+    public function deleteProduct($id_product, $id_product_attribute)
     {
         /* Product deletion */
         $result = Db::getInstance()->execute('
 		DELETE FROM `' . _DB_PREFIX_ . 'quotes_product`
-		WHERE `id_product` = ' . (int)$id_product . ' AND `id_quote` = ' . (int)$this->id_quote);
+		WHERE `id_product` = ' . (int)$id_product . ' AND `id_quote` LIKE "' . $this->id_quote.'" AND `id_product_attribute` = '.$id_product_attribute);
 
         if ($result) {
             $this->update(true);

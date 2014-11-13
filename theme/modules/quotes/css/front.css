@@ -225,7 +225,7 @@
 #header .quotes_cart_block .price {
     color: white; }
 #header .quotes_cart_block dt {
-    background: url(../../../img/cart-shadow.png) repeat-x; }
+     }
 #header .quotes_cart_block dt.first_item {
     background: none; }
 #header .quotes_cart_block .product-atributes {
@@ -483,3 +483,7 @@
     content: "\f138"; }
 #layer_cart .crossseling #blockcart_list .bx-controls {
     overflow: hidden; }
+.cart-info hr {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}

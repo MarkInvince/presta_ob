@@ -28,6 +28,7 @@
 
 $(document).ready(function(){
     $('body').on('click','.fly_to_quote_cart_button', function(){
+		$('#ipa').val($('#idCombination').val());
 		$.ajax({
 			url: quotesCart,
 			method:'post',
@@ -41,8 +42,22 @@ $(document).ready(function(){
 		});
         return false;
     });
-
+	$('body').on('click', '.remove-quote', function() {
+		var item = $(this).attr('rel');
+		var item_a = $(this);
+		$.ajax({
+			url: quotesCart,
+			method:'post',
+			data: 'action=delete&item_id='+item,
+			success: function(response) {
+				item_a.closest('dt').fadeOut('slow', function(){
+					item_a.closest('dt').remove();
+				});
+			}
+		});
+	});
 	$('body').on('click','.ajax_add_to_quote_cart_button', function(){
+		$('#ipa').val($('#idCombination').val());
 		$.ajax({
 			url: quotesCart,
 			method:'post',

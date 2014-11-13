@@ -82,6 +82,9 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             if(Tools::getValue('action') == 'add') {
                 echo $this->ajaxAddToQuotesCart();
             }
+            if(Tools::getValue('action') == 'delete') {
+                echo $this->deleteQuoteById(Tools::getValue('item_id'));
+            }
         }
     }
 
@@ -133,44 +136,73 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
         $this->setTemplate('quotes_cart.tpl');
     }
+
+    protected function deleteQuoteById($id) {
+        $vals = explode('_',$id);
+        $pid = !empty($vals[0]) ? $vals[0] : false;
+        $ipa = !empty($vals[1]) ? $vals[1] : false;
+        if (!$pid || !is_numeric($pid)) {
+            print json_encode(array('message' => Tools::displayError($this->module->l('Nothing to delete')),'hasError' => true));
+            return;
+        }
+        if ($this->context->cookie->__isset('request_id') AND $pid AND $ipa) {
+            $this->quote->id_quote = $this->context->cookie->__get('request_id');
+            $this->quote->id_product = $pid;
+            $this->quote->id_guest = (int)$this->context->cookie->id_guest;
+            $this->quote->id_customer = (int)$this->context->customer->id;
+            $this->quote->quantity = 1;
+            if($this->quote->deleteProduct($pid, $ipa)) {
+                print json_encode(array('hasError' => false));
+                return;
+            }
+            else {
+                print json_encode(array('hasError' => true));
+                return;
+            }
+        }
+    }
     protected function ajaxAddToQuotesCart() {
         if (Tools::getValue('pqty') <= 0) {
             print json_encode(array('message' => Tools::displayError($this->module->l('Null quantity!!')),'hasError' => true));
+            return;
         }
         elseif (!Tools::getValue('pid')) {
             print json_encode(array('message' => Tools::displayError($this->module->l('Product not found')),'hasError' => true));
+            return;
         }
 
         $product = new Product((int)Tools::getValue('pid'));
-        if (!Validate::isLoadedObject($product)) die(json_encode(array('message' => Tools::displayError($this->module->l('Error creating product object')),'hasError' => true)));
-        /*if (!$product->id || !$product->active)
-        {
-            print json_encode(array('message' => Tools::displayError($this->module->l('This product is no longer available.')),'hasError' => true));
+        if (Validate::isLoadedObject($product)) {
+            if (!$product->available_for_order || !$product->active)
+            {
+                print json_encode(array('message' => Tools::displayError($this->module->l('This product is no longer available.')),'hasError' => true));
+                return;
+            }
 
-        }*/
+            // update model if user is logged in system
+            /* if ($this->context->customer->isLogged()) {
+                 $this->quote->update();
+             }*/
+            if ($this->context->cookie->__isset('request_id')) {
+                //add product to shop cart
+                $this->quote->id_quote = $this->context->cookie->__get('request_id');
+                $this->quote->id_shop = $this->context->shop->id;
+                $this->quote->id_shop_group = $this->context->shop->id_shop_group;
+                $this->quote->id_lang = $this->context->language->id;
+                $this->quote->id_product = $product->id;
+                $this->quote->id_product_attribute = pSQL(Tools::getValue('ipa'));
+                $this->quote->id_guest = (int)$this->context->cookie->id_guest;
+                $this->quote->id_customer = (int)$this->context->customer->id;
+                $this->quote->quantity = 1;
+                $this->quote->date_add = date('Y-m-d H:i:s', time());
+                $operator = Tools::getIsset('operator') ? Tools::getValue('operator') : 'up';
 
-        // update model if user is logged in system
-        /* if ($this->context->customer->isLogged()) {
-             $this->quote->update();
-         }*/
-        if($this->context->cookie->__isset('request_id')) {
-            //add product to shop cart
-            $this->quote->id_quote = $this->context->cookie->__get('request_id');
-            $this->quote->id_shop = $this->context->shop->id;
-            $this->quote->id_shop_group = $this->context->shop->id_shop_group;
-            $this->quote->id_lang = $this->context->language->id;
-            $this->quote->id_product = $product->id;
-            $this->quote->id_guest = (int)$this->context->cookie->id_guest;
-            $this->quote->id_customer = (int)$this->context->customer->id;
-            $this->quote->quantity = (int)$product->quantity;
-            $this->quote->date_add = date('Y-m-d H:i:s', time());
-            $operator = Tools::getIsset('operator') ? Tools::getValue('operator') : 'up';
-
-            $this->quote->setOperator($operator);
-            $this->quote->setQuantity(pSql(Tools::getValue('pqty')));
-            $this->quote->add();
+                $this->quote->setOperator($operator);
+                $this->quote->setQuantity(pSql(Tools::getValue('pqty')));
+                $this->quote->add();
+            }
         }
-        //print json_encode(array('products' => $this->quote->getProducts()));
+        print json_encode(array('products' => $this->quote->getProducts()));
     }
 
     /**
