@@ -25,11 +25,11 @@
 */
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
-    
+
     public $ssl = true;
-	public $display_column_left = true;
+    public $display_column_left = true;
     public $isLogged;
-    
+
     public $quote_product;
 
     private $user_token;
@@ -47,7 +47,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->context->cookie->__set('request_id', $this->user_token);
         }
     }
-    
+
 
     public function setMedia()
     {
@@ -61,7 +61,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
         $this->addJS($this->module->getLocalPath().'js/quotes_cart.js');
     }
-    
+
     public function initContent()
     {
         // Send noindex to avoid ghost carts by bots
@@ -77,7 +77,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
         if (Tools::isSubmit('submitAccount') || Tools::isSubmit('submitGuestAccount'))
             $this->processSubmitAccount();
-        
+
         if(Tools::getValue('action')) {
             if(Tools::getValue('action') == 'add') {
                 echo $this->ajaxAddToQuotesCart();
@@ -85,8 +85,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
     }
 
-	public function assign()
-	{
+    public function assign()
+    {
         if ($this->context->customer->isLogged())
             $this->context->smarty->assign('isLogged', '1');
         else
@@ -136,24 +136,23 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     protected function ajaxAddToQuotesCart() {
         if (Tools::getValue('pqty') <= 0) {
             print json_encode(array('message' => Tools::displayError($this->module->l('Null quantity!!')),'hasError' => true));
-            return;
         }
         elseif (!Tools::getValue('pid')) {
             print json_encode(array('message' => Tools::displayError($this->module->l('Product not found')),'hasError' => true));
-            return;
         }
 
-        $product = new Product(Tools::getValue('pid'), true, $this->context->language->id);
-        if (!$product->id || !$product->active)
+        $product = new Product((int)Tools::getValue('pid'));
+        if (!Validate::isLoadedObject($product)) die(json_encode(array('message' => Tools::displayError($this->module->l('Error creating product object')),'hasError' => true)));
+        /*if (!$product->id || !$product->active)
         {
             print json_encode(array('message' => Tools::displayError($this->module->l('This product is no longer available.')),'hasError' => true));
-            return;
-        }
+
+        }*/
 
         // update model if user is logged in system
-        if ($this->context->customer->isLogged()) {
-            $this->quote->update();
-        }
+        /* if ($this->context->customer->isLogged()) {
+             $this->quote->update();
+         }*/
         if($this->context->cookie->__isset('request_id')) {
             //add product to shop cart
             $this->quote->id_quote = $this->context->cookie->__get('request_id');
@@ -163,16 +162,15 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->quote->id_product = $product->id;
             $this->quote->id_guest = (int)$this->context->cookie->id_guest;
             $this->quote->id_customer = (int)$this->context->customer->id;
-            $this->quote->quantity = (int)pSQL(Tools::getValue('pqty'));
+            $this->quote->quantity = (int)$product->quantity;
             $this->quote->date_add = date('Y-m-d H:i:s', time());
             $operator = Tools::getIsset('operator') ? Tools::getValue('operator') : 'up';
 
             $this->quote->setOperator($operator);
-            $this->quote->setOperator(pSql(Tools::getValue('pqty')));
+            $this->quote->setQuantity(pSql(Tools::getValue('pqty')));
             $this->quote->add();
         }
-
-        print json_encode(array('products' => $this->quote->getProducts()));
+        //print json_encode(array('products' => $this->quote->getProducts()));
     }
 
     /**
@@ -596,5 +594,4 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             'invoice_id_state' => (int)($address_invoice->id_state),
         );
     }
-    
 }
