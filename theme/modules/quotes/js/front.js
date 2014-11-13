@@ -51,8 +51,7 @@ $(document).ready(function(){
 			success: function(response) {
 				if(!$('#box-body').hasClass('expanded'))
 					$('#box-body').addClass('expanded');
-				$('#quotes-products').empty();
-				$('#quotes-products').html(response);
+
 			}
 		});
 		return false;
@@ -69,6 +68,8 @@ $(document).ready(function(){
 				item_a.closest('dt').fadeOut('slow', function(){
 					item_a.closest('dt').remove();
 				});
+				$('#quotes-products').empty();
+				$('#quotes-products').html(response);
 			}
 		});
 	});

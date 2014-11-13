@@ -87,6 +87,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             }
             if(Tools::getValue('action') == 'delete') {
                 $delete = $this->deleteQuoteById(Tools::getValue('item_id'));
+
                 $this->context->smarty->assign('products', $this->quote->getProducts());
                 echo $this->context->smarty->display(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl");
             }
