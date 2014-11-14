@@ -1,6 +1,7 @@
 <!-- MODULE Quotes cart -->
 <script type="text/javascript">
     var quotesCart = "{$actionAddQuotes}";
+    var catalogMode = "{$catalogMode}";
 </script>
 <div class="clearfix col-sm-3">
     <div class="row quotes_cart">
@@ -44,7 +45,7 @@
                     {/if}
                 </div>
                 <p class="cart-buttons">
-                    <a id="button_order_cart" class="btn btn-default button button-small" href="{$quotesCart}" title="{l s='Check out' mod='quotes'}" rel="nofollow">
+                    <a id="button_order_cart" class="btn btn-default button button-small" href="{$quotesCart}" title="{l s='Submit quote' mod='quotes'}" rel="nofollow">
 				    <span>
 						{l s='Check out' mod='quotes'}<i class="icon-chevron-right right"></i>
 					</span>
