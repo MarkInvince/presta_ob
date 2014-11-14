@@ -35,11 +35,11 @@ class QuotesProductCart extends ObjectModel
             'id_shop'       => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
             'id_shop_group' => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
             'id_lang'       => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
-            'id_product'    => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
+            'id_product'    => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
             'id_product_attribute'    => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
-            'id_guest'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
-            'id_customer'   => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
-            'quantity'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true),
+            'id_guest'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
+            'id_customer'   => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
+            'quantity'      => 	array('type' => self::TYPE_INT,  'validate' => 'isUnsignedId'),
             'date_add'      => 	array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
             'date_upd'      => 	array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
         ),
@@ -198,6 +198,18 @@ class QuotesProductCart extends ObjectModel
         if ($result) {
             $this->update(true);
             return $this->getProducts();
+        }
+        return false;
+    }
+    public function deleteAllProduct()
+    {
+        /* Product deletion */
+        $result = Db::getInstance()->execute('
+		DELETE FROM `' . _DB_PREFIX_ . 'quotes_product`
+		WHERE `id_quote` LIKE "' . $this->id_quote.'"');
+
+        if ($result) {
+            return true;
         }
         return false;
     }

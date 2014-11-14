@@ -94,8 +94,6 @@ class Quotes extends Module
 
 	public function uninstall()
 	{
-		include(dirname(__FILE__).'/sql/uninstall.php');
-
 		$this->deleteTables();
         
         $tab = new Tab(Configuration::get('MODULE_TAB_ID'));
@@ -362,9 +360,10 @@ class Quotes extends Module
 		$this->context->smarty->assign('session', $this->context->cookie->__get('request_id'));
 		$this->context->smarty->assign('actionAddQuotes',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
 		$this->context->smarty->assign('products', $products);
-		$this->context->smarty->assign('cartTotalProducts', count($products));
         $this->context->smarty->assign('catalogMode', '');
+		$this->context->smarty->assign('cartTotalProducts', count($products));
 		$this->context->smarty->assign('quotesCart',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
+
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__FILE__, 'quotesCart.tpl');
 	}
@@ -380,6 +379,7 @@ class Quotes extends Module
 		$this->context->smarty->assign('isLogged', $customer);
         $this->context->smarty->assign('product', $product);
         $this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
+
         $linkCore = new Link;
 		$this->context->smarty->assign('plink', $linkCore->getProductLink($product->id, $product->link_rewrite, $product->id_category_default));
 
@@ -388,7 +388,8 @@ class Quotes extends Module
 	}
 	public function hookCustomerAccount($params)
 	{
-		return $this->display(__FILE__, 'my-account.tpl');
+        if (Configuration::get('MAIN_STATE'))
+		    return $this->display(__FILE__, 'my-account.tpl');
 	}
     /**
 	 * Add ask to quote button to product list

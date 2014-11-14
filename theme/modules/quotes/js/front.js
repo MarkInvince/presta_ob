@@ -31,19 +31,34 @@ $(document).ready(function(){
 
 	});
 
+	$('.submit_quote').on('click', function() {
+		$.ajax({
+			url: quotesCart,
+			method:'post',
+			data: 'action=submit',
+			dataType:'json',
+			success: function(response) {
+				console.log(response);
+				if(response.hasError == false) {
+					window.location = response.redirectUrl;
+				}
+			}
+		});
+		return false;
+	});
+
     $('body').on('click','.fly_to_quote_cart_button', function(){
 		$('#ipa').val($('#idCombination').val());
 		$.ajax({
 			url: quotesCart,
 			method:'post',
 			data: $('#quote_ask_form').serialize(),
+			dataType:'json',
 			success: function(response) {
 				if(!$('#box-body').hasClass('expanded'))
 					$('#box-body').addClass('expanded');
 				$('#product-list').empty();
-				$('#product-list').html(response);
-				$('#quotes-cart-link').empty();
-				$('#quotes-cart-quotes').html($(response).find('#quotes-cart-link').text());
+				$('#product-list').html(response.products);
 			}
 		});
         return false;
@@ -54,13 +69,12 @@ $(document).ready(function(){
 			url: quotesCart,
 			method:'post',
 			data: $('#quote_ask_form').serialize(),
+			dataType:'json',
 			success: function(response) {
 				if(!$('#box-body').hasClass('expanded'))
 					$('#box-body').addClass('expanded');
 				$('#product-list').empty();
-				$('#product-list').html(response);
-				$('#quotes-cart-link').empty();
-				$('#quotes-cart-quotes').html($(response).find('#quotes-cart-link').innerHtml);
+				$('#product-list').html(response.products);
 			}
 		});
 		return false;
@@ -73,14 +87,13 @@ $(document).ready(function(){
 			url: quotesCart,
 			method:'post',
 			data: 'action=delete&item_id='+item,
+			dataType:'json',
 			success: function(response) {
 				item_a.closest('dt').fadeOut('slow', function(){
 					item_a.closest('dt').remove();
 				});
-				$('#quotes-products').empty();
-				$('#quotes-products').html($(response).find('#product-list').html());
-				$('#quotes-cart-link').empty();
-				$('#quotes-cart-quotes').html($(response).find('#quotes-cart-link').innerHtml);
+				$('#product-list').empty();
+				$('#product-list').html(response.products);
 			}
 		});
 	});
