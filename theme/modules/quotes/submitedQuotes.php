@@ -10,4 +10,4 @@ Tools::displayFileAsDeprecated();
 $controller = new FrontController();
 $controller->init();
 
-//Tools::redirect(Context::getContext()->link->getModuleLink('quotes', 'QuotesCart'));
+Tools::redirect(Context::getContext()->link->getModuleLink('quotes', 'SubmitedQuotes'));

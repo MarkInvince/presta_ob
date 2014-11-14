@@ -1,37 +1,11 @@
 <?php
-/*
-* 2007-2014 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2014 PrestaShop SA
-*  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
+
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
-
+    
     public $ssl = true;
-    public $display_column_left = true;
-    public $isLogged;
-
-    public $quote_product;
-
+	public $display_column_left = true;
+    public $quote_product;    
     private $user_token;
 
     public function __construct()
@@ -47,7 +21,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->context->cookie->__set('request_id', $this->user_token);
         }
     }
-
+    
 
     public function setMedia()
     {
@@ -61,7 +35,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
         $this->addJS($this->module->getLocalPath().'js/quotes_cart.js');
     }
-
+    
     public function initContent()
     {
         // Send noindex to avoid ghost carts by bots
@@ -94,8 +68,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
     }
 
-    public function assign()
-    {
+	public function assign()
+	{
         if ($this->context->customer->isLogged())
             $this->context->smarty->assign('isLogged', '1');
         else
@@ -137,12 +111,11 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         ));
 
         /* Load guest informations */
-        if ($this->isLogged && $this->context->cookie->is_guest)
+        if ($this->context->cookie->is_guest)
             $this->context->smarty->assign('guestInformations', $this->_getGuestInformations());
 
         $this->setTemplate('quotes_cart.tpl');
     }
-
     protected function deleteQuoteById($id) {
         $vals = explode('_',$id);
         $pid = !empty($vals[0]) ? $vals[0] : false;
@@ -438,6 +411,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                             'newCustomer' => $customer
                         ));
 
+                        //$this->errors[] = Tools::displayError('My error.');
+
                         Tools::redirect($this->context->link->getModuleLink('quotes', 'QuotesCart'));
                     }
                 }
@@ -456,27 +431,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 unset($_POST['passwd']);
 
             $this->context->smarty->assign('authentification_error', $this->errors);
-        }
-    }
-
-    /**
-     * Process submit on a creation
-     */
-    protected function processSubmitCreate()
-    {
-        if (!Validate::isEmail($email = Tools::getValue('email_create')) || empty($email))
-            $this->errors[] = Tools::displayError('Invalid email address.');
-        elseif (Customer::customerExists($email))
-        {
-            $this->errors[] = Tools::displayError('An account using this email address has already been registered. Please enter a valid password or request a new one. ', false);
-            $_POST['email'] = $_POST['email_create'];
-            unset($_POST['email_create']);
-        }
-        else
-        {
-            $this->create_account = true;
-            $this->context->smarty->assign('email_create', Tools::safeOutput($email));
-            $_POST['email'] = $email;
         }
     }
 
@@ -629,4 +583,5 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             'invoice_id_state' => (int)($address_invoice->id_state),
         );
     }
+    
 }

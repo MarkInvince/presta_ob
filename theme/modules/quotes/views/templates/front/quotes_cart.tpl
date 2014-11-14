@@ -1,6 +1,8 @@
 {capture name=path}{l s='Ask for a Quote' mod='quotes'}{/capture}
+{$isLogged}
+{$isGuest}
 
-<h2 class="page-heading">{l s='Your quotes cart'}</h2>
+<h2 class="page-heading">{l s='Your quotes cart' mod='quotes'}</h2>
 
 {if isset($authentification_error)}
     <div class="alert alert-danger">
@@ -23,9 +25,6 @@
 
     {if isset($isLogged) && $isLogged == 1}
         <a id="qsubmitnow" class="button" href="{$base_dir}modules/askforaquote/frontoffice/askforaquote.php?gofinal=1" title="{l s='Submit without preview' mod='quotes'}">{l s='Submit now' mod='quotes'}</a>
-        <form method="post" action="{$base_dir}modules/askforaquote/frontoffice/askforaquote.php">
-            <input type="submit" name="submitbox" id="submitbox" title="{l s='View detailed list before submit' mod='quotes'}" value="{l s='View list' mod='quotes'}" class="button exclusive" />
-        </form>
     {else}
         {include file="$tpl_path./quotes_new_account.tpl"}
     {/if}
@@ -40,4 +39,6 @@
     {addJsDefL name=txtErrors}{l s='Error(s)' js=1}{/addJsDefL}
     {addJsDef quoteCartUrl=$link->getModuleLink('quotes', 'QuotesCart', array(), true)|escape:'html':'UTF-8'}
     {addJsDef guestCheckoutEnabled=$PS_GUEST_QUOTES_ENABLED|intval}
+    {addJsDef isGuest=$isGuest|intval}
+    {addJsDef addressEnabled=$ADDRESS_ENABLED}
 {/strip}

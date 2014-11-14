@@ -95,18 +95,16 @@
 
                     {if !$ADDRESS_ENABLED}
                         {if !$PS_GUEST_QUOTES_ENABLED}
-                            <div class="required form-group">
-                                <p class="title_block">{l s='Add the address'}</p>
-                                <p class="opc-button">
-                                    <a id="show_address_form" class="btn btn-default button button-medium exclusive" id="opc_guestCheckout"><span>{l s='Add the address'}</span></a>
-                                </p>
+                            <div class="form-group">
+                                <p>{l s='To transform a quote to an order after it has been accepted by both ends you will need address delivery' mod='quotes'}</p>
+                                <p><a href="{$link->getPageLink('authentication', true)|escape:'html':'UTF-8'}" id="show_address_form">&raquo; {l s='Click here to add the address'}</a></p>
                             </div>
                         {/if}
                     {/if}
 
                     <div id="address_block" {if !$ADDRESS_ENABLED}{if !$PS_GUEST_QUOTES_ENABLED}style="display: none"{/if}{/if}>
                         <h3 class="page-subheading top-indent">{l s='Delivery address'}</h3>
-                        <input type="hidden" class="hidden" name="address_enabled" value="1">
+                        <input type="hidden" class="hidden" name="address_enabled" id="address_enabled" value="0">
                         {$stateExist = false}
                         {$postCodeExist = false}
                         {$dniExist = false}
@@ -144,11 +142,6 @@
                                 <div class="required text form-group">
                                     <label for="address1">{l s='Address'} <sup>*</sup></label>
                                     <input type="text" class="text form-control validate" name="address1" id="address1" data-validate="isAddress" value="{if isset($guestInformations) && isset($guestInformations.address1) && isset($guestInformations) && isset($guestInformations.address1) && $guestInformations.address1}{$guestInformations.address1}{/if}" />
-                                </div>
-                            {elseif $field_name eq "address2"}
-                                <div class="text is_customer_param form-group">
-                                    <label for="address2">{l s='Address (Line 2)'}</label>
-                                    <input type="text" class="text form-control validate" name="address2" id="address2" data-validate="isAddress" value="{if isset($guestInformations) && isset($guestInformations.address2) && isset($guestInformations) && isset($guestInformations.address2) && $guestInformations.address2}{$guestInformations.address2}{/if}" />
                                 </div>
                             {elseif $field_name eq "postcode"}
                                 {$postCodeExist = true}
@@ -208,10 +201,6 @@
                         {if isset($one_phone_at_least) && $one_phone_at_least}
                             <p class="inline-infos required is_customer_param">{l s='You must register at least one phone number.'}</p>
                         {/if}
-                        <div class="form-group is_customer_param">
-                            <label for="phone">{l s='Home phone'}</label>
-                            <input type="text" class="text form-control validate" name="phone" id="phone"  data-validate="isPhoneNumber" value="{if isset($guestInformations) && isset($guestInformations.phone) && $guestInformations.phone}{$guestInformations.phone}{/if}" />
-                        </div>
                         <div class="{if isset($one_phone_at_least) && $one_phone_at_least}required {/if}form-group">
                             <label for="phone_mobile">{l s='Mobile phone'}{if isset($one_phone_at_least) && $one_phone_at_least} <sup>*</sup>{/if}</label>
                             <input type="text" class="text form-control validate" name="phone_mobile" id="phone_mobile" data-validate="isPhoneNumber" value="{if isset($guestInformations) && isset($guestInformations.phone_mobile) && $guestInformations.phone_mobile}{$guestInformations.phone_mobile}{/if}" />
@@ -226,11 +215,9 @@
                         <p class="required opc-required pull-right">
                             <sup>*</sup>{l s='Required field'}
                         </p>
-                        {if !$PS_GUEST_QUOTES_ENABLED}
-                            <button type="submit" name="submitAccount" id="submitAccount" class="btn btn-default button button-medium"><span>{l s='Save'}<i class="icon-chevron-right right"></i></span></button>
-                        {else}
-                            <button type="submit" name="submitGuestAccount" id="submitGuestAccount" class="btn btn-default button button-medium"><span>{l s='Save'}<i class="icon-chevron-right right"></i></span></button>
-                        {/if}
+
+                        <button type="submit" name="submitAccount" id="submitAccount" class="btn btn-default button button-medium"><span>{l s='Save'}<i class="icon-chevron-right right"></i></span></button>
+
 
                     </div>
                     <div style="display: none;" id="opc_account_saved" class="alert alert-success">

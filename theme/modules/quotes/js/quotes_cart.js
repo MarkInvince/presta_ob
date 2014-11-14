@@ -1,7 +1,17 @@
 $(document).ready(function(){
     // GUEST CHECKOUT / NEW ACCOUNT MANAGEMENT
     if ((typeof isLogged == 'undefined' || !isLogged) || (typeof isGuest !== 'undefined' && isGuest)) {
-        if (guestCheckoutEnabled && !isLogged) {
+        if (addressEnabled) {
+            $('#address_enabled').val('1');
+        }
+        if (isGuest) {
+            //$('.is_customer_param').hide();
+            $('#opc_account_form').show('slow');
+            $('#is_new_customer').val('0');
+            $('#opc_account_choice, #opc_invoice_address').hide();
+            //$('#new_account_title').html(txtInstantCheckout);
+        }
+        else if (guestCheckoutEnabled && !isLogged) {
             $('#opc_account_choice').show();
             $('#opc_account_form, #opc_invoice_address').hide();
 
@@ -19,17 +29,10 @@ $(document).ready(function(){
                 $('#opc_account_form').slideDown('slow');
                 $('#is_new_customer').val('0');
                 $('#opc_account_choice, #opc_invoice_address').hide();
-                $('#new_account_title').html(txtInstantCheckout);
+                //$('#new_account_title').html(txtInstantCheckout);
                 $('#submitAccount').attr({id: 'submitGuestAccount', name: 'submitGuestAccount'});
 
             });
-        }
-        else if (isGuest) {
-            $('.is_customer_param').hide();
-            $('#opc_account_form').show('slow');
-            $('#is_new_customer').val('0');
-            $('#opc_account_choice, #opc_invoice_address').hide();
-            $('#new_account_title').html(txtInstantCheckout);
         }
         else {
             $('#opc_account_choice').hide();
@@ -41,6 +44,7 @@ $(document).ready(function(){
         // SHOW ADDRESS
         $(document).on('click', '#show_address_form', function (e) {
             e.preventDefault();
+            $('#address_enabled').val('1');
             $('#address_block').slideDown('slow');
             $(this).hide();
         });
