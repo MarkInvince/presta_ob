@@ -27,8 +27,110 @@
 */
 
 $(document).ready(function(){
+	$('#quantity_wanted').on('change', function(){
+
+	});
+
     $('body').on('click','.fly_to_quote_cart_button', function(){
-        alert('add');
+		$('#ipa').val($('#idCombination').val());
+		$.ajax({
+			url: quotesCart,
+			method:'post',
+			data: $('#quote_ask_form').serialize(),
+			success: function(response) {
+				if(!$('#box-body').hasClass('expanded'))
+					$('#box-body').addClass('expanded');
+				$('#product-list').empty();
+				$('#product-list').html(response);
+				$('#quotes-cart-link').empty();
+				$('#quotes-cart-quotes').html($(response).find('#quotes-cart-link').text());
+			}
+		});
         return false;
     });
+	$('body').on('click','.ajax_add_to_quote_cart_button', function(){
+		$('#ipa').val($('#idCombination').val());
+		$.ajax({
+			url: quotesCart,
+			method:'post',
+			data: $('#quote_ask_form').serialize(),
+			success: function(response) {
+				if(!$('#box-body').hasClass('expanded'))
+					$('#box-body').addClass('expanded');
+				$('#product-list').empty();
+				$('#product-list').html(response);
+				$('#quotes-cart-link').empty();
+				$('#quotes-cart-quotes').html($(response).find('#quotes-cart-link').innerHtml);
+			}
+		});
+		return false;
+	});
+
+	$('body').on('click', '.remove-quote', function() {
+		var item = $(this).attr('rel');
+		var item_a = $(this);
+		$.ajax({
+			url: quotesCart,
+			method:'post',
+			data: 'action=delete&item_id='+item,
+			success: function(response) {
+				item_a.closest('dt').fadeOut('slow', function(){
+					item_a.closest('dt').remove();
+				});
+				$('#quotes-products').empty();
+				$('#quotes-products').html($(response).find('#product-list').html());
+				$('#quotes-cart-link').empty();
+				$('#quotes-cart-quotes').html($(response).find('#quotes-cart-link').innerHtml);
+			}
+		});
+	});
+
+	// quotes cart actions
+	var cart_block = new showCart('#header .quotes_cart_block');
+	var cart_parent_block = new showCart('#header .quotes_cart');
+
+	$("#header .quotes_cart a:first").hover(
+		function(){
+				$("#header .quotes_cart_block").stop(true, true).slideDown(450);
+		},
+		function(){
+			setTimeout(function(){
+				if (!cart_parent_block.isHoveringOver() && !cart_block.isHoveringOver()) {
+					$("#header .quotes_cart_block").stop(true, true).slideUp(450);
+					if($('#box-body').hasClass('expanded'))
+						$('#box-body').removeClass('expanded');
+				}
+
+			}, 200);
+		}
+	);
+
+	$("#header .cart_block").hover(
+		function(){
+		},
+		function(){
+			setTimeout(function(){
+				if (!cart_parent_block.isHoveringOver()) {
+					$("#header .quotes_cart_block").stop(true, true).slideUp(450);
+					if($('#box-body').hasClass('expanded'))
+						$('#box-body').removeClass('expanded');
+				}
+			}, 200);
+		}
+	);
 });
+function showCart(selector)
+{
+	this.hovering = false;
+	var self = this;
+
+	this.isHoveringOver = function(){
+		return self.hovering;
+	}
+
+	$(selector).hover(function(){
+		self.hovering = true;
+	}, function(){
+		self.hovering = false;
+	})
+}

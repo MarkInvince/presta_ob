@@ -373,6 +373,7 @@ class AuthControllerCore extends FrontController
 		if (Tools::isSubmit('submitAccount'))
 			$this->context->smarty->assign('email_create', 1);
 		// New Guest customer
+
 		if (!Tools::getValue('is_new_customer', 1) && !Configuration::get('PS_GUEST_CHECKOUT_ENABLED'))
 			$this->errors[] = Tools::displayError('You cannot create a guest account..');
 		if (!Tools::getValue('is_new_customer', 1))
@@ -415,6 +416,7 @@ class AuthControllerCore extends FrontController
 
 		// Check the requires fields which are settings in the BO
 		$this->errors = $this->errors + $customer->validateFieldsRequiredDatabase();
+
 
 		if (!Configuration::get('PS_REGISTRATION_PROCESS_TYPE') && !$this->ajax && !Tools::isSubmit('submitGuestAccount'))
 		{
@@ -463,6 +465,7 @@ class AuthControllerCore extends FrontController
 
 						if (($back = Tools::getValue('back')) && $back == Tools::secureReferrer($back))
 							Tools::redirect(html_entity_decode($back));
+
 						// redirection: if cart is not empty : redirection to the cart
 						if (count($this->context->cart->getProducts(true)) > 0)
 							Tools::redirect('index.php?controller=order&multi-shipping='.(int)Tools::getValue('multi-shipping'));
@@ -621,7 +624,7 @@ class AuthControllerCore extends FrontController
 						// if registration type is in two steps, we redirect to register address
 						if (!Configuration::get('PS_REGISTRATION_PROCESS_TYPE') && !$this->ajax && !Tools::isSubmit('submitGuestAccount'))
 							Tools::redirect('index.php?controller=address');
-							
+
 						if (($back = Tools::getValue('back')) && $back == Tools::secureReferrer($back))
 							Tools::redirect(html_entity_decode($back));
 

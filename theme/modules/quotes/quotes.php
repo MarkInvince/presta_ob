@@ -30,6 +30,7 @@ if (!defined('_PS_VERSION_'))
 class Quotes extends Module
 {
 	protected $config_form = false;
+    
 	public function __construct()
 	{
 		$this->name = 'quotes';
@@ -37,7 +38,7 @@ class Quotes extends Module
 		$this->version = '1.0.0';
 		$this->author = 'RCS';
 		$this->need_instance = 1;
-        $this->controllers = array('QuotesCart');
+        $this->controllers = array('QuotesCart', 'SubmitedQuotes');
 		/**
 		 * Set $this->bootstrap to true if your module is compliant with bootstrap (PrestaShop 1.6)
 		 */
@@ -47,9 +48,10 @@ class Quotes extends Module
 		$this->description = $this->l('Ask for quotes module');
 	}
 
+
 	/**
 	 * Don't forget to create update methods if needed:
-	 * http://doc.prestashop.com/display/PS16/Enabling+the+Auto-Update
+	 *
 	 */
 	public function install()
 	{
@@ -74,23 +76,27 @@ class Quotes extends Module
         Configuration::updateValue('MAIN_GUEST_CHECK_OUT', '1'); // Quantity fields trigger
         Configuration::updateValue('MAIN_TERMS_AND_COND', '0'); // Quantity fields trigger
         Configuration::updateValue('MAIN_CMS_PAGE', '0'); // Quantity fields trigger
-        
-		return parent::install() &&
-			$this->registerHook('header') &&
-            $this->registerHook('extraRight') &&
-			$this->registerHook('extraLeft') &&
-			$this->registerHook('myAccountBlock') &&
-			$this->registerHook('CustomerAccount') &&
-			$this->registerHook('top') &&
-			$this->registerHook('Header') &&
-			$this->registerHook('displayMyAccountBlockfooter') &&
-			$this->registerHook('displayBackOfficeHeader');
+		Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', '0');
+		Configuration::updateValue('ADDRESS_ENABLED', '0');
+
+        return parent::install() &&
+        $this->registerHook('header') &&
+        $this->registerHook('extraRight') &&
+        $this->registerHook('extraLeft') &&
+        $this->registerHook('myAccountBlock') &&
+        $this->registerHook('CustomerAccount') &&
+        $this->registerHook('top') &&
+        $this->registerHook('Header') &&
+        $this->registerHook('displayMyAccountBlockfooter') &&
+        $this->registerHook('displayBackOfficeHeader');
 
 	}
 
 	public function uninstall()
 	{
 		include(dirname(__FILE__).'/sql/uninstall.php');
+
+		$this->deleteTables();
         
         $tab = new Tab(Configuration::get('MODULE_TAB_ID'));
 		$tab->delete();
@@ -101,8 +107,21 @@ class Quotes extends Module
                                    AND Configuration::deleteByName('MAIN_ANIMATE')
                                    AND Configuration::deleteByName('MAIN_GUEST_CHECK_OUT')
                                    AND Configuration::deleteByName('MAIN_TERMS_AND_COND')
-                                   AND Configuration::deleteByName('MAIN_CMS_PAGE');
+                                   AND Configuration::deleteByName('MAIN_CMS_PAGE')
+									AND Configuration::deleteByName('PS_GUEST_QUOTES_ENABLED')
+									AND Configuration::deleteByName('ADDRESS_ENABLED');
 	}
+
+	private function deleteTables()
+	{
+		return Db::getInstance()->execute(
+			'DROP TABLE IF EXISTS
+			`'._DB_PREFIX_.'quotes_product`,
+			`'._DB_PREFIX_.'quotes_bargains`,
+			`'._DB_PREFIX_.'quotes`'
+		);
+	}
+
 	/**
 	 * Load the configuration form
 	 */
@@ -118,6 +137,8 @@ class Quotes extends Module
             Configuration::updateValue('MAIN_GUEST_CHECK_OUT', Tools::getValue('MAIN_GUEST_CHECK_OUT'));
             Configuration::updateValue('MAIN_TERMS_AND_COND', Tools::getValue('MAIN_TERMS_AND_COND'));
             Configuration::updateValue('MAIN_CMS_PAGE', Tools::getValue('MAIN_CMS_PAGE'));
+			Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', Tools::getValue('PS_GUEST_QUOTES_ENABLED'));
+			Configuration::updateValue('ADDRESS_ENABLED', Tools::getValue('ADDRESS_ENABLED'));
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
 		$this->context->smarty->assign('module_dir', $this->_path);
@@ -231,7 +252,40 @@ class Quotes extends Module
                         'options' => array('query' => $options,'id' => 'id','name' => 'name'),
                         'identifier' => 'id',
 					),
-                    
+					array(
+						'type' => 'switch',
+						'label' => $this->l('Guest option'),
+						'name' => 'PS_GUEST_QUOTES_ENABLED',
+						'values' => array(
+							array(
+								'id' => 'on',
+								'value' => 1,
+								'label' => $this->l('Yes')
+							),
+							array(
+								'id' => 'off',
+								'value' => 0,
+								'label' => $this->l('No')
+							),
+						)
+					),
+					array(
+						'type' => 'switch',
+						'label' => $this->l('Delivery address option'),
+						'name' => 'ADDRESS_ENABLED',
+						'values' => array(
+							array(
+								'id' => 'on',
+								'value' => 1,
+								'label' => $this->l('Yes')
+							),
+							array(
+								'id' => 'off',
+								'value' => 0,
+								'label' => $this->l('No')
+							),
+						)
+					)
 				),
                 'bottom' => '<script type="text/javascript">showBlock(element);hideBlock(element);</script>',
 				'submit' => array(
@@ -241,19 +295,19 @@ class Quotes extends Module
 		);
 		
 		$helper = new HelperForm();
-		$helper->show_toolbar = false;
-		$lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
-		$helper->default_form_language = $lang->id;
-		$helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
-		$helper->identifier = $this->identifier;
-		$helper->submit_action = 'submitMainSettings';
-		$helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
-		$helper->token = Tools::getAdminTokenLite('AdminModules');
-		$helper->tpl_vars = array(
-			'fields_value' => $this->getConfigFormValues(),
-			'languages' => $this->context->controller->getLanguages(),
-			'id_language' => $this->context->language->id
-		);
+        $helper->show_toolbar = false;
+        $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+        $helper->default_form_language = $lang->id;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+        $helper->identifier = $this->identifier;
+        $helper->submit_action = 'submitMainSettings';
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->tpl_vars = array(
+            'fields_value' => $this->getConfigFormValues(),
+            'languages' => $this->context->controller->getLanguages(),
+            'id_language' => $this->context->language->id
+        );
 
 		return $helper->generateForm(array($fields_form));
 	}
@@ -270,6 +324,8 @@ class Quotes extends Module
             'MAIN_GUEST_CHECK_OUT' => Configuration::get('MAIN_GUEST_CHECK_OUT'),
             'MAIN_TERMS_AND_COND' => Configuration::get('MAIN_TERMS_AND_COND'),
             'MAIN_CMS_PAGE' => Configuration::get('MAIN_CMS_PAGE'),
+			'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
+			'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED')
 		);
 	}
 
@@ -290,6 +346,28 @@ class Quotes extends Module
 		$this->context->controller->addJS($this->_path.'/js/front.js');
 		$this->context->controller->addCSS($this->_path.'/css/front.css');
 	}
+
+	public function hookTop()
+	{
+		//load model
+		include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
+		$quote_obj = new QuotesProductCart;
+
+		$products = array();
+		// check for user cart session. Defined in QuotesCart if user add product to quote box
+		if($this->context->cookie->__isset('request_id')) {
+			$quote_obj->id_quote = $this->context->cookie->__get('request_id');
+			$products = $quote_obj->getProducts();
+		}
+		$this->context->smarty->assign('session', $this->context->cookie->__get('request_id'));
+		$this->context->smarty->assign('actionAddQuotes',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
+		$this->context->smarty->assign('products', $products);
+		$this->context->smarty->assign('cartTotalProducts', count($products));
+        $this->context->smarty->assign('catalogMode', '');
+		$this->context->smarty->assign('quotesCart',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
+		if (Configuration::get('MAIN_STATE'))
+			return $this->display(__FILE__, 'quotesCart.tpl');
+	}
     /**
 	 * Add ask to quote button to product list
 	 */
@@ -302,12 +380,15 @@ class Quotes extends Module
 		$this->context->smarty->assign('isLogged', $customer);
         $this->context->smarty->assign('product', $product);
         $this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
-        $this->context->smarty->assign('actionAddQuotes',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
         $linkCore = new Link;
 		$this->context->smarty->assign('plink', $linkCore->getProductLink($product->id, $product->link_rewrite, $product->id_category_default));
 
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__FILE__, 'extraRight.tpl');
+	}
+	public function hookCustomerAccount($params)
+	{
+		return $this->display(__FILE__, 'my-account.tpl');
 	}
     /**
 	 * Add ask to quote button to product list
