@@ -1,37 +1,11 @@
 <?php
-/*
-* 2007-2014 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2014 PrestaShop SA
-*  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
+
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     
     public $ssl = true;
 	public $display_column_left = true;
-    public $isLogged;
-    
     public $quote_product;
-
     private $user_token;
 
     public function __construct()
@@ -93,6 +67,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->context->smarty->assign('isLogged', '0');
 
         $this->context->smarty->assign('empty','true');
+
         $back = $this->context->link->getModuleLink($this->module->name, 'QuotesCart', array(), true);
 
         $tpl_path = $this->module->getLocalPath()."views/templates/front";
@@ -128,7 +103,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         ));
 
         /* Load guest informations */
-        if ($this->isLogged && $this->context->cookie->is_guest)
+        if ($this->context->cookie->is_guest)
             $this->context->smarty->assign('guestInformations', $this->_getGuestInformations());
 
         $this->setTemplate('quotes_cart.tpl');
@@ -355,16 +330,12 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         // Check the requires fields which are settings in the BO
         $this->errors = $this->errors + $customer->validateFieldsRequiredDatabase();
 
-
         // If simple rgistry without Address Delivery
         if (Tools::isSubmit('submitAccount') && !Tools::getValue('address_enabled'))
         {
 
             if (!count($this->errors))
             {
-                if (Tools::isSubmit('newsletter'))
-                    $this->processCustomerNewsletter($customer);
-
                 $customer->firstname = Tools::ucwords($customer->firstname);
                 $customer->birthday = (empty($_POST['years']) ? '' : (int)$_POST['years'].'-'.(int)$_POST['months'].'-'.(int)$_POST['days']);
                 if (!Validate::isBirthDate($customer->birthday))
@@ -464,6 +435,14 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                     $customer->is_guest = !Tools::getValue('is_new_customer', 1);
                 else
                     $customer->is_guest = 0;
+//                if(Tools::getValue('is_new_customer'))
+//                    $customer->is_guest = 0;
+//                else if (!Tools::getValue('is_new_customer') && $this->context->cookie->is_guest) {
+//                    $customer->is_guest = 0;
+//                }
+//                else
+//                    $customer->is_guest = 1;
+
                 if (!$customer->add())
                     $this->errors[] = Tools::displayError('An error occurred while creating your account.');
                 else
@@ -521,6 +500,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                             '_POST' => $_POST,
                             'newCustomer' => $customer
                         ));
+
+                        $this->errors[] = Tools::displayError('My error.');
 
                         Tools::redirect($this->context->link->getModuleLink('quotes', 'QuotesCart'));
                     }

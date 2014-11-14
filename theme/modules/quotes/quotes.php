@@ -38,7 +38,7 @@ class Quotes extends Module
 		$this->version = '1.0.0';
 		$this->author = 'RCS';
 		$this->need_instance = 1;
-        $this->controllers = array('QuotesCart');
+        $this->controllers = array('QuotesCart', 'SubmitedQuotes');
 		/**
 		 * Set $this->bootstrap to true if your module is compliant with bootstrap (PrestaShop 1.6)
 		 */
@@ -95,6 +95,8 @@ class Quotes extends Module
 	public function uninstall()
 	{
 		include(dirname(__FILE__).'/sql/uninstall.php');
+
+		$this->deleteTables();
         
         $tab = new Tab(Configuration::get('MODULE_TAB_ID'));
 		$tab->delete();
@@ -109,6 +111,17 @@ class Quotes extends Module
 									AND Configuration::deleteByName('PS_GUEST_QUOTES_ENABLED')
 									AND Configuration::deleteByName('ADDRESS_ENABLED');
 	}
+
+	private function deleteTables()
+	{
+		return Db::getInstance()->execute(
+			'DROP TABLE IF EXISTS
+			`'._DB_PREFIX_.'quotes_product`,
+			`'._DB_PREFIX_.'quotes_bargains`,
+			`'._DB_PREFIX_.'quotes`'
+		);
+	}
+
 	/**
 	 * Load the configuration form
 	 */
@@ -351,6 +364,10 @@ class Quotes extends Module
 
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__FILE__, 'extraRight.tpl');
+	}
+	public function hookCustomerAccount($params)
+	{
+		return $this->display(__FILE__, 'my-account.tpl');
 	}
     /**
 	 * Add ask to quote button to product list

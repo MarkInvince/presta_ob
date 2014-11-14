@@ -2,10 +2,10 @@
 
 $sql = array();
 
-/*$sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes` (
+$sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes` (
     `id_quotes` int(11) NOT NULL AUTO_INCREMENT,
     PRIMARY KEY  (`id_quotes`)
-) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';*/
+) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_product` (
           `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -21,7 +21,19 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_product` (
           `date_add` datetime NOT NULL,
           `date_upd` datetime NOT NULL ,
           PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+        ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+
+$sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_bargains` (
+    `id_bargain` int(11) NOT NULL AUTO_INCREMENT,
+    `id_quote` int(11) NOT NULL,
+    `bargain_whos` varchar(100) NOT NULL,
+    `bargain_text` text NOT NULL,
+    `date_add` datetime NOT NULL,
+    `bargain_price` decimal(20,6) NOT NULL,
+    `bargain_price_text` varchar(250) NOT NULL,
+    `bargain_customer_confirm` tinyint(1) NOT NULL DEFAULT "0",
+    PRIMARY KEY (`id_bargain`)
+) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 foreach ($sql as $query)
     if (Db::getInstance()->execute($query) == false)

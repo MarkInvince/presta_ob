@@ -30,10 +30,18 @@
 * but does not want to loose all of the data associated to the module.
 */
 
-$sql = array();
+//
+//$sql = array();
+//
+//$sql[] = 'DROP TABLE `'._DB_PREFIX_.'quotes_product`';
+//
+//$sql[] = 'DROP TABLE `'._DB_PREFIX_.'quotes_bargains`';
+//
+//$sql[] = 'DROP TABLE `'._DB_PREFIX_.'quotes`';
+//
+//foreach ($sql as $query)
+//	if (Db::getInstance()->execute($query) == false)
+//		return false;
 
-$sql[] = 'DROP TABLE `'._DB_PREFIX_.'quotes_product`';
 
-foreach ($sql as $query)
-	if (Db::getInstance()->execute($query) == false)
-		return false;
+
