@@ -78,6 +78,7 @@ class Quotes extends Module
         Configuration::updateValue('MAIN_CMS_PAGE', '0'); // Quantity fields trigger
 		Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', '0');
 		Configuration::updateValue('ADDRESS_ENABLED', '0');
+		Configuration::updateValue('MESSAGING_ENABLED', '1');
 
         return parent::install() &&
         $this->registerHook('header') &&
@@ -94,8 +95,6 @@ class Quotes extends Module
 
 	public function uninstall()
 	{
-		include(dirname(__FILE__).'/sql/uninstall.php');
-
 		$this->deleteTables();
         
         $tab = new Tab(Configuration::get('MODULE_TAB_ID'));
@@ -109,7 +108,8 @@ class Quotes extends Module
                                    AND Configuration::deleteByName('MAIN_TERMS_AND_COND')
                                    AND Configuration::deleteByName('MAIN_CMS_PAGE')
 									AND Configuration::deleteByName('PS_GUEST_QUOTES_ENABLED')
-									AND Configuration::deleteByName('ADDRESS_ENABLED');
+									AND Configuration::deleteByName('ADDRESS_ENABLED')
+									AND Configuration::deleteByName('MESSAGING_ENABLED');
 	}
 
 	private function deleteTables()
@@ -139,6 +139,7 @@ class Quotes extends Module
             Configuration::updateValue('MAIN_CMS_PAGE', Tools::getValue('MAIN_CMS_PAGE'));
 			Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', Tools::getValue('PS_GUEST_QUOTES_ENABLED'));
 			Configuration::updateValue('ADDRESS_ENABLED', Tools::getValue('ADDRESS_ENABLED'));
+			Configuration::updateValue('MESSAGING_ENABLED', Tools::getValue('MESSAGING_ENABLED'));
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
 		$this->context->smarty->assign('module_dir', $this->_path);
@@ -285,6 +286,23 @@ class Quotes extends Module
 								'label' => $this->l('No')
 							),
 						)
+					),
+					array(
+						'type' => 'switch',
+						'label' => $this->l('User messaging'),
+						'name' => 'MESSAGING_ENABLED',
+						'values' => array(
+							array(
+								'id' => 'on',
+								'value' => 1,
+								'label' => $this->l('Yes')
+							),
+							array(
+								'id' => 'off',
+								'value' => 0,
+								'label' => $this->l('No')
+							),
+						)
 					)
 				),
                 'bottom' => '<script type="text/javascript">showBlock(element);hideBlock(element);</script>',
@@ -325,7 +343,8 @@ class Quotes extends Module
             'MAIN_TERMS_AND_COND' => Configuration::get('MAIN_TERMS_AND_COND'),
             'MAIN_CMS_PAGE' => Configuration::get('MAIN_CMS_PAGE'),
 			'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
-			'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED')
+			'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED'),
+			'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED')
 		);
 	}
 
