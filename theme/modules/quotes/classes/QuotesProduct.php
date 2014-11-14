@@ -201,4 +201,16 @@ class QuotesProductCart extends ObjectModel
         }
         return false;
     }
+    public function deleteAllProduct()
+    {
+        /* Product deletion */
+        $result = Db::getInstance()->execute('
+		DELETE FROM `' . _DB_PREFIX_ . 'quotes_product`
+		WHERE `id_quote` LIKE "' . $this->id_quote.'"');
+
+        if ($result) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -39,6 +39,9 @@ $(document).ready(function(){
 			dataType:'json',
 			success: function(response) {
 				console.log(response);
+				if(response.hasError == false) {
+					window.location = response.redirectUrl;
+				}
 			}
 		});
 		return false;
@@ -89,6 +92,8 @@ $(document).ready(function(){
 				item_a.closest('dt').fadeOut('slow', function(){
 					item_a.closest('dt').remove();
 				});
+				$('#product-list').empty();
+				$('#product-list').html(response.products);
 			}
 		});
 	});

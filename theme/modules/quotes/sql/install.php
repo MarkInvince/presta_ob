@@ -41,7 +41,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes` (
     `id_customer` int(11) NOT NULL,
     `products` text NOT NULL,
     `date_add` datetime NOT NULL,
-    `submitted` tinyint(1) NOT NULL,
+    `submited` tinyint(1) NOT NULL,
     PRIMARY KEY (`id_quote`)
 ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 

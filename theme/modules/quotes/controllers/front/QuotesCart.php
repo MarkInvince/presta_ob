@@ -1,11 +1,11 @@
 <?php
 
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
+include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesSubmit.php');
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     
     public $ssl = true;
 	public $display_column_left = true;
-    public $quote_product;    
     private $user_token;
 
     public function __construct()
@@ -15,13 +15,13 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         $this->context = Context::getContext();
 
         $this->quote = new QuotesProductCart;
+        $this->submit_quote = new QuotesSubmitCore;
         $this->user_token = uniqid();
         //set user unique key
         if(!$this->context->cookie->__isset('request_id')) {
             $this->context->cookie->__set('request_id', $this->user_token);
         }
     }
-    
 
     public function setMedia()
     {
@@ -57,16 +57,16 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $add = $this->ajaxAddToQuotesCart();
 
                 $this->context->smarty->assign('products', $this->quote->getProducts());
-                die(Tools::jsonEncode(array('products' => $this->context->smarty->display(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"))));
+                die(Tools::jsonEncode(array('products' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"))));
             }
             if(Tools::getValue('action') == 'delete') {
                 $delete = $this->deleteQuoteById(Tools::getValue('item_id'));
 
                 $this->context->smarty->assign('products', $this->quote->getProducts());
-                die(Tools::jsonEncode(array('products' => $this->context->smarty->display(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"))));
+                die(Tools::jsonEncode(array('products' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"))));
             }
             if(Tools::getValue('action') == 'submit') {
-                if($this->submitQuote()) {
+                if($this->submitQuote($this->quote)) {
                     die(Tools::jsonEncode(array('hasError' => false,'redirectUrl' => $this->context->link->getModuleLink($this->module->name, 'submitedQuotes', array(), true))));
                 }
                 else {
@@ -75,10 +75,27 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             }
         }
     }
-    protected function submitQuote() {
+    protected function submitQuote($quote) {
         // check for user session
         if ($this->context->cookie->__isset('request_id')) {
-            return true;
+            $quote->id_quote = $this->context->cookie->__get('request_id');
+            // get all products
+            $all_products = array();
+            foreach($quote->getProducts() as $product) {
+                $all_products[] = array(
+                    'id'           => $product['id'],
+                    'id_attribute' => $product['id_attribute'],
+                    'quantity'     => $product['quantity'],
+                );
+            }
+            $this->submit_quote->burgain_price = 0;
+            $this->submit_quote->products = Tools::jsonEncode($all_products);
+            if($this->submit_quote->add()) {
+                // clear shop box
+                return $quote->deleteAllProduct();
+            }
+            else
+                return false;
         }
         else {
             return false;
@@ -143,8 +160,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         $pid = !empty($vals[0]) ? $vals[0] : false;
         $ipa = !empty($vals[1]) ? $vals[1] : false;
         if (!$pid || !is_numeric($pid)) {
-            print json_encode(array('message' => Tools::displayError($this->module->l('Nothing to delete')),'hasError' => true));
-            return;
+            die(Tools::jsonEncode(array('message' => Tools::displayError($this->module->l('Nothing to delete')),'hasError' => true)));
         }
         if ($this->context->cookie->__isset('request_id') AND $pid AND $ipa) {
             $this->quote->id_quote = $this->context->cookie->__get('request_id');
@@ -162,19 +178,16 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     }
     protected function ajaxAddToQuotesCart() {
         if (Tools::getValue('pqty') <= 0) {
-            print json_encode(array('message' => Tools::displayError($this->module->l('Null quantity!!')),'hasError' => true));
-            return;
+            die(Tools::jsonEncode(array('message' => Tools::displayError($this->module->l('Null quantity!!')),'hasError' => true)));
         }
         elseif (!Tools::getValue('pid')) {
-            print json_encode(array('message' => Tools::displayError($this->module->l('Product not found')),'hasError' => true));
-            return;
+            die(Tools::jsonEncode(array('message' => Tools::displayError($this->module->l('Product not found')),'hasError' => true)));
         }
 
         $product = new Product((int)Tools::getValue('pid'));
         if (Validate::isLoadedObject($product)) {
             if (!$product->available_for_order || !$product->active) {
-                print json_encode(array('message' => Tools::displayError($this->module->l('This product is no longer available.')), 'hasError' => true));
-                return;
+                die(Tools::jsonEncode(array('message' => Tools::displayError($this->module->l('This product is no longer available.')), 'hasError' => true)));
             }
 
             // update model if user is logged in system
@@ -197,7 +210,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
                 $this->quote->setOperator($operator);
                 $this->quote->setQuantity(pSql(Tools::getValue('pqty')));
-                $this->quote->add();
+                $add = $this->quote->add();
             }
         }
         return true;
