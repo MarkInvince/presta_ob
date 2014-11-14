@@ -1,8 +1,10 @@
 {capture name=path}{l s='Ask for a Quote' mod='quotes'}{/capture}
-{$isLogged}
-{$isGuest}
+<div class="block">
+    <h4 class="title_block">
+        {l s='Your quotes cart' mod='quotes'}
+    </h4>
+</div>
 
-<h2 class="page-heading">{l s='Your quotes cart' mod='quotes'}</h2>
 
 {if isset($authentification_error)}
     <div class="alert alert-danger">
@@ -23,8 +25,13 @@
 
     {include file="$tpl_path./quote_product_list.tpl"}
 
-    {if isset($isLogged) && $isLogged == 1}
-        <a id="qsubmitnow" class="button" href="{$base_dir}modules/askforaquote/frontoffice/askforaquote.php?gofinal=1" title="{l s='Submit without preview' mod='quotes'}">{l s='Submit now' mod='quotes'}</a>
+    {if isset($isLogged) && $isLogged == 1 && count($products) > 0}
+        <a class="btn btn-success submit_quote" href="javascript:void(0);" title="{l s='Submit now' mod='quotes'}">
+            <span>
+                {l s='Submit now' mod='quotes'}
+                <i class="icon-chevron-right right"></i>
+            </span>
+        </a>
     {else}
         {include file="$tpl_path./quotes_new_account.tpl"}
     {/if}
