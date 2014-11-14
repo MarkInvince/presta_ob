@@ -333,6 +333,28 @@ class Quotes extends Module
 		$this->context->controller->addJS($this->_path.'/js/front.js');
 		$this->context->controller->addCSS($this->_path.'/css/front.css');
 	}
+
+	public function hookTop()
+	{
+		//load model
+		include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
+		$quote_obj = new QuotesProductCart;
+
+		$products = array();
+		// check for user cart session. Defined in QuotesCart if user add product to quote box
+		if($this->context->cookie->__isset('request_id')) {
+			$quote_obj->id_quote = $this->context->cookie->__get('request_id');
+			$products = $quote_obj->getProducts();
+		}
+		$this->context->smarty->assign('session', $this->context->cookie->__get('request_id'));
+		$this->context->smarty->assign('actionAddQuotes',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
+		$this->context->smarty->assign('products', $products);
+		$this->context->smarty->assign('cartTotalProducts', count($products));
+        $this->context->smarty->assign('catalogMode', '');
+		$this->context->smarty->assign('quotesCart',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
+		if (Configuration::get('MAIN_STATE'))
+			return $this->display(__FILE__, 'quotesCart.tpl');
+	}
     /**
 	 * Add ask to quote button to product list
 	 */
@@ -345,7 +367,6 @@ class Quotes extends Module
 		$this->context->smarty->assign('isLogged', $customer);
         $this->context->smarty->assign('product', $product);
         $this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
-        $this->context->smarty->assign('actionAddQuotes',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
         $linkCore = new Link;
 		$this->context->smarty->assign('plink', $linkCore->getProductLink($product->id, $product->link_rewrite, $product->id_category_default));
 

@@ -1,11 +1,9 @@
 <div class="ask_offer clearfix">
-    <script type="text/javascript">
-        var quotesCart = "{$actionAddQuotes}";
-    </script>
     <form id="quote_ask_form" action="{$actionAddQuotes}" method="post">
         <input type="hidden" name="action" value="add" />
         <input type="hidden" name="ajax" value="true" />
         <input type="hidden" name="pid" value="{$product->id|intval}" />
+        <input type="hidden" name="ipa" id="ipa" value="" />
 		{if $PS_CATALOG_MODE}
     	    <label for="quantity_wanted_ask">{l s='Quantity' mod='quotes'}:</label>
             <input type="hidden" name="catalog_mode" value="1" />
