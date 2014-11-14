@@ -95,8 +95,13 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $free_shipping = true;
                 break;
             }
-
+        $products = array();
+        if ($this->context->cookie->__isset('request_id')) {
+            $this->quote->id_quote = $this->context->cookie->__get('request_id');
+            $products = $this->quote->getProducts();
+        }
         $this->context->smarty->assign(array(
+            'products' => $products,
             'quotesNumber' => 1,
             'tpl_path' => $tpl_path,
             'back' => $back,
