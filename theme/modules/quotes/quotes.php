@@ -94,8 +94,6 @@ class Quotes extends Module
 
 	public function uninstall()
 	{
-		include(dirname(__FILE__).'/sql/uninstall.php');
-
 		$this->deleteTables();
         
         $tab = new Tab(Configuration::get('MODULE_TAB_ID'));

@@ -189,6 +189,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     /**
      * Process submit on an account
      */
+    protected function
     protected function processSubmitAccount()
     {
         Hook::exec('actionBeforeSubmitAccount');
