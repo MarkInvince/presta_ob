@@ -25,8 +25,8 @@
 
     {include file="$tpl_path./quote_product_list.tpl"}
 
-    {if isset($isLogged) && $isLogged == 1}
-        <a class="btn btn-success" href="" title="{l s='Submit now' mod='quotes'}">
+    {if isset($isLogged) && $isLogged == 1 && count($products) > 0}
+        <a class="btn btn-success submit_quote" href="javascript:void(0);" title="{l s='Submit now' mod='quotes'}">
             <span>
                 {l s='Submit now' mod='quotes'}
                 <i class="icon-chevron-right right"></i>

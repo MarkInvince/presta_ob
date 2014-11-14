@@ -57,14 +57,31 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $add = $this->ajaxAddToQuotesCart();
 
                 $this->context->smarty->assign('products', $this->quote->getProducts());
-                echo $this->context->smarty->display(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl");
+                die(Tools::jsonEncode(array('products' => $this->context->smarty->display(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"))));
             }
             if(Tools::getValue('action') == 'delete') {
                 $delete = $this->deleteQuoteById(Tools::getValue('item_id'));
 
                 $this->context->smarty->assign('products', $this->quote->getProducts());
-                echo $this->context->smarty->display(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl");
+                die(Tools::jsonEncode(array('products' => $this->context->smarty->display(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"))));
             }
+            if(Tools::getValue('action') == 'submit') {
+                if($this->submitQuote()) {
+                    die(Tools::jsonEncode(array('hasError' => false,'redirectUrl' => $this->context->link->getModuleLink($this->module->name, 'submitedQuotes', array(), true))));
+                }
+                else {
+                    die(Tools::jsonEncode(array('hasError' => true)));
+                }
+            }
+        }
+    }
+    protected function submitQuote() {
+        // check for user session
+        if ($this->context->cookie->__isset('request_id')) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
@@ -189,7 +206,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     /**
      * Process submit on an account
      */
-    protected function
     protected function processSubmitAccount()
     {
         Hook::exec('actionBeforeSubmitAccount');
