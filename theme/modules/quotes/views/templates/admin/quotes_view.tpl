@@ -1,5 +1,5 @@
 <div class="row panel">
-    <h3><i class="icon-hand-right"></i> {l s='Quote request:' mod="quotes"} #{$quote[0].id_quote}</h3>
+    <h3><i class="icon-hand-right"></i> {l s='Quote request:' mod="quotes"} #{$quote[0]['id_quote']}</h3>
     <br/>
     <div class="col-lg-6 panel admin-panel">
         <h3><i class="icon-hand-right"></i> {l s='Requisites' mod="quotes"}</h3>
@@ -10,11 +10,22 @@
     <div class="col-lg-12 panel">
         <h3><i class="icon-list-ul"></i> {l s='Products list' mod="quotes"}</h3>
         <table class="table">
-            {foreach $quote[0].products_list as $product}
+            <thead>
+                <tr>
+                    <td>{l s="ID" mod="quotes"}</td>
+                    <td>{l s="Name" mod="quotes"}</td>
+                    <td>{l s="Unit price" mod="quotes"}</td>
+                    <td>{l s="Quantity" mod="quotes"}</td>
+                    <td>{l s="Total" mod="quotes"}</td>
+                </tr>
+            </thead>
+            {foreach $quote[0]['products'] as $product}
                 <tr>
                     <td>{$product.id}</td>
+                    <td></td>
+                    <td></td>
                     <td>{$product.quantity}</td>
-                    <td>{print_r($quote[0].products)}</td>
+                    <td></td>
                 </tr>
             {/foreach}
         </table>

@@ -98,14 +98,20 @@ class QuotesSubmitCore extends ObjectModel
             return array();
 
         $customer = new Customer($result['id_customer']);
-        $result['customer'] = array(
+        $out['customer'] = array(
             'id' => $customer->id,
             'name' => $customer->firstname.' '.$customer->lastname,
             'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
         );
 
-        $result['products_list'] = Tools::jsonDecode($row['products']);
-        return $result;
+        $product_arr = array();
+        $products = Tools::jsonDecode($result[0]['products'], true);
+        foreach($products as $item) {
+            $product_arr[] = new Product($item['id']);
+        }
+        $out['products'] = $product_arr;
+        $out[] = $result[0];
+        return $out;
     }
     public function getOldAllQuotes() {
 
