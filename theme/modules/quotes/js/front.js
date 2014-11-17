@@ -27,9 +27,7 @@
 */
 
 $(document).ready(function(){
-	$('#quantity_wanted').on('change', function(){
 
-	});
 
 	$('.submit_quote').on('click', function() {
 		$.ajax({
