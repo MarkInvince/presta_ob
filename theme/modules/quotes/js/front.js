@@ -27,9 +27,7 @@
 */
 
 $(document).ready(function(){
-	$('#quantity_wanted').on('change', function(){
 
-	});
 
 	// Change quote name
 	$('.quote_name').on('click', function(){

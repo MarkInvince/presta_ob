@@ -65,4 +65,79 @@ class QuotesSubmitCore extends ObjectModel
 
         return parent::delete();
     }
+    public function getAllQuotes() {
+
+        $quotes = array();
+        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `submited` = 0');
+        if (empty($result))
+            return array();
+
+        foreach ($result as $row) {
+            $quote = array();
+            $quote['id_quote'] = $row['id_quote'];
+            $quote['quote_name'] = $row['quote_name'];
+            $quote['id_shop'] = $row['id_shop'];
+            $quote['id_shop_group'] = $row['id_shop_group'];
+            $quote['id_lang'] = $row['id_lang'];
+            $customer = new Customer($row['id_customer']);
+            $quote['customer'] = array(
+                'id' => $customer->id,
+                'name' => $customer->firstname.' '.$customer->lastname,
+                'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
+            );
+            $quote['products'] = Tools::jsonDecode($row['products']);
+            $quote['date_add'] = $row['date_add'];
+            $quote['submited'] = $row['submited'];
+            $quotes[] = $quote;
+        }
+        return $quotes;
+    }
+    public function getQuoteById($id_quote, $id_customer) {
+        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.$id_quote.' AND `id_customer` = '.$id_customer);
+        if (empty($result))
+            return array();
+
+        $customer = new Customer($result['id_customer']);
+        $out['customer'] = array(
+            'id' => $customer->id,
+            'name' => $customer->firstname.' '.$customer->lastname,
+            'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
+        );
+
+        $product_arr = array();
+        $products = Tools::jsonDecode($result[0]['products'], true);
+        foreach($products as $item) {
+            $product_arr[] = new Product($item['id']);
+        }
+        $out['products'] = $product_arr;
+        $out[] = $result[0];
+        return $out;
+    }
+    public function getOldAllQuotes() {
+
+        $quotes = array();
+        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `submited` = 1');
+        if (empty($result))
+            return array();
+
+        foreach ($result as $row) {
+            $quote = array();
+            $quote['id_quote'] = $row['id_quote'];
+            $quote['quote_name'] = $row['quote_name'];
+            $quote['id_shop'] = $row['id_shop'];
+            $quote['id_shop_group'] = $row['id_shop_group'];
+            $quote['id_lang'] = $row['id_lang'];
+            $customer = new Customer($row['id_customer']);
+            $quote['customer'] = array(
+                'id' => $customer->id,
+                'name' => $customer->firstname.' '.$customer->lastname,
+                'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
+            );
+            $quote['products'] = Tools::jsonDecode($row['products']);
+            $quote['date_add'] = $row['date_add'];
+            $quote['submited'] = $row['submited'];
+            $quotes[] = $quote;
+        }
+        return $quotes;
+    }
 }

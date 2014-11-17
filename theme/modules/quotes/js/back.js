@@ -34,4 +34,8 @@ $(document).ready(function(){
     $('#MAIN_TERMS_AND_COND_off').on('change', function(){
         $('#cms_page_select').parent().parent().fadeOut("slow");
     });
+
+	$('body').on('click','.view_quote',  function(){
+		$(this).closest('form').submit();
+	});
 });
