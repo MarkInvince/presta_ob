@@ -65,4 +65,46 @@ class QuotesSubmitCore extends ObjectModel
 
         return parent::delete();
     }
+    public function getAllQuotes() {
+
+        $quotes = array();
+        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `submited` = 0');
+        if (empty($result))
+            return array();
+
+        foreach ($result as $row) {
+            $quote = array();
+            $quote['id_quote'] = $row['id_quote'];
+            $quote['quote_name'] = $row['quote_name'];
+            $quote['id_shop'] = $row['id_shop'];
+            $quote['id_shop_group'] = $row['id_shop_group'];
+            $quote['id_lang'] = $row['id_lang'];
+            $quote['id_customer'] = $row['id_customer'];
+            $quote['products'] = Tools::jsonDecode($row['products']);
+            $quote['date_add'] = $row['date_add'];
+            $quotes[] = $quote;
+        }
+        return $quotes;
+    }
+    public function getOldAllQuotes() {
+
+        $quotes = array();
+        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `submited` = 1');
+        if (empty($result))
+            return array();
+
+        foreach ($result as $row) {
+            $quote = array();
+            $quote['id_quote'] = $row['id_quote'];
+            $quote['quote_name'] = $row['quote_name'];
+            $quote['id_shop'] = $row['id_shop'];
+            $quote['id_shop_group'] = $row['id_shop_group'];
+            $quote['id_lang'] = $row['id_lang'];
+            $quote['id_customer'] = $row['id_customer'];
+            $quote['products'] = Tools::jsonDecode($row['products']);
+            $quote['date_add'] = $row['date_add'];
+            $quotes[] = $quote;
+        }
+        return $quotes;
+    }
 }
