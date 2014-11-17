@@ -1,3 +1,4 @@
+
 {capture name=path}{l s='Ask for a Quote' mod='quotes'}{/capture}
 <div class="block">
     <h4 class="title_block">
@@ -5,26 +6,8 @@
     </h4>
 </div>
 
-
-{if isset($authentification_error)}
-    <div class="alert alert-danger">
-        {*{if {$authentification_error|@count} == 1}*}
-        {*<p>{l s='There\'s at least one error'} :</p>*}
-        {*{else}*}
-        {*<p>{l s='There are %s errors' sprintf=[$account_error|@count]} :</p>*}
-        {*{/if}*}
-        <ol>
-            {foreach from=$authentification_error item=v}
-                <li>{$v}</li>
-            {/foreach}
-        </ol>
-    </div>
-{/if}
-
-{if isset($quotesNumber) && $quotesNumber > 0}
-
+{if isset($products) && count($products) > 0}
     {include file="$tpl_path./quote_product_list.tpl"}
-
     {if isset($isLogged) && $isLogged == 1 && count($products) > 0}
         <a class="btn btn-success submit_quote" href="javascript:void(0);" title="{l s='Submit now' mod='quotes'}">
             <span>
@@ -35,7 +18,9 @@
     {else}
         {include file="$tpl_path./quotes_new_account.tpl"}
     {/if}
-
+    <div {if isset($userRegistry) && $userRegistry==1}style="display: block;"{/if} id="quote_account_saved" class="alert alert-success">
+        {l s='Account information saved successfully' mod='quotes'}
+    </div>
 {else}
     <p class="alert alert-warning">{l s='No quotes' mod='quotes'}</p>
 {/if}

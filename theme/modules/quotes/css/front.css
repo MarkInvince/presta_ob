@@ -490,3 +490,75 @@
 .expanded {
     display: block!important;
 }
+
+/************************************************************************
+						Cart tpl AND Account reg/auth
+*************************************************************************/
+#quote_account_saved {
+    display: none;
+    margin-top: 10px;
+}
+
+/************************************************************************
+						Submited Quotes Page
+*************************************************************************/
+#quote_products_info {
+    display: none;
+}
+
+/************************************************************************
+						Bargains messages
+*************************************************************************/
+.bargains_list {
+    padding: 15px;
+    max-height: 500px;
+    overflow-y: scroll;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #d6d4d4;
+}
+.bargains_list li {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border: 1px solid #d6d4d4;
+}
+.bargains_list li.admin_bargain {
+
+}
+.bargains_list li.customer_bargain {
+    background: #FBFBFB;
+}
+.bargain_whos {
+    font-weight: bold;
+}
+
+.bargains_list li.admin_bargain .bargain_whos {
+    color: #42B455;
+}
+
+.bargain_heading {
+    border-bottom: 1px solid #d6d4d4;
+}
+
+.bargain_message {
+    margin-bottom: 15px;
+    border: none;
+}
+
+.bargain_price_container {
+    float: right;
+    text-align: right;
+}
+.bargain_price_container .table {
+    margin-bottom: 5px;
+}
+
+.bargain_price_container .price {
+    font: 600 21px/25px "Open Sans", sans-serif;
+    color: #333333;
+    background: white;
+}
+
+.bargain_alerts .alert {
+    text-align: left;
+    display: none;
+}

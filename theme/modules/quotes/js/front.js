@@ -29,6 +29,55 @@
 $(document).ready(function(){
 
 
+	// Change quote name
+	$('.quote_name').on('click', function(){
+		alert('ook');
+		$(this)
+			.html('<input id="changed_name" type="text" value="' + $(this).text() + '">')
+				.removeClass('quote_name');
+	});
+
+	// Show quote products
+	$(document).on('click', '#show_quote_products_info', function (e) {
+		e.preventDefault();
+		$('#quote_products_info').toggle('slow');
+		//$(this).text();
+	});
+
+	//Submit bargain price
+	$('#rejectBargainOffer, #acceptBargainOffer').on('click', function(e) {
+
+		var $action = $(this).data('action');
+		var $id_bargain = $(this).data('id');
+		var $id_quote = $(this).data('quote');
+
+		$.ajax({
+			url: submitedQuotes,
+			method:'post',
+			data:
+			{
+				actionSubmitBargain : $action,
+        		id_quote : $id_quote,
+				id_bargain : $id_bargain
+			},
+			dataType:'json',
+			success: function(data) {
+				console.log(data);
+				console.log(data.submited);
+				if(data.hasError)
+					$('#danger_bargain_' + $id_bargain).css('display', 'block');
+				else
+					$('.burgainSubmitForm').css('display', 'none');
+
+				if(data.submited == 'reject')
+					$('#reject_bargain_' + $id_bargain).css('display', 'block');
+				if(data.submited == 'accept')
+					$('#success_bargain_' + $id_bargain).css('display', 'block');
+			}
+		});
+		return false;
+	});
+
 	$('.submit_quote').on('click', function() {
 		$.ajax({
 			url: quotesCart,

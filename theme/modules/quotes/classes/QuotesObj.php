@@ -50,27 +50,12 @@ class QuotesObj
 
     public function getQuotesByCustomer($id_customer)
     {
-
         if (!$id_customer)
             return false;
-//
-//        $sql = "SELECT * FROM `"._DB_PREFIX_."quotes` WHERE `id_customer` = ".$id_customer;
-//
-//        $result = Db::getInstance()->execute($sql);
 
+        $sql = "SELECT * FROM `"._DB_PREFIX_."quotes` WHERE `id_customer` = ".$id_customer;
 
-        $quotes = array();
-
-        for ($i=0; $i<5; $i++) {
-            $quotes[$i]['id_quote'] = $i;
-            $quotes[$i]['id_customer'] = 31;
-            $quotes[$i]['date_add'] = time();
-            $quotes[$i]['reference'] = Tools::passwdGen(10);
-            $quotes[$i]['total_paid'] = rand(100, 9999);
-            $quotes[$i]['id_currency'] = 1;
-        }
-
-        return $quotes;
+        return $result = Db::getInstance()->executeS($sql);
 
     }
 
@@ -78,19 +63,9 @@ class QuotesObj
         if (!$id_quote)
             return false;
 
-        $quote = array(
-            'id' => 1,
-            'name' => 'dfhjedhfeg',
-            'totalPrice' => '12330',
-            'bargainPrice' => '12100',
-            'reference' => '5445sd4s45',
-            'products' => array(
-                'id' => '1',
-                'quantity' => '5'
-            )
-        );
+        $sql = "SELECT * FROM `"._DB_PREFIX_."quotes` WHERE `id_quote` = ".$id_quote;
 
-        return $quote;
+        return $result = Db::getInstance()->executeS($sql);
     }
 
     public function getBargains($id_quote = false) {
@@ -117,5 +92,31 @@ class QuotesObj
         ";
 
         return $result = Db::getInstance()->execute($sql);
+    }
+
+    public function submitBargain($id_bargain = false, $action, $id_quote) {
+        if (!$id_bargain)
+            return false;
+
+        if($action == 'reject') {
+            $sql = "UPDATE `"._DB_PREFIX_."quotes_bargains` SET
+                    `bargain_customer_confirm` = 2
+                        WHERE `id_bargain`=".$id_bargain;
+            return Db::getInstance()->execute($sql);
+        }
+        elseif($action == 'accept') {
+            $sql = "UPDATE `"._DB_PREFIX_."quotes_bargains` SET
+                `bargain_customer_confirm` = 1
+                    WHERE `id_bargain`=".$id_bargain;
+            if(Db::getInstance()->execute($sql)) {
+                $sql = "UPDATE `"._DB_PREFIX_."quotes` SET
+                `submited` = 1
+                    WHERE `id_quote`=".$id_quote;
+                if(Db::getInstance()->execute($sql))
+                    return true;
+            }
+        }
+
+        return false;
     }
 }
