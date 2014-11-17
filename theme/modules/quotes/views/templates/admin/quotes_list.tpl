@@ -11,6 +11,7 @@
                     <td class="text-center">{l s="Customer" mod="quotes"}</td>
                     <td class="text-center">{l s="Total Products" mod="quotes"}</td>
                     <td class="text-center">{l s="Date add" mod="quotes"}</td>
+                    <td class="text-center">{l s="Status" mod="quotes"}</td>
                     <td class="text-center"><i class="icon-cogs"></i></td>
                 </tr>
             </thead>

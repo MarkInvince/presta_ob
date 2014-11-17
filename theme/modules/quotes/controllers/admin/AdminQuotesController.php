@@ -61,15 +61,24 @@ class AdminQuotesController extends ModuleAdminController
     }
 	public function postProcess()
 	{
-		
+
 	}
     protected function assign() {
-        if(!Tools::getValue('show_customer')) {
+        global $currentIndex;
+        if(!Tools::getValue('id_customer') AND !Tools::getValue('id_quote')) {
             $this->context->smarty->assign(array(
+                'index' => $currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes'),
                 'quotes' => $this->squotes->getAllQuotes(),
                 'totalQuotes' => count($this->squotes->getAllQuotes())
             ));
             return $this->context->smarty->fetch($this->getTemplatePath(). 'quotes_list.tpl');
+        }
+        else {
+            $this->context->smarty->assign(array(
+                'index' => $currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes'),
+                'quote' => $this->squotes->getQuoteById(pSQL(Tools::getValue('id_quote')), pSQL(Tools::getValue('id_customer'))),
+            ));
+            return $this->context->smarty->fetch($this->getTemplatePath(). 'quotes_view.tpl');
         }
     }
 }

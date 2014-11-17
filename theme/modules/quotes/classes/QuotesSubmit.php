@@ -79,12 +79,33 @@ class QuotesSubmitCore extends ObjectModel
             $quote['id_shop'] = $row['id_shop'];
             $quote['id_shop_group'] = $row['id_shop_group'];
             $quote['id_lang'] = $row['id_lang'];
-            $quote['id_customer'] = $row['id_customer'];
+            $customer = new Customer($row['id_customer']);
+            $quote['customer'] = array(
+                'id' => $customer->id,
+                'name' => $customer->firstname.' '.$customer->lastname,
+                'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
+            );
             $quote['products'] = Tools::jsonDecode($row['products']);
             $quote['date_add'] = $row['date_add'];
+            $quote['submited'] = $row['submited'];
             $quotes[] = $quote;
         }
         return $quotes;
+    }
+    public function getQuoteById($id_quote, $id_customer) {
+        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.$id_quote.' AND `id_customer` = '.$id_customer);
+        if (empty($result))
+            return array();
+
+        $customer = new Customer($result['id_customer']);
+        $result['customer'] = array(
+            'id' => $customer->id,
+            'name' => $customer->firstname.' '.$customer->lastname,
+            'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
+        );
+
+        $result['products_list'] = Tools::jsonDecode($row['products']);
+        return $result;
     }
     public function getOldAllQuotes() {
 
@@ -100,9 +121,15 @@ class QuotesSubmitCore extends ObjectModel
             $quote['id_shop'] = $row['id_shop'];
             $quote['id_shop_group'] = $row['id_shop_group'];
             $quote['id_lang'] = $row['id_lang'];
-            $quote['id_customer'] = $row['id_customer'];
+            $customer = new Customer($row['id_customer']);
+            $quote['customer'] = array(
+                'id' => $customer->id,
+                'name' => $customer->firstname.' '.$customer->lastname,
+                'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
+            );
             $quote['products'] = Tools::jsonDecode($row['products']);
             $quote['date_add'] = $row['date_add'];
+            $quote['submited'] = $row['submited'];
             $quotes[] = $quote;
         }
         return $quotes;
