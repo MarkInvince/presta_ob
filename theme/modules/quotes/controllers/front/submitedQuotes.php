@@ -9,7 +9,6 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
     public $quote_product;
     public $id_quote;
     public $id_customer;
-    private $user_token;
 
     public function __construct()
     {
@@ -22,6 +21,11 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
         $this->id_quote = 0;
 
         $this->id_customer = (int)$this->context->cookie->id_customer;
+
+        if (!$this->context->customer->isLogged()) {
+            Tools::redirect('authentication.php');
+        }
+
 
     }
 
@@ -37,12 +41,14 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
 
     public function postProcess() {
 
-        if (!Tools::getValue('id_quote', 1))
+        if (!Tools::getValue('id_quote'))
             $this->id_quote = 0;
         else {
             $this->id_quote = Tools::getValue('id_quote');
         }
 
+        if (Tools::isSubmit('addClientBargain'))
+            $this->addClientBargain(Tools::getValue('id_quote'));
 
     }
 
@@ -65,7 +71,7 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
             $quoteInfo = $this->quote->getQuoteInfo($this->id_quote);
             $this->context->smarty->assign('quote', $quoteInfo);
 
-            $bargains = $this->quote->getQuoteInfo($this->id_quote);
+            $bargains = $this->quote->getBargains($this->id_quote);
             $this->context->smarty->assign('bargains', $bargains);
         } else // if 0 Get quotes list
         {
@@ -73,14 +79,32 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
             $this->context->smarty->assign('quotes', $quotes);
         }
 
+
+
         $this->context->smarty->assign(array(
             'id_quote' => $this->id_quote,
-            'id_customer' => $this->id_customer
+            'id_customer' => $this->id_customer,
+            'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED')
         ));
 
         $this->setTemplate('submited_quotes.tpl');
     }
 
 
+    /**
+     * Add client bargain to quote by quote id
+     */
+    protected function addClientBargain($id_quote = false) {
+        if(!Configuration::get('MESSAGING_ENABLED') || !$id_quote)
+            return false;
+
+        if(!Tools::getValue('bargain_text'))
+            $this->errors[] = Tools::displayError('You can not add empty message.');
+
+        if (!count($this->errors))
+            return $this->quote->addQuoteBargain($id_quote, Tools::getValue('bargain_text'));
+        else
+            $this->context->smarty->assign('bargain_errors', $this->bargain_errors);
+    }
 
 }

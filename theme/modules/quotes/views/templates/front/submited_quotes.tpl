@@ -69,15 +69,106 @@
         </li>
     </ul>
 {else}
+
+    <h1 class="page-heading">{$quote.name}</h1>
+
     <h1 class="page-heading bottom-indent">{l s='Quote information' mod='quotes'}</h1>
 
     <pre>
         {print_r($quote)}
     </pre>
 
-    {$quote.name}
 
-    <h1 class="page-heading bottom-indent">{l s='Quote bargain' mod='quotes'}</h1>
+
+    <table id="quote_info" class="table table-bordered ">
+        <thead>
+        <tr>
+            <th class="quotes_cart_product first_item">{l s='Product' mod="quotes"}</th>
+            <th class="quotes_cart_description item">{l s='Description' mod="quotes"}</th>
+            <th class="quotes_cart_unit item">{l s='Unit price' mod="quotes"}</th>
+            <th class="quotes_cart_quantity item">{l s='Qty' mod="quotes"}</th>
+            <th class="quotes_cart_total item">{l s='Total' mod="quotes"}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $products as $product}
+            <tr id="product_{$product.id}_{$product.id_attribute}">
+                <td class="quotes_cart_product">
+                    <a href="{$product.link|escape:'html':'UTF-8'}">
+                        <img src="{$link->getImageLink($product.link_rewrite, $product.id, 'cart_default')|escape:'html':'UTF-8'}" alt="{$product.name|escape:'html':'UTF-8'}" />
+                    </a>
+                </td>
+                <td class="quotes_cart_description">
+                    <p class="product-name">
+                        <a href="{$product.link|escape:'html':'UTF-8'}">{$product.title|escape:'html':'UTF-8'}</a>
+                    </p>
+                </td>
+                <td class="quotes_cart_unit">
+                    {$product.price}
+                </td>
+                <td class="quotes_cart_quantity">
+                    <input type="hidden" value="{$product.quantity}" name="quantity_{$product.id}_{$product.id_attribute}" />
+                    <input size="2" type="text" autocomplete="off" class="cart_quantity_input form-control grey" value="{$product.quantity}"  name="quantity_{$product.id}_{$product.id_attribute}" />
+                </td>
+                <td class="quotes_cart_total">
+                    {$product.price}
+                </td>
+                <td class="quotes_cart_delete">
+                    <a href="javascript:void(0);" rel="{$product.id}_{$product.id_attribute}" class="remove_quote"><i class="icon-remove"></i></a>
+                </td>
+            </tr>
+        {/foreach}
+        </tbody>
+    </table>
+
+    <h1 class="page-heading bottom-indent">{l s='Quote bargains' mod='quotes'}</h1>
+
+    <p>Messagin - {$MESSAGING_ENABLED}</p>
+
+    <pre>
+        {print_r($bargains)}
+    </pre>
+    <ul class="bargains_list">
+        {foreach from=$bargains item=bargain}
+            {if $bargain.bargain_whos == 'customer'}
+                <li class="customer_bargain">
+                    <div class="date col-xs-3">
+                        {$bargain.date_add}
+                    </div>
+                    <div class="col-xs-9">{$bargain.bargain_text}</div>
+                </li>
+            {/if}
+        {/foreach}
+        <li>
+
+        </li>
+    </ul>
+
+    {if $MESSAGING_ENABLED}
+        <form action="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" method="post" id="client_bargain_txt" class="std">
+            <input type="hidden" id="id_quote" name="id_quote" value="{$id_quote}" />
+            <fieldset>
+                <div class="box">
+                    {if isset($bargain_errors)}
+                        <div class="alert alert-danger">
+                            <ol>
+                                {foreach from=$bargain_errors item=v}
+                                    <li>{$v}</li>
+                                {/foreach}
+                            </ol>
+                        </div>
+                    {/if}
+                    <h3 class="page-subheading">{l s='New bargain message' mod='quotes'}</h3>
+                    <div class="form-group is_customer_param">
+                        <label for="other_invoice">{l s='Additional information' mod='quotes'}</label>
+                        <textarea class="form-control" name="bargain_text" id="bargain_text" cols="26" rows="3"></textarea>
+                    </div>
+                    <button type="submit" name="addClientBargain" id="addClientBargain" class="btn btn-default button button-medium"><span>{l s='Send' mod='quotes'}<i class="icon-chevron-right right"></i></span></button>
+                </div>
+
+            </fieldset>
+        </form>
+    {/if}
 
     <ul class="footer_links clearfix">
         <li>

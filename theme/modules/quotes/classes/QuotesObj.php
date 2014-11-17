@@ -3,7 +3,7 @@
 if (!defined('_PS_VERSION_'))
     exit;
 
-class QuotesObj extends ObjectModel
+class QuotesObj
 {
 
     /*
@@ -18,7 +18,7 @@ class QuotesObj extends ObjectModel
     public $quantity;
     public $date_add;
     public $date_upd;
-    */
+
 
     public static $definition = array(
         'table' => 'quotes_product',
@@ -45,6 +45,7 @@ class QuotesObj extends ObjectModel
             $this->id_lang = (int)(Language::getLanguage($id_lang) !== false) ? $id_lang : Configuration::get('PS_LANG_DEFAULT');
 
     }
+    */
 
 
     public function getQuotesByCustomer($id_customer)
@@ -73,8 +74,8 @@ class QuotesObj extends ObjectModel
 
     }
 
-    public function getQuoteInfo($quote_id = false) {
-        if (!$quote_id)
+    public function getQuoteInfo($id_quote = false) {
+        if (!$id_quote)
             return false;
 
         $quote = array(
@@ -90,5 +91,31 @@ class QuotesObj extends ObjectModel
         );
 
         return $quote;
+    }
+
+    public function getBargains($id_quote = false) {
+        if (!$id_quote)
+            return false;
+        $sql = "SELECT * FROM `"._DB_PREFIX_."quotes_bargains` WHERE `id_quote`=".$id_quote." ORDER BY `id_bargain` ASC";
+
+
+        return $result = Db::getInstance()->executeS($sql);
+    }
+
+    public function addQuoteBargain($id_quote = false, $text, $whos = 'customer', $price = 0, $price_text = '') {
+        if (!$id_quote)
+            return false;
+        $date_add = date('Y-m-d H:i:s', time());
+        $sql = "INSERT INTO `"._DB_PREFIX_."quotes_bargains` SET
+                    `id_quote` = ".$id_quote.",
+                    `bargain_whos` = '".$whos."',
+                    `bargain_text` = '".$text."',
+                    `date_add` = '".$date_add."',
+                    `bargain_price` = ".$price.",
+                    `bargain_price_text` = '".$price_text."',
+                    `bargain_customer_confirm` = 0
+        ";
+
+        return $result = Db::getInstance()->execute($sql);
     }
 }
