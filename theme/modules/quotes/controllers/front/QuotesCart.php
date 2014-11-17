@@ -129,6 +129,10 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $free_shipping = true;
                 break;
             }
+
+        if (Tools::getValue('userRegistry'))
+            $this->context->smarty->assign('userRegistry', '1');
+
         $products = array();
         if ($this->context->cookie->__isset('request_id')) {
             $this->quote->id_quote = $this->context->cookie->__get('request_id');
@@ -136,7 +140,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
         $this->context->smarty->assign(array(
             'products' => $products,
-            'quotesNumber' => 1,
             'tpl_path' => $tpl_path,
             'back' => $back,
             'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
@@ -315,7 +318,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                             'newCustomer' => $customer
                         ));
 
-                        Tools::redirect($this->context->link->getModuleLink('quotes', 'QuotesCart'));
+                        Tools::redirect($this->context->link->getModuleLink('quotes', 'QuotesCart')."?userRegistry=true");
                     }
                     else
                         $this->errors[] = Tools::displayError('An error occurred while creating your account.');
@@ -448,7 +451,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
                         //$this->errors[] = Tools::displayError('My error.');
 
-                        Tools::redirect($this->context->link->getModuleLink('quotes', 'QuotesCart'));
+                        Tools::redirect($this->context->link->getModuleLink('quotes', 'QuotesCart')."?userRegistry=true");
                     }
                 }
             }

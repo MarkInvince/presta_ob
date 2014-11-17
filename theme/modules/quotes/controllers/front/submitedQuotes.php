@@ -50,6 +50,11 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
         if (Tools::isSubmit('addClientBargain'))
             $this->addClientBargain(Tools::getValue('id_quote'));
 
+        if (Tools::getValue('actionSubmitBargain'))
+            $this->bargainCustomerSubmit();
+        //else
+            //die(Tools::jsonEncode(array('hasError' => true)));
+
     }
 
     public function initContent()
@@ -69,17 +74,30 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
         // if id - get Quote information and Quote Bargains
         if ($this->id_quote != 0) {
             $quoteInfo = $this->quote->getQuoteInfo($this->id_quote);
+            $quoteInfo = $this->foreachQuotes($quoteInfo);
+            foreach ($quoteInfo as $quoteInf ) {
+                $quoteInfo = $quoteInf;
+            }
             $this->context->smarty->assign('quote', $quoteInfo);
 
+
             $bargains = $this->quote->getBargains($this->id_quote);
+
+            foreach ($bargains as $key=>$bargain){
+                //$bargain['bargain_price'] =
+                $bargains[$key]['bargain_price_display'] = Tools::displayPrice(Tools::ps_round($bargain['bargain_price'],2), $this->context->currency);
+            }
+
             $this->context->smarty->assign('bargains', $bargains);
+
         } else // if 0 Get quotes list
         {
             $quotes = $this->quote->getQuotesByCustomer($this->id_customer);
+
+            $quotes = $this->foreachQuotes($quotes);
+
             $this->context->smarty->assign('quotes', $quotes);
         }
-
-
 
         $this->context->smarty->assign(array(
             'id_quote' => $this->id_quote,
@@ -90,6 +108,36 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
         $this->setTemplate('submited_quotes.tpl');
     }
 
+    /**
+     * Parcing quotes products from json To Array And Get Total Price of Quote
+     */
+    protected function foreachQuotes($quotes) {
+        foreach ($quotes as $firstkey=>$quoteInfo) {
+            $quote_total_price = 0;
+            foreach ($quoteInfo as $key=>$field){
+                if ($key == 'products'){
+                    $quoteIn[$key] = Tools::jsonDecode($field, true);
+                    foreach($quoteIn[$key] as $k=>$product) {
+                        $productObj = new Product($product['id'], true, $this->context->language->id);
+
+                        $quoteIn[$key][$k]['name'] = $productObj->name;
+
+                        $prod_price = Product::getPriceStatic($product['id'], true, NULL, 6);
+                        $quoteIn[$key][$k]['price_total'] = Tools::displayPrice(Tools::ps_round($prod_price*$product['quantity'],2), $this->context->currency);
+                        $quoteIn[$key][$k]['price'] = Tools::displayPrice(Tools::ps_round($prod_price,2), $this->context->currency);
+                        $quoteIn[$key][$k]['link_rewrite'] = $productObj->link_rewrite;
+                        $quoteIn[$key][$k]['link'] = $this->context->link->getProductLink($productObj, $productObj->link_rewrite, $productObj->category, null, null);
+
+                        $quote_total_price = $quote_total_price + $prod_price*$product['quantity'];
+                    }
+                    $quoteIn['price'] = Tools::displayPrice(Tools::ps_round($quote_total_price,2), $this->context->currency);
+                }else
+                    $quoteIn[$key] = $field;
+            }
+            $quotes[$firstkey] = $quoteIn;
+        }
+        return $quotes;
+    }
 
     /**
      * Add client bargain to quote by quote id
@@ -105,6 +153,19 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
             return $this->quote->addQuoteBargain($id_quote, Tools::getValue('bargain_text'));
         else
             $this->context->smarty->assign('bargain_errors', $this->bargain_errors);
+    }
+
+    /**
+     * Customer bargin submit
+     */
+    protected function bargainCustomerSubmit() {
+
+        $action = Tools::getValue('actionSubmitBargain');
+
+        if($this->quote->submitBargain(Tools::getValue('id_bargain'), $action, Tools::getValue('id_quote'))) {
+            die(Tools::jsonEncode(array('submited' => $action)));
+        }else
+            die(Tools::jsonEncode(array('hasError' => true)));
     }
 
 }

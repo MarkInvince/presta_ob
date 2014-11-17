@@ -97,7 +97,7 @@
                         {if !$PS_GUEST_QUOTES_ENABLED}
                             <div class="form-group">
                                 <p>{l s='To transform a quote to an order after it has been accepted by both ends you will need address delivery' mod='quotes'}</p>
-                                <p><a href="{$link->getPageLink('authentication', true)|escape:'html':'UTF-8'}" id="show_address_form">&raquo; {l s='Click here to add the address'}</a></p>
+                                <p><a href="{$link->getModuleLink('quotes', 'QuotesCart', array(), true)|escape:'html':'UTF-8'}" id="show_address_form">&raquo; {l s='Click here to add the address'}</a></p>
                             </div>
                         {/if}
                     {/if}
@@ -220,9 +220,7 @@
 
 
                     </div>
-                    <div style="display: none;" id="opc_account_saved" class="alert alert-success">
-                        {l s='Account information saved successfully'}
-                    </div>
+
                 <!-- END Account -->
                 </div>
             </div>

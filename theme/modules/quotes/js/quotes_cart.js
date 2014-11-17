@@ -1,7 +1,7 @@
 $(document).ready(function(){
     // GUEST CHECKOUT / NEW ACCOUNT MANAGEMENT
     if ((typeof isLogged == 'undefined' || !isLogged) || (typeof isGuest !== 'undefined' && isGuest)) {
-        if (addressEnabled) {
+        if (addressEnabled == 1) {
             $('#address_enabled').val('1');
         }
         if (isGuest) {
