@@ -85,7 +85,7 @@ class QuotesSubmitCore extends ObjectModel
                 'name' => $customer->firstname.' '.$customer->lastname,
                 'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
             );
-            $quote['products'] = Tools::jsonDecode($row['products']);
+            $quote['products'] = unserialize($row['products']);
             $quote['date_add'] = $row['date_add'];
             $quote['submited'] = $row['submited'];
             $quotes[] = $quote;
@@ -105,9 +105,16 @@ class QuotesSubmitCore extends ObjectModel
         );
 
         $product_arr = array();
-        $products = Tools::jsonDecode($result[0]['products'], true);
+        $products = unserialize($result[0]['products']);
         foreach($products as $item) {
-            $product_arr[] = new Product($item['id']);
+            $itemp = new Product($item['id'], true, $this->context->language->id);
+            $product_arr[] = array(
+                'id' => $itemp->id,
+                'name' => $itemp->name,
+                'quantity' => $item['quantity'],
+                'unit_price' => $itemp->getPriceStatic($itemp->id, true, $item['id_product_attribute'], 6),
+                'total' => $itemp->getPriceStatic($itemp->id, true, $item['id_product_attribute'], 6, null, false, true, $item['quantity']),
+            );
         }
         $out['products'] = $product_arr;
         $out[] = $result[0];
@@ -133,7 +140,7 @@ class QuotesSubmitCore extends ObjectModel
                 'name' => $customer->firstname.' '.$customer->lastname,
                 'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
             );
-            $quote['products'] = Tools::jsonDecode($row['products']);
+            $quote['products'] = unserialize($row['products']);
             $quote['date_add'] = $row['date_add'];
             $quote['submited'] = $row['submited'];
             $quotes[] = $quote;
