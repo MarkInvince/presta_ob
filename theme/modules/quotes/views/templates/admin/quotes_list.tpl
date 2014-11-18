@@ -15,7 +15,7 @@
                     <td class="text-center"><i class="icon-cogs"></i></td>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="quotes_list">
                 {foreach $quotes as $quote}
                     {include file="$tpl_dir./quotes_list_item.tpl"}
                 {/foreach}

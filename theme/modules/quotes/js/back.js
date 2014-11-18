@@ -36,12 +36,27 @@ $(document).ready(function(){
     });
 
 	$('body').on('click','.view_quote',  function(){
+		console.log('click');
 		$(this).closest('form').submit();
 	});
 
 	$('body').on('click', '.delete_quote', function(){
 		if(confirm(confirmDelete)) {
-			console.log('ok');
+			$.ajax({
+				method   : 'post',
+				data     : 'action=delete&item='+ $(this).attr('rel'),
+				url      : adminQuotesUrl,
+				dataType :'json',
+				success: function(response) {
+					if(response.hasError == false) {
+						/*$('#quotes_list').empty();
+						$('#quotes_list').html(response.data.quotes);*/
+					}
+					else {
+						alert(response.data.message);
+					}
+				}
+			});
 		}
 	});
 });

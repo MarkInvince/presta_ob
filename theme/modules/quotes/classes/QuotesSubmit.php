@@ -66,6 +66,13 @@ class QuotesSubmitCore extends ObjectModel
 
         return parent::delete();
     }
+    public function deleteQuoteById($id_quote, $id_customer)
+    {
+        if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.(int)$id_quote.' AND `id_customer`'.$id_customer))
+            return false;
+
+        return true;
+    }
     public function getAllQuotes() {
 
         $quotes = array();
