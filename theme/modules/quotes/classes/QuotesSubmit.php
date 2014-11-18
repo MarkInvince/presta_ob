@@ -107,13 +107,13 @@ class QuotesSubmitCore extends ObjectModel
         $product_arr = array();
         $products = unserialize($result[0]['products']);
         foreach($products as $item) {
-            $itemp = new Product($item['id'], $this->id_lang);
+            $itemp = new Product($item['id'], true, $this->context->language->id);
             $product_arr[] = array(
                 'id' => $itemp->id,
                 'name' => $itemp->name,
                 'quantity' => $item['quantity'],
-                'unit_price' => $itemp->getPriceStatic($itemp->id, true, $item['quantity'], 6),
-                'total' => $itemp->getPriceStatic($itemp->id, true, $item['quantity'], 6, null, false, true, $item['quantity']),
+                'unit_price' => $itemp->getPriceStatic($itemp->id, true, $item['id_product_attribute'], 6),
+                'total' => $itemp->getPriceStatic($itemp->id, true, $item['id_product_attribute'], 6, null, false, true, $item['quantity']),
             );
         }
         $out['products'] = $product_arr;

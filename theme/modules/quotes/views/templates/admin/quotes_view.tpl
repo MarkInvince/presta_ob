@@ -21,7 +21,7 @@
             </thead>
             {foreach $quote['products'] as $product}
                 <tr>
-                    <td>{$product.id}{print_r($product)}</td>
+                    <td>{$product.id}</td>
                     <td>{$product.name}</td>
                     <td>{$product.unit_price}</td>
                     <td>{$product.quantity}</td>
