@@ -262,6 +262,6 @@
 {/if}
 
 {strip}
-    {addJsDef submitedQuotes=$link->getModuleLink('quotes', 'submitedQuotes', array(), true)|escape:'html':'UTF-8'}
+    {addJsDef submitedQuotes=$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}
 {/strip}
 
