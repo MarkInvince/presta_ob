@@ -108,12 +108,19 @@ class QuotesSubmitCore extends ObjectModel
         $products = unserialize($result[0]['products']);
         foreach($products as $item) {
             $itemp = new Product($item['id'], true, $this->context->language->id);
+            $link = new Link;
+            $attr = new Attribute($item['id_attribute'], $this->context->language->id);
+            $image_link = explode('/',__PS_BASE_URI__.$link->getImageLink($itemp->link_rewrite[$this->context->language->id], $itemp->id, 'cart_default'));
+            unset($image_link[0]);
             $product_arr[] = array(
                 'id' => $itemp->id,
+                'attr' => $attr->name,
                 'name' => $itemp->name,
+                'image' => implode('/',$image_link),
+                'link' => $link->getProductLink($itemp, $itemp->link_rewrite, $itemp->category, null, null, $itemp->id_shop, $item['id_product_attribute']),
                 'quantity' => $item['quantity'],
-                'unit_price' => $itemp->getPriceStatic($itemp->id, true, $item['id_product_attribute'], 6),
-                'total' => $itemp->getPriceStatic($itemp->id, true, $item['id_product_attribute'], 6, null, false, true, $item['quantity']),
+                'unit_price' => Tools::displayPrice(Tools::ps_round($itemp->getPriceStatic($itemp->id, true, $item['id_attribute'], 6),2), $this->context->currency),
+                'total' => Tools::displayPrice(Tools::ps_round(($itemp->getPriceStatic($itemp->id, true, $item['id_attribute'], 6) * (int)$item['quantity']),2), $this->context->currency),
             );
         }
         $out['products'] = $product_arr;
