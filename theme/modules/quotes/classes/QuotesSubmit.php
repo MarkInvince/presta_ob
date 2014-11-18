@@ -3,6 +3,7 @@
 if (!defined('_PS_VERSION_'))
     exit;
 
+include_once(_PS_MODULE_DIR_ . 'quotes/classes/QuotesTools.php');
 class QuotesSubmitCore extends ObjectModel
 {
     public $id_quote;
@@ -93,11 +94,12 @@ class QuotesSubmitCore extends ObjectModel
         return $quotes;
     }
     public function getQuoteById($id_quote, $id_customer) {
+        global $currentIndex;
         $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.$id_quote.' AND `id_customer` = '.$id_customer);
         if (empty($result))
             return array();
 
-        $customer = new Customer($result['id_customer']);
+        $customer = new Customer($id_customer);
         $out['customer'] = array(
             'id' => $customer->id,
             'name' => $customer->firstname.' '.$customer->lastname,
@@ -106,23 +108,27 @@ class QuotesSubmitCore extends ObjectModel
 
         $product_arr = array();
         $products = unserialize($result[0]['products']);
+        $price = 0;
         foreach($products as $item) {
             $itemp = new Product($item['id'], true, $this->context->language->id);
-            $link = new Link;
             $attr = new Attribute($item['id_attribute'], $this->context->language->id);
-            $image_link = explode('/',__PS_BASE_URI__.$link->getImageLink($itemp->link_rewrite[$this->context->language->id], $itemp->id, 'cart_default'));
-            unset($image_link[0]);
+            $image_id = getProductAttributeImage($item['id'], $item['id_attribute'], $this->context->language->id);
             $product_arr[] = array(
                 'id' => $itemp->id,
                 'attr' => $attr->name,
                 'name' => $itemp->name,
-                'image' => implode('/',$image_link),
-                'link' => $link->getProductLink($itemp, $itemp->link_rewrite, $itemp->category, null, null, $itemp->id_shop, $item['id_product_attribute']),
+                'image' => $this->context->link->getImageLink($itemp->link_rewrite[$this->context->language->id], $image_id, 'cart_default'),
+                'link' => $this->context->link->getProductLink($itemp, $itemp->link_rewrite, $itemp->category, null, null, $itemp->id_shop, $item['id_product_attribute']),
                 'quantity' => $item['quantity'],
                 'unit_price' => Tools::displayPrice(Tools::ps_round($itemp->getPriceStatic($itemp->id, true, $item['id_attribute'], 6),2), $this->context->currency),
                 'total' => Tools::displayPrice(Tools::ps_round(($itemp->getPriceStatic($itemp->id, true, $item['id_attribute'], 6) * (int)$item['quantity']),2), $this->context->currency),
             );
+            $price = $price + (float)($itemp->getPriceStatic($itemp->id, true, $item['id_attribute'], 6) * (int)$item['quantity']);
         }
+        $out['quote_total'] = array(
+            'quote_static' => $price,
+            'quote_normal' => Tools::displayPrice(Tools::ps_round($price,2), $this->context->currency)
+        );
         $out['products'] = $product_arr;
         $out[] = $result[0];
         return $out;

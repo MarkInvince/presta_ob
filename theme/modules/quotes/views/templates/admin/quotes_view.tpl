@@ -2,7 +2,8 @@
     <h3><i class="icon-hand-right"></i> {l s='Quote request:' mod="quotes"} #{$quote[0]['id_quote']}</h3>
     <br/>
     <div class="col-lg-12 panel admin-panel">
-        <h3><i class="icon-hand-right"></i> {l s='Requisites' mod="quotes"}</h3>
+        <h3><i class="icon-user"></i> {l s='Requisites' mod="quotes"}</h3>
+
     </div>
     <div class="col-lg-12 panel">
         <h3><i class="icon-list-ul"></i> {l s='Products list' mod="quotes"}</h3>
@@ -37,10 +38,16 @@
                     <td>{$product.total}</td>
                 </tr>
             {/foreach}
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><h4>{l s="Quote total:"}</h4></td>
+                    <td><h4>{$quote['quote_total']['quote_normal']}<h4></td>
+                </tr>
+            </tfoot>
         </table>
-    </div>
-    <div class="col-lg-6 panel">
-        <h3><i class="icon-legal"></i> {l s='View guote' mod="quotes"}</h3>
     </div>
     <div class="panel-footer">
         <button onclick="javascript:history.go(-1);" class="btn btn-default pull-right" ><i class="icon-chevron-left"></i> {l s="Back"}</button>
