@@ -89,7 +89,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 );
             }
             $this->submit_quote->burgain_price = 0;
-            $this->submit_quote->products = Tools::jsonEncode($all_products);
+            $this->submit_quote->products = serialize($all_products);
             if($this->submit_quote->add()) {
                 // clear shop box
                 return $quote->deleteAllProduct();

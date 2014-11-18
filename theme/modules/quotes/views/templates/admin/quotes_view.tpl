@@ -19,13 +19,13 @@
                     <td>{l s="Total" mod="quotes"}</td>
                 </tr>
             </thead>
-            {foreach $quote[0]['products'] as $product}
+            {foreach $quote['products'] as $product}
                 <tr>
                     <td>{$product.id}</td>
-                    <td></td>
-                    <td></td>
+                    <td>{$product.name}</td>
+                    <td>{$product.unit_price}</td>
                     <td>{$product.quantity}</td>
-                    <td></td>
+                    <td>{$product.total}</td>
                 </tr>
             {/foreach}
         </table>
