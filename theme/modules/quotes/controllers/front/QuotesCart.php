@@ -2,6 +2,7 @@
 
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesSubmit.php');
+include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesTools.php');
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     
     public $ssl = true;

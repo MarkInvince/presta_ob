@@ -56,6 +56,7 @@ class AdminQuotesController extends ModuleAdminController
     public function initContent()
     {
         // default template
+        $this->content = $this->context->smarty->fetch($this->getTemplatePath(). 'quotes_assign_global.tpl');
         $this->content = $this->assign();
         parent::initContent();
     }

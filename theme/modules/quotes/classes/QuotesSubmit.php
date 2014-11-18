@@ -112,7 +112,7 @@ class QuotesSubmitCore extends ObjectModel
         foreach($products as $item) {
             $itemp = new Product($item['id'], true, $this->context->language->id);
             $attr = new Attribute($item['id_attribute'], $this->context->language->id);
-            $image_id = getProductAttributeImage($item['id'], $item['id_attribute'], $this->context->language->id);
+            $image_id = getProductAttributeImage($item['id'], $item['id_attribute'], $this->context->language->id) ? getProductAttributeImage($item['id'], $item['id_attribute'], $this->context->language->id) : $itemp->id;
             $product_arr[] = array(
                 'id' => $itemp->id,
                 'attr' => $attr->name,

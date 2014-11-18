@@ -38,4 +38,10 @@ $(document).ready(function(){
 	$('body').on('click','.view_quote',  function(){
 		$(this).closest('form').submit();
 	});
+
+	$('body').on('click', '.delete_quote', function(){
+		if(confirm(confirmDelete)) {
+			console.log('ok');
+		}
+	});
 });
