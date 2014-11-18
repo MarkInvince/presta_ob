@@ -67,7 +67,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             }
             if(Tools::getValue('action') == 'submit') {
                 if($this->submitQuote($this->quote)) {
-                    die(Tools::jsonEncode(array('hasError' => false,'redirectUrl' => $this->context->link->getModuleLink($this->module->name, 'submitedQuotes', array(), true))));
+                    die(Tools::jsonEncode(array('hasError' => false,'redirectUrl' => $this->context->link->getModuleLink($this->module->name, 'SubmitedQuotes', array(), true))));
                 }
                 else {
                     die(Tools::jsonEncode(array('hasError' => true)));
