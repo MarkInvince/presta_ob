@@ -28,13 +28,41 @@
 
 $(document).ready(function(){
 
-
 	// Change quote name
-	$('.quote_name').on('click', function(){
-		alert('ook');
-		$(this)
-			.html('<input id="changed_name" type="text" value="' + $(this).text() + '">')
-				.removeClass('quote_name');
+	$( ".quote_name" ).on( "click", function() {
+		var $thisQuoteName = $(this);
+		var $oldName = $thisQuoteName.text();
+		if($oldName == ''){
+			var $myInput = $($thisQuoteName).find('.changed_name');
+		}else {
+			$($thisQuoteName).html('<input class="changed_name" type="text" value="' + $oldName + '">');
+			var $myInput = $($thisQuoteName).find('.changed_name');
+		}
+		$myInput.focus();
+		$myInput.on( "blur", function() {
+			var $id_quote = $thisQuoteName.data('value');
+			var $quoteName = $myInput.val();
+			$.ajax({
+				url: submitedQuotes,
+				method:'post',
+				data:
+				{
+					quoteRename: 'rename',
+					id_quote : $id_quote,
+					quoteName : $quoteName
+				},
+				dataType:'json',
+				success: function(data) {
+					if(data.hasError){
+							alert(data.message);
+							$thisQuoteName.html('<i class="icon-pencil"></i>' + $oldName);
+					}
+					if(data.renamed){
+						$thisQuoteName.html('<i class="icon-pencil"></i>' + data.renamed);
+					}
+				}
+			});
+		});
 	});
 
 	// Show quote products
@@ -45,8 +73,7 @@ $(document).ready(function(){
 	});
 
 	//Submit bargain price
-	$('#rejectBargainOffer, #acceptBargainOffer').on('click', function(e) {
-
+	$('.rejectBargainOffer, .acceptBargainOffer').on('click', function(e) {
 		var $action = $(this).data('action');
 		var $id_bargain = $(this).data('id');
 		var $id_quote = $(this).data('quote');
@@ -62,8 +89,6 @@ $(document).ready(function(){
 			},
 			dataType:'json',
 			success: function(data) {
-				console.log(data);
-				console.log(data.submited);
 				if(data.hasError)
 					$('#danger_bargain_' + $id_bargain).css('display', 'block');
 				else

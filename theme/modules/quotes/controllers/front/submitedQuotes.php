@@ -26,7 +26,6 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
             Tools::redirect('authentication.php');
         }
 
-
     }
 
     public function setMedia()
@@ -52,10 +51,16 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
 
         if (Tools::getValue('actionSubmitBargain'))
             $this->bargainCustomerSubmit();
-        //else
-            //die(Tools::jsonEncode(array('hasError' => true)));
 
+        if (Tools::getValue('quoteRename')) {
+            $this->quoteRename(Tools::getValue('id_quote'));
+        }
     }
+
+//    private function getMessage($message) {
+//        $output = $message;
+//        return $output;
+//    }
 
     public function initContent()
     {
@@ -116,7 +121,7 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
             $quote_total_price = 0;
             foreach ($quoteInfo as $key=>$field){
                 if ($key == 'products'){
-                    $quoteIn[$key] = Tools::jsonDecode($field, true);
+                    $quoteIn[$key] = Tools::unSerialize($field);
                     foreach($quoteIn[$key] as $k=>$product) {
                         $productObj = new Product($product['id'], true, $this->context->language->id);
 
@@ -144,22 +149,21 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
      */
     protected function addClientBargain($id_quote = false) {
         if(!Configuration::get('MESSAGING_ENABLED') || !$id_quote)
-            return false;
+            $this->errors[] = Tools::displayError('You can not add bargain without quote_id.');
 
         if(!Tools::getValue('bargain_text'))
             $this->errors[] = Tools::displayError('You can not add empty message.');
 
         if (!count($this->errors))
-            return $this->quote->addQuoteBargain($id_quote, Tools::getValue('bargain_text'));
+            return $this->quote->addQuoteBargain(pSQL($id_quote), pSQL(Tools::getValue('bargain_text')));
         else
-            $this->context->smarty->assign('bargain_errors', $this->bargain_errors);
+            $this->context->smarty->assign('bargain_errors', $this->errors);
     }
 
     /**
      * Customer bargin submit
      */
     protected function bargainCustomerSubmit() {
-
         $action = Tools::getValue('actionSubmitBargain');
 
         if($this->quote->submitBargain(Tools::getValue('id_bargain'), $action, Tools::getValue('id_quote'))) {
@@ -167,5 +171,23 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
         }else
             die(Tools::jsonEncode(array('hasError' => true)));
     }
+
+    /**
+     * Rename quote
+     */
+    protected function quoteRename($id_quote = false) {
+        if(Tools::getValue('quoteName')){
+            $quoteName = Tools::getValue('quoteName');
+            if(!Validate::isCatalogName($quoteName))
+                die(Tools::jsonEncode(array('hasError' => true, 'message' => $this->module->l('Wrong quote name'))));
+        }else
+            die(Tools::jsonEncode(array('hasError' => true, 'message' => $this->module->l('Name is empty'))));
+
+        if($this->quote->renameQuote(pSQL($id_quote), pSQL($quoteName))) {
+            die(Tools::jsonEncode(array('renamed' => $quoteName)));
+        }else
+            die(Tools::jsonEncode(array('hasError' => true, 'message' => $this->module->l('Cannot rename quote'))));
+    }
+
 
 }

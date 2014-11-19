@@ -38,4 +38,36 @@ $(document).ready(function(){
 	$('body').on('click','.view_quote',  function(){
 		$(this).closest('form').submit();
 	});
+
+    //Delete bargain offer
+    $('.deleteBargainOffer').on('click', function() {
+
+        if(confirm(confirmDelete)){
+            var $action = $(this).data('action');
+            var $id_bargain = $(this).data('id');
+            var $thisBargain = $(this).closest('.admin_bargain');
+
+            $.ajax({
+                url: adminQuotesUrl,
+                method:'post',
+                data:
+                {
+                    actionBargainDelete : $action,
+                    id_bargain : $id_bargain
+                },
+                dataType:'json',
+                success: function(data) {
+                    console.log(data);
+                    console.log(data.deleted);
+                    if(data.hasError)
+                        $('#danger_bargain_' + $id_bargain).css('display', 'block');
+                    if(data.deleted){
+                        $thisBargain.html(data.message);
+                    }
+                }
+            });
+        }
+        return false;
+    });
+
 });

@@ -22,9 +22,7 @@
                 <tbody>
                 {foreach from=$quotes item=quote}
                     <tr class="item">
-                        <td class="quote_name">
-                            {$quote.quote_name}
-                        </td>
+                        <td data-value="{$quote.id_quote}" class="quote_name"><i class="icon-pencil"></i>{$quote.quote_name}</td>
                         <td data-value="{$quote.date_add|regex_replace:"/[\-\:\ ]/":""}" class="">
                             {dateFormat date=$quote.date_add full=0}
                         </td>
@@ -81,24 +79,20 @@
             <th class="item">{l s='Total price' mod='quotes'}</th>
             <th class="item">{l s='Bargain price' mod='quotes'}</th>
         </tr>
-            <tr class="item">
-                <td class="quote_name">
-                    {$quote.quote_name}
-                </td>
-                <td data-value="{$quote.date_add|regex_replace:"/[\-\:\ ]/":""}" class="">
-                    {dateFormat date=$quote.date_add full=0}
-                </td>
-                <td class="">
-                    <span class="price">
-                        {$quote.price}
-                    </span>
-                </td>
-                <td class="">
-                    <span class="price">
-                        {$quote.price}
-                    </span>
-                </td>
-            </tr>
+        <tr class="item">
+            <td data-value="{$quote.id_quote}" class="quote_name"><i class="icon-pencil"></i>{$quote.quote_name}</td>
+            <td data-value="{$quote.date_add|regex_replace:"/[\-\:\ ]/":""}" class="">{dateFormat date=$quote.date_add full=0}</td>
+            <td class="">
+                <span class="price">
+                    {$quote.price}
+                </span>
+            </td>
+            <td class="">
+                <span class="price">
+                    {$quote.price}
+                </span>
+            </td>
+        </tr>
     </table>
 
     <p><a href="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" id="show_quote_products_info">&raquo; {l s='Click to show quote products info'}</a></p>
@@ -142,9 +136,6 @@
 
 
     <h1 class="page-heading bottom-indent">{l s='Quote bargains' mod='quotes'}</h1>
-
-    {*<p>Messagin - {$MESSAGING_ENABLED}</p>*}
-
     {*<pre>*}
         {*{print_r($bargains)}*}
     {*</pre>*}
@@ -184,22 +175,25 @@
                                 <div class="col-xs-6 bargain_price_container clearfix">
                                     <table class="table">
                                         <tr>
-                                            <td>{l s='Admins price offer' mod="quotes"}</td>
+                                            <td>{l s='Admins price' mod="quotes"}</td>
                                             <td class="price">{$bargain.bargain_price_display}</td>
                                         </tr>
                                         {if $bargain.bargain_price_text}
                                             <tr>
-                                                <td colspan="2">
-                                                    {$bargain.bargain_price_text}
-                                                </td>
+                                                <td>{l s='The offer' mod="quotes"}</td>
+                                                <td>{$bargain.bargain_price_text}</td>
                                             </tr>
                                         {/if}
                                     </table>
                                     {if !$bargain.bargain_customer_confirm}
                                         <form  action="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" method="post" class="burgainSubmitForm std">
                                             <fieldset>
-                                                <a  id="rejectBargainOffer" data-action="reject" data-id="{$bargain.id_bargain}" data-quote="{$id_quote}" class="btn btn-default button button-medium"><span>{l s='Reject offer' mod='quotes'}</span></a>
-                                                <a  id="acceptBargainOffer" data-action="accept" data-id="{$bargain.id_bargain}" data-quote="{$id_quote}" class="btn btn-default button button-medium"><span>{l s='Accept offer' mod='quotes'}</span></a>
+                                                <a  data-action="reject" data-id="{$bargain.id_bargain}" data-quote="{$id_quote}" class="btn btn-default button button-medium rejectBargainOffer">
+                                                    <span>{l s='Reject offer' mod='quotes'}</span>
+                                                </a>
+                                                <a  data-action="accept" data-id="{$bargain.id_bargain}" data-quote="{$id_quote}" class="btn btn-default button button-medium acceptBargainOffer">
+                                                    <span>{l s='Accept offer' mod='quotes'}</span>
+                                                </a>
                                             </fieldset>
                                         </form>
                                     {/if}
@@ -245,7 +239,6 @@
                     </div>
                     <button type="submit" name="addClientBargain" id="addClientBargain" class="btn btn-default button button-medium"><span>{l s='Send' mod='quotes'}<i class="icon-chevron-right right"></i></span></button>
                 </div>
-
             </fieldset>
         </form>
     {/if}

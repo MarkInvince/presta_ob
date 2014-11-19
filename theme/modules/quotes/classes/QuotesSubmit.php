@@ -97,7 +97,7 @@ class QuotesSubmitCore extends ObjectModel
         if (empty($result))
             return array();
 
-        $customer = new Customer($result['id_customer']);
+        $customer = new Customer($id_customer);
         $out['customer'] = array(
             'id' => $customer->id,
             'name' => $customer->firstname.' '.$customer->lastname,
