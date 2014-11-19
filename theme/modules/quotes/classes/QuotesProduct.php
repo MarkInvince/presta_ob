@@ -3,6 +3,7 @@
 if (!defined('_PS_VERSION_'))
     exit;
 
+include_once(_PS_MODULE_DIR_ . 'quotes/classes/QuotesTools.php');
 class QuotesProductCart extends ObjectModel
 {
     public $id;
@@ -175,7 +176,7 @@ class QuotesProductCart extends ObjectModel
                 $product['id_attribute'] = $row['id_product_attribute'];
                 $product['link'] = $link->getProductLink($p_obj, $p_obj->link_rewrite, $p_obj->category, null, null, $p_obj->id_shop, $this->id_product_attribute);
                 $product['link_rewrite'] = $p_obj->link_rewrite;
-                $product['image'] = '';
+                $product['id_image'] = getProductAttributeImage($p_obj->id, $row['id_product_attribute'], $this->context->language->id);
                 $product['quantity'] = $row['quantity'];
                 $product['price'] = Tools::displayPrice(Tools::ps_round(Product::getPriceStatic($p_obj->id, true, NULL, 6),2), $this->context->currency);
                 $products[] = $product;

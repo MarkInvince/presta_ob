@@ -15,27 +15,20 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
         parent::__construct();
 
         $this->context = Context::getContext();
-
         $this->quote = new QuotesObj;
-
         $this->id_quote = 0;
-
         $this->id_customer = (int)$this->context->cookie->id_customer;
 
         if (!$this->context->customer->isLogged()) {
             Tools::redirect('authentication.php');
         }
-
     }
 
     public function setMedia()
     {
         parent::setMedia();
-
         $this->addJS(array(
-
         ));
-
     }
 
     public function postProcess() {
@@ -56,11 +49,6 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
             $this->quoteRename(Tools::getValue('id_quote'));
         }
     }
-
-//    private function getMessage($message) {
-//        $output = $message;
-//        return $output;
-//    }
 
     public function initContent()
     {

@@ -2,6 +2,7 @@
 
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesSubmit.php');
+include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesTools.php');
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     
     public $ssl = true;
@@ -91,6 +92,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->submit_quote->burgain_price = 0;
             $this->submit_quote->products = serialize($all_products);
             if($this->submit_quote->add()) {
+                //generate new user session id
+                $this->context->cookie->__set('request_id', uniqid());
                 // clear shop box
                 return $quote->deleteAllProduct();
             }

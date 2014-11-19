@@ -1,4 +1,4 @@
-<tr>
+<tr class="quote_item">
     <td class="text-center">{$quote.id_quote}</td>
     <td class="text-center">{$quote.quote_name}</td>
     <td class="text-center"><a target="_blank" href="{$quote.customer.link}">{$quote.customer.name}</a></td>
@@ -19,7 +19,7 @@
                 </button>
                 <ul class="dropdown-menu" role="menu">
                     <li>
-                        <a href="javascript:void(0);" class="delete_quote">
+                        <a href="javascript:void(0);" rel="{$quote.id_quote}_{$quote.customer.id}" class="delete_quote">
                             <i class="icon-trash"></i>
                             {l s="Delete" mod="quotes"}
                         </a>

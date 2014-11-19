@@ -15,7 +15,7 @@
                 <tr id="product_{$product.id}_{$product.id_attribute}">
                     <td class="quotes_cart_product">
                         <a href="{$product.link|escape:'html':'UTF-8'}">
-                            <img src="{$link->getImageLink($product.link_rewrite, $product.id, 'cart_default')|escape:'html':'UTF-8'}" alt="{$product.title|escape:'html':'UTF-8'}" />
+                            <img src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'cart_default')|escape:'html':'UTF-8'}" alt="{$product.title|escape:'html':'UTF-8'}" />
                         </a>
                     </td>
                     <td class="quotes_cart_description">
