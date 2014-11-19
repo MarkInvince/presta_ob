@@ -431,4 +431,6 @@ class Quotes extends Module
             $out[] = array('name' => $this->l('No cms pages found'));
         return $out;    
     }
+
+
 }
