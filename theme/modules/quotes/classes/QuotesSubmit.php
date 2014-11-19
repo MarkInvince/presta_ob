@@ -66,12 +66,15 @@ class QuotesSubmitCore extends ObjectModel
 
         return parent::delete();
     }
-    public function deleteQuoteById($id_quote, $id_customer)
+    public function deleteQuoteById($id_quote = false, $id_customer = false)
     {
-        if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.(int)$id_quote.' AND `id_customer`'.$id_customer))
+        if($id_quote AND $id_customer) {
+            if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.(int)$id_quote.' AND `id_customer` = '.(int)$id_customer))
+                return false;
+            return true;
+        }
+        else
             return false;
-
-        return true;
     }
     public function getAllQuotes() {
 
@@ -108,9 +111,14 @@ class QuotesSubmitCore extends ObjectModel
 
         $customer = new Customer($id_customer);
         $out['customer'] = array(
-            'id' => $customer->id,
-            'name' => $customer->firstname.' '.$customer->lastname,
-            'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
+            'id'       => $customer->id,
+            'name'     => $customer->firstname.' '.$customer->lastname,
+            'gender'   => $customer->id_gender,
+            'email'    => $customer->email,
+            'birthday' => $customer->birthday,
+            'addresses'=> $customer->getAddresses($this->context->language->id),
+            'date_add' => $customer->date_add,
+            'link'     => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
         );
 
         $product_arr = array();

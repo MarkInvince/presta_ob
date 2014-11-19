@@ -74,12 +74,14 @@ class AdminQuotesController extends ModuleAdminController
         if(!Validate::isInt($items[0]) OR !Validate::isInt($items[1]))
             return array('hasError' => true, 'message' => $this->l('There was some error!Please try again later'));
 
-        if(!$this->squotes->deleteQuoteById())
+        if(!$this->squotes->deleteQuoteById($items[0], $items[1]))
             return array('hasError' => true, 'message' => $this->l('There was some problem while deleting quote ID:'.$items[0]));
 
-        $this->context->smarty->assign(squotes->getAllQuotes());
-
-        return array('hasError' => false, 'quotes' => $this->context->smarty->fetch($this->getTemplatePath(). 'quotes_assign_global.tpl'));
+        $this->context->smarty->assign(array(
+            'quotes' => $this->squotes->getAllQuotes(),
+            'totalQuotes' => count($this->squotes->getAllQuotes())
+        ));
+        return array('hasError' => false, 'quotes' => $this->context->smarty->fetch($this->getTemplatePath(). 'quotes_ajax_list_item.tpl'));
     }
 
     protected function assign() {

@@ -562,3 +562,7 @@
     text-align: left;
     display: none;
 }
+#quotes-products {
+	max-height: 330px;
+	overflow: auto;
+}

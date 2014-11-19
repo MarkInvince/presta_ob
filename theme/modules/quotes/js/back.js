@@ -48,9 +48,9 @@ $(document).ready(function(){
 				url      : adminQuotesUrl,
 				dataType :'json',
 				success: function(response) {
-					if(response.hasError == false) {
-						/*$('#quotes_list').empty();
-						$('#quotes_list').html(response.data.quotes);*/
+					if(response.data.hasError == false) {
+						$('#quotes_panel').empty();
+						$('#quotes_panel').html(response.data.quotes);
 					}
 					else {
 						alert(response.data.message);
