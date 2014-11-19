@@ -24,14 +24,23 @@
                         </p>
                     </td>
                     <td class="quotes_cart_unit">
-                        {$product.price}
+                        {$product.unit_price}
                     </td>
                     <td class="quotes_cart_quantity">
-                        <input type="hidden" value="{$product.quantity}" name="quantity_{$product.id}_{$product.id_attribute}" />
-                        <input size="2" type="text" autocomplete="off" class="cart_quantity_input form-control grey" value="{$product.quantity}"  name="quantity_{$product.id}_{$product.id_attribute}" />
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <input size="2" readonly type="text" autocomplete="off" class="cart_quantity_input form-control grey" value="{$product.quantity}"  name="quantity_{$product.id}_{$product.id_attribute}" />
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="quantity-block">
+                                    <a href="javascript:void(0);" class="quote-plus-button btn btn-default" rel="{$product.id}_{$product.id_attribute}"><i class="icon-chevron-up"></i></a>
+                                    <a href="javascript:void(0);" class="quote-minus-button btn btn-default" rel="{$product.id}_{$product.id_attribute}"><i class="icon-chevron-down"></i></a>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                     <td class="quotes_cart_total">
-                        {$product.price}
+                        {$product.total_price}
                     </td>
                     <td class="quotes_cart_delete">
                         <a href="javascript:void(0);" rel="{$product.id}_{$product.id_attribute}" class="remove_quote"><i class="icon-remove"></i></a>

@@ -127,7 +127,7 @@
                 <td></td>
                 <td></td>
                 <td><h4>{l s="Quote total:" mod="quotes"}</h4></td>
-                <td><h4>{$quote['quote_total']['quote_normal']}<h4></td>
+                <td><h4>{$quote.quote_total.quote_normal}<h4></td>
             </tr>
             </tfoot>
         </table>

@@ -103,6 +103,51 @@ $(document).ready(function(){
 		return false;
 	});
 
+	// minus item quote cart
+	$('body').on('click', '.quote-plus-button', function(){
+		var current = $(this).closest('.quotes_cart_quantity').find('.cart_quantity_input');
+			if($('#order-detail-content').find('.overlay').length == 0)
+				$('#order-detail-content').append('<div class="overlay-wrapper"><div class="overlay"></div></div>');
+			var button = $(this);
+			$.ajax({
+				url: quotesCart,
+				method:'post',
+				data: 'action=recount&method=add&item_id='+button.attr('rel')+'&value='+current.val(),
+				dataType:'json',
+				success: function(response) {
+					if(response.hasError == false) {
+						$('#quotes-cart-wrapper').empty();
+						$('#quotes-cart-wrapper').html(response.data);
+					}
+					else
+						alert(response.data.message);
+				}
+			});
+	});
+	// plus item quote cart
+	$('body').on('click', '.quote-minus-button', function(){
+		var current = $(this).closest('.quotes_cart_quantity').find('.cart_quantity_input');
+		if(current.val() != 1) {
+			if($('#order-detail-content').find('.overlay').length == 0)
+				$('#order-detail-content').append('<div class="overlay-wrapper"><div class="overlay"></div></div>');
+			var button = $(this);
+			$.ajax({
+				url: quotesCart,
+				method:'post',
+				data: 'action=recount&method=remove&item_id='+button.attr('rel')+'&value='+current.val(),
+				dataType:'json',
+				success: function(response) {
+					if(response.hasError == false) {
+						$('#quotes-cart-wrapper').empty();
+						$('#quotes-cart-wrapper').html(response.data);
+					}
+					else
+						alert(response.data.message);
+				}
+			});
+		}
+	});
+
 	$('.submit_quote').on('click', function() {
 		$.ajax({
 			url: quotesCart,
@@ -117,6 +162,23 @@ $(document).ready(function(){
 			}
 		});
 		return false;
+	});
+	$('body').on('click', '.remove_quote', function(){
+		var elem = $(this);
+		$.ajax({
+			url: quotesCart,
+			method: 'post',
+			data: 'action=delete_from_cart&item_id='+ $(this).attr('rel'),
+			dataType: 'json',
+			success: function(response) {
+				if(response.hasError == false) {
+					$('#quotes-cart-wrapper').empty();
+					$('#quotes-cart-wrapper').html(response.data);
+				}
+				else
+					alert(response.data.message);
+			}
+		});
 	});
 
     $('body').on('click','.fly_to_quote_cart_button', function(){

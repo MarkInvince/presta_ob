@@ -61,3 +61,11 @@
 #bargain_form .input-group.col-lg-2 {
 	padding-left: 5px;
 }
+.color-red {
+	color: red;
+	font-size: 20px;
+}
+.color-green {
+	color: green;
+	font-size: 20px;
+}

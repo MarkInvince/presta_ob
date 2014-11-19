@@ -66,6 +66,126 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $this->context->smarty->assign('products', $this->quote->getProducts());
                 die(Tools::jsonEncode(array('products' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"))));
             }
+            if(Tools::getValue('action') == 'recount') {
+                $item_id = Tools::getValue('item_id');
+                $items = explode('_', $item_id);
+                $this->quote->recountProductByValue((int)pSQL($items[0]), (int)pSQL($items[1]),1 ,pSQL(Tools::getValue('method')), pSQL($this->context->cookie->__get('request_id')));
+
+                $this->context->smarty->assign('products', $this->quote->getProducts());
+
+                if ($this->context->customer->isLogged())
+                    $this->context->smarty->assign('isLogged', '1');
+                else
+                    $this->context->smarty->assign('isLogged', '0');
+
+                $this->context->smarty->assign('empty','true');
+                $back = $this->context->link->getModuleLink($this->module->name, 'QuotesCart', array(), true);
+
+                $tpl_path = $this->module->getLocalPath()."views/templates/front";
+
+                $selectedCountry = (int)(Configuration::get('PS_COUNTRY_DEFAULT'));
+
+                if (Configuration::get('PS_RESTRICT_DELIVERED_COUNTRIES'))
+                    $countries = Carrier::getDeliveredCountries($this->context->language->id, true, true);
+                else
+                    $countries = Country::getCountries($this->context->language->id, true);
+
+                // If a rule offer free-shipping, force hidding shipping prices
+                $free_shipping = false;
+                foreach ($this->context->cart->getCartRules() as $rule)
+                    if ($rule['free_shipping'] && !$rule['carrier_restriction'])
+                    {
+                        $free_shipping = true;
+                        break;
+                    }
+
+                if (Tools::getValue('userRegistry'))
+                    $this->context->smarty->assign('userRegistry', '1');
+
+                $products = array();
+                if ($this->context->cookie->__isset('request_id')) {
+                    $this->quote->id_quote = $this->context->cookie->__get('request_id');
+                    $products = $this->quote->getProducts();
+                }
+                $this->context->smarty->assign(array(
+                    'products' => $products,
+                    'tpl_path' => $tpl_path,
+                    'back' => $back,
+                    'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
+                    'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED'),
+                    'isGuest' => isset($this->context->cookie->is_guest) ? $this->context->cookie->is_guest : 0,
+                    'countries' => $countries,
+                    'sl_country' => isset($selectedCountry) ? $selectedCountry : 0,
+                    'one_phone_at_least' => (int)Configuration::get('PS_ONE_PHONE_AT_LEAST'),
+                    'HOOK_CREATE_ACCOUNT_FORM' => Hook::exec('displayCustomerAccountForm'),
+                    'HOOK_CREATE_ACCOUNT_TOP' => Hook::exec('displayCustomerAccountFormTop')
+                ));
+
+                /* Load guest informations */
+                if ($this->context->cookie->is_guest)
+                    $this->context->smarty->assign('guestInformations', $this->_getGuestInformations());
+
+                die(Tools::jsonEncode(array('hasError' => false,'data' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/front/ajax_quote_product_list.tpl"))));
+            }
+            if(Tools::getValue('action') == 'delete_from_cart') {
+                $delete = $this->deleteQuoteById(Tools::getValue('item_id'));
+
+                $this->context->smarty->assign('products', $this->quote->getProducts());
+
+                if ($this->context->customer->isLogged())
+                    $this->context->smarty->assign('isLogged', '1');
+                else
+                    $this->context->smarty->assign('isLogged', '0');
+
+                $this->context->smarty->assign('empty','true');
+                $back = $this->context->link->getModuleLink($this->module->name, 'QuotesCart', array(), true);
+
+                $tpl_path = $this->module->getLocalPath()."views/templates/front";
+
+                $selectedCountry = (int)(Configuration::get('PS_COUNTRY_DEFAULT'));
+
+                if (Configuration::get('PS_RESTRICT_DELIVERED_COUNTRIES'))
+                    $countries = Carrier::getDeliveredCountries($this->context->language->id, true, true);
+                else
+                    $countries = Country::getCountries($this->context->language->id, true);
+
+                // If a rule offer free-shipping, force hidding shipping prices
+                $free_shipping = false;
+                foreach ($this->context->cart->getCartRules() as $rule)
+                    if ($rule['free_shipping'] && !$rule['carrier_restriction'])
+                    {
+                        $free_shipping = true;
+                        break;
+                    }
+
+                if (Tools::getValue('userRegistry'))
+                    $this->context->smarty->assign('userRegistry', '1');
+
+                $products = array();
+                if ($this->context->cookie->__isset('request_id')) {
+                    $this->quote->id_quote = $this->context->cookie->__get('request_id');
+                    $products = $this->quote->getProducts();
+                }
+                $this->context->smarty->assign(array(
+                    'products' => $products,
+                    'tpl_path' => $tpl_path,
+                    'back' => $back,
+                    'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
+                    'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED'),
+                    'isGuest' => isset($this->context->cookie->is_guest) ? $this->context->cookie->is_guest : 0,
+                    'countries' => $countries,
+                    'sl_country' => isset($selectedCountry) ? $selectedCountry : 0,
+                    'one_phone_at_least' => (int)Configuration::get('PS_ONE_PHONE_AT_LEAST'),
+                    'HOOK_CREATE_ACCOUNT_FORM' => Hook::exec('displayCustomerAccountForm'),
+                    'HOOK_CREATE_ACCOUNT_TOP' => Hook::exec('displayCustomerAccountFormTop')
+                ));
+
+                /* Load guest informations */
+                if ($this->context->cookie->is_guest)
+                    $this->context->smarty->assign('guestInformations', $this->_getGuestInformations());
+
+                die(Tools::jsonEncode(array('hasError' => false,'data' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/front/ajax_quote_product_list.tpl"))));
+            }
             if(Tools::getValue('action') == 'submit') {
                 if($this->submitQuote($this->quote)) {
                     die(Tools::jsonEncode(array('hasError' => false,'redirectUrl' => $this->context->link->getModuleLink($this->module->name, 'SubmitedQuotes', array(), true))));
@@ -76,6 +196,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             }
         }
     }
+
     protected function submitQuote($quote) {
         // check for user session
         if ($this->context->cookie->__isset('request_id')) {

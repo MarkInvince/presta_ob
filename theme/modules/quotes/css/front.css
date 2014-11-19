@@ -542,3 +542,33 @@
 	max-height: 330px;
 	overflow: auto;
 }
+.cart_quantity_input {
+	float: left;
+	padding-right: 25px;
+	width: 100%;
+}
+.quantity-block a {
+	display: table;
+	width: 22px;
+	margin-bottom: 1px;
+}
+.quantity-block a i {
+	font-size: 10px;
+}
+.quantity-block {
+	position: relative;
+	top: -6px;
+	left: -15px;
+}
+.quotes_cart_quantity {
+	width: 15%;
+}
+/*.overlay {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 10;
+	background: rgba(0,0,0,0.3);
+	top: 0;
+	left:0;
+}*/
