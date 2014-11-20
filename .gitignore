@@ -36,7 +36,7 @@ Icon
 .Spotlight-V100
 .Trashes
 
-/theme
+theme/
 /theme/cache
 /theme/cache/smarty/compile
 /theme/img/tmp
