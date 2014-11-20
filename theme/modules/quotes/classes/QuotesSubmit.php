@@ -7,10 +7,12 @@ include_once(_PS_MODULE_DIR_ . 'quotes/classes/QuotesTools.php');
 class QuotesSubmitCore extends ObjectModel
 {
     public $id_quote;
+    public $id_cart;
     public $quote_name;
     public $id_shop;
     public $id_shop_group;
     public $id_lang;
+    public $id_currency;
     public $id_customer;
     public $products;
     public $burgain_price;
@@ -21,10 +23,12 @@ class QuotesSubmitCore extends ObjectModel
         'table' => 'quotes',
         'primary' => 'id_quote',
         'fields' => array(
+            'id_cart'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'quote_name'    => 	array('type' => self::TYPE_STRING,  'validate' => 'isAnything'),
             'id_shop'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'id_shop_group' => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'id_lang'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
+            'id_currency'   => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'id_customer'   => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'products'      => 	array('type' => self::TYPE_STRING,  'validate' => 'isAnything'),
             'burgain_price' => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
@@ -79,7 +83,7 @@ class QuotesSubmitCore extends ObjectModel
     public function getAllQuotes() {
 
         $quotes = array();
-        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `submited` = 0');
+        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes`');
         if (empty($result))
             return array();
 
@@ -144,35 +148,12 @@ class QuotesSubmitCore extends ObjectModel
             'quote_static' => $price,
             'quote_normal' => Tools::displayPrice(Tools::ps_round($price,2), $this->context->currency)
         );
+//        $out['cart'] = array(
+//            'id_cart' => $result[0]['id_cart'],
+//        );
         $out['products'] = $product_arr;
         $out[] = $result[0];
         return $out;
     }
-    public function getOldAllQuotes() {
 
-        $quotes = array();
-        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `submited` = 1');
-        if (empty($result))
-            return array();
-
-        foreach ($result as $row) {
-            $quote = array();
-            $quote['id_quote'] = $row['id_quote'];
-            $quote['quote_name'] = $row['quote_name'];
-            $quote['id_shop'] = $row['id_shop'];
-            $quote['id_shop_group'] = $row['id_shop_group'];
-            $quote['id_lang'] = $row['id_lang'];
-            $customer = new Customer($row['id_customer']);
-            $quote['customer'] = array(
-                'id' => $customer->id,
-                'name' => $customer->firstname.' '.$customer->lastname,
-                'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
-            );
-            $quote['products'] = unserialize($row['products']);
-            $quote['date_add'] = $row['date_add'];
-            $quote['submited'] = $row['submited'];
-            $quotes[] = $quote;
-        }
-        return $quotes;
-    }
 }

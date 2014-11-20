@@ -10,7 +10,7 @@ class QuotesObj
         if (!$id_customer)
             return false;
 
-        $sql = "SELECT * FROM `"._DB_PREFIX_."quotes` WHERE `id_customer` = ".$id_customer;
+        $sql = "SELECT * FROM `"._DB_PREFIX_."quotes` WHERE `id_customer` = ".$id_customer." ORDER BY `id_quote` DESC";
 
         return Db::getInstance()->executeS($sql);
 
@@ -39,7 +39,7 @@ class QuotesObj
     public function getBargains($id_quote = false) {
         if (!$id_quote)
             return false;
-        $sql = "SELECT * FROM `"._DB_PREFIX_."quotes_bargains` WHERE `id_quote`=".$id_quote." ORDER BY `id_bargain` ASC";
+        $sql = "SELECT * FROM `"._DB_PREFIX_."quotes_bargains` WHERE `id_quote`=".$id_quote." ORDER BY `id_bargain` DESC";
 
         return $result = Db::getInstance()->executeS($sql);
     }
@@ -58,7 +58,15 @@ class QuotesObj
                     `bargain_customer_confirm` = 0
         ";
 
-        return $result = Db::getInstance()->execute($sql);
+        $result = Db::getInstance()->execute($sql);
+
+        if ($result) {
+            $sql = "UPDATE `"._DB_PREFIX_."quotes` SET `burgain_price` = ".$price." WHERE `id_quote`=".$id_quote;
+            if(Db::getInstance()->execute($sql))
+                return true;
+        }
+
+        return $result;
     }
 
     public function deleteBargain($id_bargain = false) {
@@ -90,6 +98,17 @@ class QuotesObj
                     return true;
             }
         }
+        return false;
+    }
+
+    public function submitTransformQuote($id_quote) {
+        if (!$id_quote)
+            return false;
+        $sql = "UPDATE `"._DB_PREFIX_."quotes` SET
+                `submited` = 2
+                    WHERE `id_quote`=".$id_quote;
+        if(Db::getInstance()->execute($sql))
+            return true;
 
         return false;
     }

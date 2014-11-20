@@ -10,7 +10,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_product` (
     `id_lang` int(11) unsigned NOT NULL DEFAULT "1",
     `id_product` int(10) unsigned NOT NULL,
     `id_product_attribute` int(10) unsigned NOT NULL,
-    `id_curreny` int(10) unsigned NOT NULL,
+    `id_currency` int(10) unsigned NOT NULL,
     `id_guest` int(11) unsigned NOT NULL DEFAULT "0",
     `id_customer` int(11) unsigned NOT NULL DEFAULT "0",
     `quantity` int(10) unsigned NOT NULL DEFAULT "0",
@@ -33,11 +33,13 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_bargains` (
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes` (
     `id_quote` int(11) NOT NULL AUTO_INCREMENT,
+    `id_cart` int(11) NOT NULL,
     `quote_name` varchar(250) NOT NULL,
     `burgain_price` int(20) NOT NULL,
     `id_shop` int(11) NOT NULL,
     `id_shop_group` int(11) NOT NULL,
     `id_lang` int(11) NOT NULL,
+    `id_currency` int(11) NOT NULL,
     `id_customer` int(11) NOT NULL,
     `products` text NOT NULL,
     `date_add` datetime NOT NULL,
