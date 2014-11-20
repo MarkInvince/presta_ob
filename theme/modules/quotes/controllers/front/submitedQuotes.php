@@ -78,7 +78,6 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
             $bargains = $this->quote->getBargains($this->id_quote);
 
             foreach ($bargains as $key=>$bargain){
-                //$bargain['bargain_price'] =
                 $bargains[$key]['bargain_price_display'] = Tools::displayPrice(Tools::ps_round($bargain['bargain_price'],2), $this->context->currency);
             }
 
