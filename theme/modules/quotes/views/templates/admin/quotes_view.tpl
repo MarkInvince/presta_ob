@@ -38,7 +38,7 @@
                         </table>
                         <br/>
                         <div class="text-right">
-                            <a href="javascript:void(0);" class="btn btn-default"><i class="icon-edit"></i> {l s="Edit" mod="quotes"}</a>
+                            <a target="_blank" href="{$link->getAdminLink("AdminCustomers", true)}&id_customer={$quote.customer.id}&updatecustomer" class="btn btn-default"><i class="icon-edit"></i> {l s="Edit" mod="quotes"}</a>
                         </div>
                     </div>
                     <div class="col-lg-1"></div>
@@ -130,7 +130,7 @@
                 <td></td>
                 <td></td>
                 <td><h4>{l s="Quote total:" mod="quotes"}</h4></td>
-                <td><h4>{$quote['quote_total']['quote_normal']}<h4></td>
+                <td><h4>{$quote.quote_total.quote_normal}<h4></td>
             </tr>
             </tfoot>
         </table>
