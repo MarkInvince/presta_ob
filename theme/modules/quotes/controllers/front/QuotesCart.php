@@ -208,6 +208,33 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     protected function submitQuote($quote) {
         // check for user session
         if ($this->context->cookie->__isset('request_id')) {
+
+            $address_delivery = $this->context->customer->getAddresses($this->context->language->id);
+            $id_address_delivery = $address_delivery[0]['id_address'];
+            $date_add = date('Y-m-d H:i:s', time());
+
+            $sql = "INSERT INTO `"._DB_PREFIX_."cart` SET
+                    `id_shop_group` = ".$this->context->shop->id_shop_group.",
+                    `id_shop` = ".$this->context->shop->id.",
+                    `id_carrier` = 0,
+                    `id_lang` = ".$this->context->language->id.",
+                    `id_address_delivery` = ".$id_address_delivery.",
+                    `id_address_invoice` = ".$id_address_delivery.",
+                    `id_currency` = ".$this->context->currency->id.",
+                    `id_customer` = ".(int)$this->context->customer->id.",
+                    `id_guest` = ".(int)$this->context->cookie->id_guest.",
+                    `secure_key` = '".$this->context->customer->secure_key."',
+                    `recyclable` = ".$this->context->cart->recyclable.",
+                    `date_add` = '".$date_add."',
+                    `date_upd` = '".$date_add."'";
+
+            if(Db::getInstance()->execute($sql)){
+                $id_cart = Db::getInstance()->Insert_ID();
+            }
+            else{
+                $id_cart = 0;
+                die($sql);
+            }
             $quote->id_quote = $this->context->cookie->__get('request_id');
             // get all products
             $all_products = array();
@@ -217,12 +244,41 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                     'id_attribute' => $product['id_attribute'],
                     'quantity'     => $product['quantity'],
                 );
+                $sql = "INSERT INTO `"._DB_PREFIX_."cart_product` SET
+                    `id_cart` = ".$id_cart.",
+                    `id_product` = ".$product['id'].",
+                    `id_address_delivery` = ".$id_address_delivery.",
+                    `id_shop` = ".$this->context->shop->id.",
+                    `id_product_attribute` = ".$product['id_attribute'].",
+                    `quantity` = ".$product['quantity'].",
+                    `date_add` = '".$date_add."'";
+                Db::getInstance()->execute($sql);
             }
+
+            $this->submit_quote->id_cart = $id_cart;
+            $this->submit_quote->id_lang = $this->context->language->id;
+            $this->submit_quote->id_currency = $this->context->currency->id;
             $this->submit_quote->burgain_price = 0;
             $this->submit_quote->products = serialize($all_products);
+            $this->submit_quote->date_add = $date_add;
             if($this->submit_quote->add()) {
                 //generate new user session id
                 $this->context->cookie->__set('request_id', uniqid());
+
+//                if (Validate::isEmail($this->context->customer->email))
+//                    Mail::Send(
+//                        (int)$this->context->language->id,
+//                        'order_conf',
+//                        'Quote was submited',
+//                        $data,
+//                        $this->context->customer->email,
+//                        $this->context->customer->firstname.' '.$this->context->customer->lastname,
+//                        null,
+//                        null,
+//                        null,
+//                        null, _PS_MAIL_DIR_, false, (int)$this->context->shop->id
+//                    );
+
                 // clear shop box
                 return $quote->deleteAllProduct();
             }

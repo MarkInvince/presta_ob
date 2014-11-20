@@ -1,0 +1,7 @@
+*ERROR* 	2014/11/19 - 13:31:43: Can't load Order status at line 173 in file modules/quotes/controllers/admin/AdminQuotesController.php
+*ERROR* 	2014/11/19 - 14:33:19: Property Order->id_address_delivery is empty at line 846 in file classes/ObjectModel.php
+*ERROR* 	2014/11/19 - 14:35:45: Property Order->id_address_invoice is empty at line 846 in file classes/ObjectModel.php
+*ERROR* 	2014/11/19 - 14:58:41: Property Order->id_address_invoice is empty at line 846 in file classes/ObjectModel.php
+*ERROR* 	2014/11/19 - 15:00:33: Property Order->id_customer is empty at line 846 in file classes/ObjectModel.php
+*ERROR* 	2014/11/19 - 15:04:32: Property Order->id_carrier is empty at line 846 in file classes/ObjectModel.php
+*ERROR* 	2014/11/19 - 15:05:01: Property Order->id_carrier is empty at line 846 in file classes/ObjectModel.php

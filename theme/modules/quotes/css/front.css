@@ -474,12 +474,43 @@
 /************************************************************************
 						Submited Quotes Page
 *************************************************************************/
+.table.table-bordered {
+    margin-bottom: 15px;
+}
 #quote_products_info {
     display: none;
 }
 
+.quote_name {
+    cursor: pointer;
+}
+
+.quote_name:hover {
+    color: #000;
+}
+
 .quote_name .icon-pencil {
     margin-right: 5px;
+}
+
+.color-red {
+    color: red;
+    font-size: 18px;
+}
+.color-green {
+    color: green;
+    font-size: 18px;
+}
+.color-green2 {
+    color: green;
+    font-size: 15px;
+}
+
+#quotes-list .table_link a {
+
+}
+#quotes-list .table_link a:hover {
+    color: #008000;
 }
 
 /************************************************************************

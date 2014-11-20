@@ -54,8 +54,9 @@
 	display: none;
 }
 
-.bargains_list .admin_bargain .bargain_delete {
+.bargains_list .admin_bargain .bargain_action {
 	float: right;
+	margin-top: 25px;
 }
 
 #bargain_form .input-group.col-lg-2 {

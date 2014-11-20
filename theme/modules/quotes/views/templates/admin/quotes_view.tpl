@@ -1,3 +1,6 @@
+<pre>
+    {print_r($order)}
+</pre>
 <script type="text/javascript">
     var confirmDelete   = '{l s="Are you sure you want delete?" mod="quotes"}';
     var adminQuotesUrl = "{$index}";
@@ -149,20 +152,22 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="control-label col-lg-3">{l s='Bargain price' mod='quotes'}</label>
-                    <div class="input-group col-lg-2">
-                        <span class="input-group-addon">{$currency}</span>
-                        <input maxlength="14" name="bargain_price" id="bargain_price" type="text">
+                {if {$quote[0]['submited']} == 0}
+                    <div class="form-group">
+                        <label class="control-label col-lg-3">{l s='Bargain price' mod='quotes'}</label>
+                        <div class="input-group col-lg-2">
+                            <span class="input-group-addon">{$currency}</span>
+                            <input maxlength="14" name="bargain_price" id="bargain_price" type="text">
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="control-label col-lg-3">{l s='The offer' mod='quotes'}</label>
-                    <div class="col-lg-4 ">
-                        <input type="text" name="bargain_price_text" id="bargain_price_text" value="" class="">
+                    <div class="form-group">
+                        <label class="control-label col-lg-3">{l s='The offer' mod='quotes'}</label>
+                        <div class="col-lg-4 ">
+                            <input type="text" name="bargain_price_text" id="bargain_price_text" value="" class="">
+                        </div>
                     </div>
-                </div>
+                {/if}
 
                 <div class="form-group col-lg-7">
                     <button type="submit" id="addClientBargain" name="addClientBargain" class="btn btn-default pull-right">
@@ -178,6 +183,7 @@
 </div>
 
 <div class="col-lg-12 panel">
+    {$quote_transform}
     <h3><i class="icon-list-ul"></i> {l s='Quote bargains' mod='quotes'}</h3>
     {if $bargains && count($bargains) > 0}
         <ul class="bargains_list">
@@ -239,16 +245,34 @@
                                         <div id="danger_bargain_{$bargain.id_bargain}" class="alert alert-danger">
                                             {l s='Something wrong, try again' mod='quotes'}
                                         </div>
+                                        <div {if $quote[0]['submited'] == 2}style="display: block"{/if} class="alert alert-success">
+                                            {l s='Transformed to order' mod='quotes'}
+                                        </div>
                                     </div>
+
                                 </div>
                                 {if !$bargain.bargain_customer_confirm}
-                                    <div class="col-lg-1 bargain_delete">
+                                    <div class="col-lg-1 bargain_action">
                                         <form  action="{$index}" method="post" class="burgainSubmitForm std">
                                             <a data-action="deleteBargain" data-id="{$bargain.id_bargain}" class="btn btn-default deleteBargainOffer">
                                                 <i class="icon-trash"></i><span> {l s='Delete' mod='quotes'}</span>
                                             </a>
                                         </form>
                                     </div>
+                                {elseif $bargain.bargain_customer_confirm == 1}
+                                    {if $quote[0]['submited'] != 2}
+                                        <div class="col-lg-3 bargain_action">
+                                            <form  action="{$index}" method="post" class="burgainSubmitForm std">
+                                                <input type="hidden" name="id_quote" value="{$id_quote}"/>
+                                                <input type="hidden" name="id_customer" value="{$id_customer}">
+                                                <input type="hidden" name="total_products" value="{$quote.quote_total.quote_static}">
+                                                <input type="hidden" name="id_cart" value="{$quote[0]['id_cart']}">
+                                                <button type="submit" name="transformQuote" class="btn btn-primary">
+                                                    {l s='Transform quote to order' mod='quotes'}
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {/if}
                                 {/if}
                             {/if}
                         </div>

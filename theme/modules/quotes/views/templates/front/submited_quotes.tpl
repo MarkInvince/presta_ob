@@ -3,12 +3,17 @@
     <h1 class="page-heading bottom-indent">{l s='Submited quotes' mod='quotes'}</h1>
     <p class="info-title">{l s='Here are the quotes you\'ve submited since your account was created.' mod='quotes'}</p>
 
-
     <div class="block-center" id="block-quotes">
-            {*<pre>*}
-                {*{print_r($quotes)}*}
-            {*</pre>*}
         {if $quotes && count($quotes)}
+            <div class="panel">
+                <ul class="list-group">
+                    <li class="list-group-item"><i class="icon-remove color-red btn"></i> {l s="Not submited quotes" mod="quotes"}</li>
+                    <li class="list-group-item"><i class="icon-ok-circle btn color-green"></i> {l s="Submited quotes" mod="quotes"}</li>
+                    <li class="list-group-item"><i class="icon-mail-forward btn color-green2"></i> {l s="Submited and transorm into prestashop order quotes" mod="quotes"}</li>
+                    <li class="list-group-item"><i class="icon-pencil btn"></i> {l s="Click to edit quote name" mod="quotes"}</li>
+                </ul>
+            </div>
+
             <table id="quotes-list" class="table table-bordered footab">
                 <thead>
                 <tr>
@@ -16,7 +21,8 @@
                     <th class="item">{l s='Date' mod='quotes'}</th>
                     <th class="item">{l s='Total price' mod='quotes'}</th>
                     <th class="item">{l s='Bargain price' mod='quotes'}</th>
-                    <th class="last_item">{l s='Details' mod='quotes'}</th>
+                    <th class="item text-center">{l s='Status' mod='quotes'}</th>
+                    <th class="last_item">{l s='Bargains' mod='quotes'}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -26,18 +32,23 @@
                         <td data-value="{$quote.date_add|regex_replace:"/[\-\:\ ]/":""}" class="">
                             {dateFormat date=$quote.date_add full=0}
                         </td>
-                        <td class="" data-value="{}">
-                            <span class="price">
-                                {$quote.price}
-                            </span>
-                        </td>
-                        <td class="" data-value="{}">
+                        <td>
                             <span class="price">
                                 {$quote.price}
                             </span>
                         </td>
                         <td>
-                            <a href="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}?id_quote={$quote.id_quote}">{l s='See bargains' mod='quotes'}</a>
+                            <span class="price">
+                                {if $quote.bargain_price ==0}
+                                    {$quote.price}
+                                {else}
+                                    {$quote.bargain_price}
+                                {/if}
+                            </span>
+                        </td>
+                        <td class="text-center">{if $quote.submited == 1}<i class="icon-ok-circle color-green"></i>{elseif $quote.submited == 0}<i class="icon-remove color-red"></i>{else}<i class="icon-mail-forward color-green2"></i>{/if}</td>
+                        <td class="table_link">
+                            <a href="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}?id_quote={$quote.id_quote}"><i class="icon-eye-open"></i> {l s='view' mod='quotes'}</a>
                         </td>
                     </tr>
                 {/foreach}
@@ -65,19 +76,15 @@
     </ul>
 {else}
 
-    {*<pre>*}
-        {*{print_r($quote)}*}
-    {*</pre>*}
-
     <h1 class="page-heading bottom-indent">{l s='Quote information' mod='quotes'}</h1>
-
 
     <table  class="table table-bordered footab">
         <tr>
             <th class="first_item" data-sort-ignore="true">{l s='Quote name'}</th>
-            <th class="item">{l s='Date' mod='quotes'}</th>
+            <th class="item">{l  s='Date' mod='quotes'}</th>
             <th class="item">{l s='Total price' mod='quotes'}</th>
             <th class="item">{l s='Bargain price' mod='quotes'}</th>
+            <th class="last_item text-center">{l s='Status' mod='quotes'}</th>
         </tr>
         <tr class="item">
             <td data-value="{$quote.id_quote}" class="quote_name"><i class="icon-pencil"></i>{$quote.quote_name}</td>
@@ -89,15 +96,22 @@
             </td>
             <td class="">
                 <span class="price">
-                    {$quote.price}
+                    {if $quote.bargain_price ==0}
+                        {$quote.price}
+                    {else}
+                        {$quote.bargain_price}
+                    {/if}
                 </span>
             </td>
+            <td class="text-center">{if $quote.submited == 1}<i class="icon-ok-circle color-green"></i>{elseif $quote.submited == 0}<i class="icon-remove color-red"></i>{else}<i class="icon-mail-forward"></i>{/if}</td>
         </tr>
     </table>
 
     <p><a href="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" id="show_quote_products_info">&raquo; {l s='Click to show quote products info'}</a></p>
 
-
+    {*<pre>*}
+        {*{print_r($quote.products)}*}
+    {*</pre>*}
 
     <table id="quote_products_info" class="table table-bordered">
         <tr>
@@ -112,7 +126,7 @@
         <tr id="product_{$product.id}_{$product.id_attribute}">
             <td class="quotes_cart_product">
                 <a href="{$product.link|escape:'html':'UTF-8'}">
-                    <img src="{$link->getImageLink($product.link_rewrite, $product.id_attribute, 'cart_default')|escape:'html':'UTF-8'}" alt="{$product.name|escape:'html':'UTF-8'}" />
+                    <img src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'cart_default')|escape:'html':'UTF-8'}" alt="{$product.name|escape:'html':'UTF-8'}" />
                 </a>
             </td>
             <td class="quotes_cart_description">
@@ -134,11 +148,31 @@
     {/foreach}
     </table>
 
+    {if $MESSAGING_ENABLED}
+        <form action="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" method="post" id="client_bargain_txt" class="std">
+            <input type="hidden" id="id_quote" name="id_quote" value="{$id_quote}" />
+            <fieldset>
+                <div class="box">
+                    {if isset($bargain_errors)}
+                        <div class="alert alert-danger">
+                            <ol>
+                                {foreach from=$bargain_errors item=v}
+                                    <li>{$v}</li>
+                                {/foreach}
+                            </ol>
+                        </div>
+                    {/if}
+                    <h3 class="page-subheading">{l s='New bargain message' mod='quotes'}</h3>
+                    <div class="form-group is_customer_param">
+                        <textarea class="form-control" name="bargain_text" id="bargain_text" cols="26" rows="3"></textarea>
+                    </div>
+                    <button type="submit" name="addClientBargain" id="addClientBargain" class="btn btn-default button button-medium"><span>{l s='Send' mod='quotes'}<i class="icon-chevron-right right"></i></span></button>
+                </div>
+            </fieldset>
+        </form>
+    {/if}
 
     <h1 class="page-heading bottom-indent">{l s='Quote bargains' mod='quotes'}</h1>
-    {*<pre>*}
-        {*{print_r($bargains)}*}
-    {*</pre>*}
 
     {if $bargains && count($bargains) > 0}
         <ul class="bargains_list">
@@ -207,6 +241,9 @@
                                         <div id="danger_bargain_{$bargain.id_bargain}" class="alert alert-danger">
                                             {l s='Submit error, try again' mod='quotes'}
                                         </div>
+                                        <div {if $quote.submited == 2}style="display: block"{/if} class="alert alert-success">
+                                            {l s='Transformed to order' mod='quotes'}
+                                        </div>
                                     </div>
                                 </div>
                             {/if}
@@ -217,30 +254,6 @@
         </ul>
     {else}
         <p class="alert alert-warning">{l s='There are no any bargains yet' mod='quotes'}</p>
-    {/if}
-
-    {if $MESSAGING_ENABLED}
-        <form action="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" method="post" id="client_bargain_txt" class="std">
-            <input type="hidden" id="id_quote" name="id_quote" value="{$id_quote}" />
-            <fieldset>
-                <div class="box">
-                    {if isset($bargain_errors)}
-                        <div class="alert alert-danger">
-                            <ol>
-                                {foreach from=$bargain_errors item=v}
-                                    <li>{$v}</li>
-                                {/foreach}
-                            </ol>
-                        </div>
-                    {/if}
-                    <h3 class="page-subheading">{l s='New bargain message' mod='quotes'}</h3>
-                    <div class="form-group is_customer_param">
-                        <textarea class="form-control" name="bargain_text" id="bargain_text" cols="26" rows="3"></textarea>
-                    </div>
-                    <button type="submit" name="addClientBargain" id="addClientBargain" class="btn btn-default button button-medium"><span>{l s='Send' mod='quotes'}<i class="icon-chevron-right right"></i></span></button>
-                </div>
-            </fieldset>
-        </form>
     {/if}
 
     <ul class="footer_links clearfix">
