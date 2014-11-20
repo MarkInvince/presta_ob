@@ -36,6 +36,7 @@ Icon
 .Spotlight-V100
 .Trashes
 
+/theme
 /theme/cache
 /theme/cache/smarty/compile
 /theme/img/tmp
@@ -47,3 +48,4 @@ Icon
 /theme/log/20141114_exception.log
 /theme/config
 /theme/translations
+/theme/img
