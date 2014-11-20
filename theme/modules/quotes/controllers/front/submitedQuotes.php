@@ -86,7 +86,6 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
         } else // if 0 Get quotes list
         {
             $quotes = $this->quote->getQuotesByCustomer($this->id_customer);
-
             $quotes = $this->foreachQuotes($quotes);
 
             $this->context->smarty->assign('quotes', $quotes);
@@ -108,6 +107,7 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
         foreach ($quotes as $firstkey=>$quoteInfo) {
             $quote_total_price = 0;
             foreach ($quoteInfo as $key=>$field){
+                //$currency = new Currency($quoteInfo['id_currency'], null, $this->context->shop->id);
                 if ($key == 'products'){
                     $quoteIn[$key] = Tools::unSerialize($field);
                     foreach($quoteIn[$key] as $k=>$product) {
@@ -121,9 +121,14 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
                         $quoteIn[$key][$k]['link_rewrite'] = $productObj->link_rewrite;
                         $quoteIn[$key][$k]['link'] = $this->context->link->getProductLink($productObj, $productObj->link_rewrite, $productObj->category, null, null);
 
+                        $quoteIn[$key][$k]['id_image'] = getProductAttributeImage($productObj->id, $product['id_attribute'], $this->context->language->id);
+
                         $quote_total_price = $quote_total_price + $prod_price*$product['quantity'];
                     }
                     $quoteIn['price'] = Tools::displayPrice(Tools::ps_round($quote_total_price,2), $this->context->currency);
+                }
+                elseif($key == 'burgain_price'){
+                    $quoteIn['bargain_price'] = Tools::displayPrice(Tools::ps_round($field,2), $this->context->currency);
                 }else
                     $quoteIn[$key] = $field;
             }

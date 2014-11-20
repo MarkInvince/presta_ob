@@ -211,12 +211,15 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $quote->id_quote = $this->context->cookie->__get('request_id');
             // get all products
             $all_products = array();
-            foreach($quote->getProducts() as $product) {
-                $all_products[] = array(
-                    'id'           => $product['id'],
-                    'id_attribute' => $product['id_attribute'],
-                    'quantity'     => $product['quantity'],
-                );
+            foreach($quote->getProducts() as $key=>$product) {
+                if(is_numeric($key)) {
+                    $all_products[] = array(
+                        'id'           => $product['id'],
+                        'id_attribute' => $product['id_attribute'],
+                        'quantity'     => $product['quantity'],
+                    );
+                }
+
             }
             $this->submit_quote->burgain_price = 0;
             $this->submit_quote->products = serialize($all_products);

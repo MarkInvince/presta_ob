@@ -209,30 +209,32 @@ class QuotesProductCart extends ObjectModel
         if (empty($result))
             return array();
         //$order_total = 0;
-        foreach ($result as $row) {
-            $products_ids[] = $row['id_product'];
-            $product = array();
-            $p_obj = new Product($row['id_product'], true, $this->context->language->id);
-            $link = new Link;
-            if (Validate::isLoadedObject($p_obj)) {
-                $product['id'] = $p_obj->id;
-                $product['title'] = $p_obj->name;
-                $product['id_shop'] = $this->id_shop;
-                $product['category'] = $p_obj->category;
-                $product['id_image'] = $p_obj->getCover($p_obj->id);
-                $product['id_attribute'] = $row['id_product_attribute'];
-                $product['link'] = $link->getProductLink($p_obj, $p_obj->link_rewrite, $p_obj->category, null, null, $p_obj->id_shop, $this->id_product_attribute);
-                $product['link_rewrite'] = $p_obj->link_rewrite;
-                $product['id_image'] = getProductAttributeImage($p_obj->id, $row['id_product_attribute'], $this->context->language->id);
-                $product['quantity'] = $row['quantity'];
-                $product['unit_price'] = Tools::displayPrice(Tools::ps_round(Product::getPriceStatic($p_obj->id, true, NULL, 6),2), $this->context->currency);
-                $product['total_price'] = Tools::displayPrice(Tools::ps_round((Product::getPriceStatic($p_obj->id, true, NULL, 6) * $row['quantity']),2), $this->context->currency);
-                $products[] = $product;
+        foreach ($result as $key => $row) {
+            if(is_numeric($key)) {
+                $products_ids[] = $row['id_product'];
+                $product = array();
+                $p_obj = new Product($row['id_product'], true, $this->context->language->id);
+                $link = new Link;
+                if (Validate::isLoadedObject($p_obj)) {
+                    $product['id'] = $p_obj->id;
+                    $product['title'] = $p_obj->name;
+                    $product['id_shop'] = $this->id_shop;
+                    $product['category'] = $p_obj->category;
+                    $product['id_image'] = $p_obj->getCover($p_obj->id);
+                    $product['id_attribute'] = $row['id_product_attribute'];
+                    $product['link'] = $link->getProductLink($p_obj, $p_obj->link_rewrite, $p_obj->category, null, null, $p_obj->id_shop, $this->id_product_attribute);
+                    $product['link_rewrite'] = $p_obj->link_rewrite;
+                    $product['id_image'] = getProductAttributeImage($p_obj->id, $row['id_product_attribute'], $this->context->language->id);
+                    $product['quantity'] = $row['quantity'];
+                    $product['unit_price'] = Tools::displayPrice(Tools::ps_round(Product::getPriceStatic($p_obj->id, true, NULL, 6),2), $this->context->currency);
+                    $product['total_price'] = Tools::displayPrice(Tools::ps_round((Product::getPriceStatic($p_obj->id, true, NULL, 6) * $row['quantity']),2), $this->context->currency);
+                    $products[] = $product;
 
-                $order_total += Tools::ps_round((Product::getPriceStatic($p_obj->id, true, NULL, 6) * $row['quantity']),2);
+                    $order_total += Tools::ps_round((Product::getPriceStatic($p_obj->id, true, NULL, 6) * $row['quantity']),2);
+                }
             }
         }
-        $products['cart'] = array('total' => Tools::displayPrice($order_total, $this->context->currency));
+        //$products['cart'] = array('total' => Tools::displayPrice($order_total, $this->context->currency));
         if(!empty($products_ids))
             Product::cacheProductsFeatures($products_ids);
 

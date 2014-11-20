@@ -149,7 +149,7 @@ $(document).ready(function(){
 		}
 	});
 
-	$('.submit_quote').on('click', function() {
+	$('body').on('click', '.submit_quote', function() {
 		$.ajax({
 			url: quotesCart,
 			method:'post',
