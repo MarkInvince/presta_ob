@@ -86,7 +86,6 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
         } else // if 0 Get quotes list
         {
             $quotes = $this->quote->getQuotesByCustomer($this->id_customer);
-
             $quotes = $this->foreachQuotes($quotes);
 
             $this->context->smarty->assign('quotes', $quotes);

@@ -97,6 +97,53 @@ class QuotesProductCart extends ObjectModel
         else
             return false;
     }
+    public function recountProductByValue($id_product, $id_product_attribute, $value, $operator = 'add', $id_quote = false) {
+        if (!$id_quote) {
+            return false;
+        }
+
+        $row = Db::getInstance()->getRow('
+			SELECT qp.`quantity`, qp.`id_product_attribute`
+			FROM `'._DB_PREFIX_.'quotes_product` qp
+			WHERE qp.`id_product` = '.(int)$id_product.' AND qp.`id_quote` LIKE "'.$id_quote.'" AND qp.`id_product_attribute` = '.$id_product_attribute
+        );
+
+        $current_qty = (int)$row['quantity'];
+        $product = new Product($id_product, false, Configuration::get('PS_LANG_DEFAULT'));
+
+        if (!Validate::isLoadedObject($product))
+            die(Tools::displayError());
+
+        if ((int)$current_qty < 0)
+            return $this->deleteProduct($id_product, $id_product_attribute);
+        elseif (!$product->available_for_order || !$product->active)
+            return false;
+        else
+        {
+            switch($operator) {
+                case "add":
+                    $current_qty = $current_qty + (int)$value;
+                    break;
+                case "remove":
+                    $current_qty = $current_qty - (int)$value;
+                    break;
+                default:
+                    break;
+            }
+
+            if ((int)$current_qty < 0)
+                return $this->deleteProduct($id_product, $row['id_product_attribute']);
+
+            //update current product in cart
+            $update = Db::getInstance()->execute('
+					UPDATE `'._DB_PREFIX_.'quotes_product`
+					SET `quantity` = '.(int)$current_qty.', `date_upd` = "'.date('Y-m-d H:i:s', time()).'"
+					WHERE `id_product` = '.(int)$id_product. ' AND `id_quote` LIKE "'.$id_quote.'" AND `id_product_attribute` = '.$id_product_attribute.'
+					LIMIT 1'
+            );
+            return $update;
+        }
+    }
     public function recountProduct() {
         if (!$this->id_product || !$this->id_quote) {
             return false;
@@ -161,28 +208,33 @@ class QuotesProductCart extends ObjectModel
         $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes_product` WHERE `id_quote` LIKE "'.$this->id_quote.'"');
         if (empty($result))
             return array();
+        //$order_total = 0;
+        foreach ($result as $key => $row) {
+            if(is_numeric($key)) {
+                $products_ids[] = $row['id_product'];
+                $product = array();
+                $p_obj = new Product($row['id_product'], true, $this->context->language->id);
+                $link = new Link;
+                if (Validate::isLoadedObject($p_obj)) {
+                    $product['id'] = $p_obj->id;
+                    $product['title'] = $p_obj->name;
+                    $product['id_shop'] = $this->id_shop;
+                    $product['category'] = $p_obj->category;
+                    $product['id_image'] = $p_obj->getCover($p_obj->id);
+                    $product['id_attribute'] = $row['id_product_attribute'];
+                    $product['link'] = $link->getProductLink($p_obj, $p_obj->link_rewrite, $p_obj->category, null, null, $p_obj->id_shop, $this->id_product_attribute);
+                    $product['link_rewrite'] = $p_obj->link_rewrite;
+                    $product['id_image'] = getProductAttributeImage($p_obj->id, $row['id_product_attribute'], $this->context->language->id);
+                    $product['quantity'] = $row['quantity'];
+                    $product['unit_price'] = Tools::displayPrice(Tools::ps_round(Product::getPriceStatic($p_obj->id, true, NULL, 6),2), $this->context->currency);
+                    $product['total_price'] = Tools::displayPrice(Tools::ps_round((Product::getPriceStatic($p_obj->id, true, NULL, 6) * $row['quantity']),2), $this->context->currency);
+                    $products[] = $product;
 
-        foreach ($result as $row) {
-            $products_ids[] = $row['id_product'];
-            $product = array();
-            $p_obj = new Product($row['id_product'], true, $this->context->language->id);
-            $link = new Link;
-            if (Validate::isLoadedObject($p_obj)) {
-                $product['id'] = $p_obj->id;
-                $product['title'] = $p_obj->name;
-                $product['id_shop'] = $this->id_shop;
-                $product['category'] = $p_obj->category;
-                $product['id_image'] = $p_obj->getCover($p_obj->id);
-                $product['id_attribute'] = $row['id_product_attribute'];
-                $product['link'] = $link->getProductLink($p_obj, $p_obj->link_rewrite, $p_obj->category, null, null, $p_obj->id_shop, $this->id_product_attribute);
-                $product['link_rewrite'] = $p_obj->link_rewrite;
-                $product['id_image'] = getProductAttributeImage($p_obj->id, $row['id_product_attribute'], $this->context->language->id);
-                $product['quantity'] = $row['quantity'];
-                $product['price'] = Tools::displayPrice(Tools::ps_round(Product::getPriceStatic($p_obj->id, true, NULL, 6),2), $this->context->currency);
-                $products[] = $product;
+                    $order_total += Tools::ps_round((Product::getPriceStatic($p_obj->id, true, NULL, 6) * $row['quantity']),2);
+                }
             }
         }
-
+        //$products['cart'] = array('total' => Tools::displayPrice($order_total, $this->context->currency));
         if(!empty($products_ids))
             Product::cacheProductsFeatures($products_ids);
 

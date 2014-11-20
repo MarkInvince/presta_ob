@@ -148,12 +148,10 @@ class QuotesSubmitCore extends ObjectModel
             'quote_static' => $price,
             'quote_normal' => Tools::displayPrice(Tools::ps_round($price,2), $this->context->currency)
         );
-//        $out['cart'] = array(
-//            'id_cart' => $result[0]['id_cart'],
-//        );
+
         $out['products'] = $product_arr;
         $out[] = $result[0];
         return $out;
     }
-
+    
 }
