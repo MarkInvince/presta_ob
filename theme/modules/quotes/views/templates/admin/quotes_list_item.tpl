@@ -4,7 +4,7 @@
     <td class="text-center"><a target="_blank" href="{$quote.customer.link}">{$quote.customer.name}</a></td>
     <td class="text-center">{count($quote.products)}</td>
     <td class="text-center">{$quote.date_add}</td>
-    <td class="text-center">{if $quote.submited == 1}<i class="icon-ok-circle color-green"></i>{else}<i class="icon-remove color-red"></i>{/if}</td>
+    <td class="text-center">{if $quote.submited == 1}<i class="icon-ok-circle color-green"></i>{elseif $quote.submited == 0}<i class="icon-remove color-red"></i>{else}<i class="icon-mail-forward color-green"></i>{/if}</td>
     <td class="text-center">
         <form action="{$index}" method="post" class="action_form">
             <input type="hidden" name="id_customer" value="{$quote.customer.id}" />

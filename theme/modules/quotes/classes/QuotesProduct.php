@@ -208,7 +208,7 @@ class QuotesProductCart extends ObjectModel
         $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes_product` WHERE `id_quote` LIKE "'.$this->id_quote.'"');
         if (empty($result))
             return array();
-
+        //$order_total = 0;
         foreach ($result as $row) {
             $products_ids[] = $row['id_product'];
             $product = array();
@@ -228,9 +228,11 @@ class QuotesProductCart extends ObjectModel
                 $product['unit_price'] = Tools::displayPrice(Tools::ps_round(Product::getPriceStatic($p_obj->id, true, NULL, 6),2), $this->context->currency);
                 $product['total_price'] = Tools::displayPrice(Tools::ps_round((Product::getPriceStatic($p_obj->id, true, NULL, 6) * $row['quantity']),2), $this->context->currency);
                 $products[] = $product;
+
+                $order_total += Tools::ps_round((Product::getPriceStatic($p_obj->id, true, NULL, 6) * $row['quantity']),2);
             }
         }
-
+        $products['cart'] = array('total' => Tools::displayPrice($order_total, $this->context->currency));
         if(!empty($products_ids))
             Product::cacheProductsFeatures($products_ids);
 

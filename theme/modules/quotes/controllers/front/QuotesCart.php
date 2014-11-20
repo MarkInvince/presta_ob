@@ -54,6 +54,14 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $this->processSubmitAccount();
 
         if(Tools::getValue('action')) {
+            if(Tools::getValue('action') == 'popup') {
+
+                $this->context->smarty->assign('active_overlay', '1');
+                $this->context->smarty->assign('total', 0);
+                $this->context->smarty->assign('total_count', 0);
+
+                die(Tools::jsonEncode(array('popup' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/quotesCart.tpl"))));
+            }
             if(Tools::getValue('action') == 'add') {
                 $add = $this->ajaxAddToQuotesCart();
 

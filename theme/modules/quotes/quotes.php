@@ -381,9 +381,12 @@ class Quotes extends Module
 		$this->context->smarty->assign('session', $this->context->cookie->__get('request_id'));
 		$this->context->smarty->assign('actionAddQuotes',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
 		$this->context->smarty->assign('products', $products);
-        $catalog_mode = Configuration::get('PS_CATALOG_MODE') ? Configuration::get('PS_CATALOG_MODE') : false;
-        $this->context->smarty->assign('catalogMode', $catalog_mode);
-		$this->context->smarty->assign('cartTotalProducts', count($products));
+        $this->context->smarty->assign('active_overlay', 0);
+        $product_count = 0;
+        foreach($products as $key=>$value)
+            if(is_numeric($key))
+                $product_count++;
+		$this->context->smarty->assign('cartTotalProducts', count($product_count));
 		$this->context->smarty->assign('quotesCart',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
 
 		if (Configuration::get('MAIN_STATE'))

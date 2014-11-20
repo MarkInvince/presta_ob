@@ -1,3 +1,10 @@
+<div class="panel">
+    <ul class="list-group">
+        <li class="list-group-item"><i class="icon-remove color-red btn"></i> {l s="Not submited quotes" mod="quotes"}</li>
+        <li class="list-group-item"><i class="icon-ok-circle btn color-green"></i> {l s="Submited quotes" mod="quotes"}</li>
+        <li class="list-group-item"><i class="icon-mail-forward btn color-green"></i> {l s="Submited and transorm into prestashop order quotes" mod="quotes"}</li>
+    </ul>
+</div>
 <div class="panel" id="quotes_panel">
     <h3><i class="icon-legal"></i> {l s='Current quotes list' mod="quotes"} <span class="badge">{$totalQuotes}</span></h3>
     {if $totalQuotes < 1}
