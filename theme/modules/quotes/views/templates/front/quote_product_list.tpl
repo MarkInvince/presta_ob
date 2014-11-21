@@ -55,7 +55,7 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td>{$products.cart.total}</td>
+                    <td>{$cart.total}</td>
                 </tr>
             </tbody>
         </table>
