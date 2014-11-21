@@ -48,7 +48,7 @@
                         <div class="quotes-cart-prices">
                             <div class="row">
                                 <span class="col-xs-12 col-lg-6 text-center">{l s="Total:" mod="quotes"}</span>
-                                <span class="col-xs-12 col-lg-6 text-center">{$products.cart.total}</span>
+                                <span class="col-xs-12 col-lg-6 text-center">{$cart.total}</span>
 
                             </div>
                         </div>

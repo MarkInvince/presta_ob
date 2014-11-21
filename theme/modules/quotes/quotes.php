@@ -376,11 +376,12 @@ class Quotes extends Module
 		// check for user cart session. Defined in QuotesCart if user add product to quote box
 		if($this->context->cookie->__isset('request_id')) {
 			$quote_obj->id_quote = $this->context->cookie->__get('request_id');
-			$products = $quote_obj->getProducts();
+			list($products, $cart) = $quote_obj->getProducts();
 		}
 		$this->context->smarty->assign('session', $this->context->cookie->__get('request_id'));
 		$this->context->smarty->assign('actionAddQuotes',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
 		$this->context->smarty->assign('products', $products);
+        $this->context->smarty->assign('cart', $cart);
         $this->context->smarty->assign('active_overlay', 0);
         $product_count = 0;
         foreach($products as $key => $value)

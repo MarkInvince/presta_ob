@@ -234,11 +234,11 @@ class QuotesProductCart extends ObjectModel
                 }
             }
         }
-        //$products['cart'] = array('total' => Tools::displayPrice($order_total, $this->context->currency));
+        $cart = array('total' => Tools::displayPrice($order_total, $this->context->currency));
         if(!empty($products_ids))
             Product::cacheProductsFeatures($products_ids);
 
-        return $products;
+        return array($products, $cart);
     }
 
     public function deleteProduct($id_product, $id_product_attribute)
