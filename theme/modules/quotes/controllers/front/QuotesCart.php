@@ -670,7 +670,12 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             if (!Tools::getValue('is_new_customer'))
                 unset($_POST['passwd']);
 
-            $this->context->smarty->assign('authentification_error', $this->errors);
+
+            $this->context->smarty->assign(array(
+                'authentification_error' => $this->errors,
+                'post' => $_POST
+
+            ));
         }
     }
 

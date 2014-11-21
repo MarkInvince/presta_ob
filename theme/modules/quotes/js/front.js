@@ -25,6 +25,9 @@
 * Don't forget to prefix your containers with your own identifier
 * to avoid any conflicts with others containers.
 */
+function setHiddenShow(elem_id) {
+	document.getElementById(elem_id).value = 1;
+}
 
 $(document).ready(function(){
 
