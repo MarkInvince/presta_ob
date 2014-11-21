@@ -219,8 +219,10 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         if ($this->context->cookie->__isset('request_id')) {
 
             $address_delivery = $this->context->customer->getAddresses($this->context->language->id);
-            $id_address_delivery = $address_delivery[0]['id_address'];
+            $id_address_delivery = $address_delivery[0]['id_address'] ? $address_delivery[0]['id_address'] : 0;
+
             $date_add = date('Y-m-d H:i:s', time());
+
 
             $sql = "INSERT INTO `"._DB_PREFIX_."cart` SET
                     `id_shop_group` = ".$this->context->shop->id_shop_group.",
@@ -436,8 +438,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         if (!Tools::getValue('is_new_customer', 1))
             $_POST['passwd'] = md5(time()._COOKIE_KEY_);
 
-        if (isset($_POST['guest_email']) && $_POST['guest_email'])
-            $_POST['email'] = $_POST['guest_email'];
+        if (Tools::getIsset('guest_email') && Tools::getValue('guest_email'))
+            $_POST['email'] = Tools::getValue('guest_email');
 
         // Checked the user address in case he changed his email address
         if (Validate::isEmail($email = Tools::getValue('email')) && !empty($email))
@@ -667,7 +669,12 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             if (!Tools::getValue('is_new_customer'))
                 unset($_POST['passwd']);
 
-            $this->context->smarty->assign('authentification_error', $this->errors);
+
+            $this->context->smarty->assign(array(
+                'authentification_error' => $this->errors,
+                'post' => $_POST
+
+            ));
         }
     }
 

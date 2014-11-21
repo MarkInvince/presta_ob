@@ -41,20 +41,27 @@ class AdminQuotesController extends ModuleAdminController
     }
 	public function postProcess()
 	{
+        global $currentIndex;
         if(Tools::getIsset('action')) {
+            if(Tools::getValue('action') == 'view') {
+                header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote')).'&id_customer='.Tools::getValue('id_customer');
+            }
             if(Tools::getValue('action') == 'delete') {
                 die(Tools::jsonEncode(array('data' => $this->processDelete(Tools::getValue('item')))));
             }
         }
-        if (Tools::isSubmit('addClientBargain'))
+        if (Tools::isSubmit('addClientBargain')) {
             $this->addAdminBargain(Tools::getValue('id_quote'));
+            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote')).'&id_customer='.Tools::getValue('id_customer');
+        }
 
         if (Tools::getValue('actionBargainDelete'))
             $this->bargainDelete(Tools::getValue('id_bargain'));
 
-        if (Tools::isSubmit('transformQuote'))
+        if (Tools::isSubmit('transformQuote')) {
             $this->transormQuote(Tools::getValue('id_cart'), 1, Tools::getValue('total_products'));
-
+            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote')).'&id_customer='.Tools::getValue('id_customer');
+        }
 	}
 
     public function processDelete($item_customer_id) {

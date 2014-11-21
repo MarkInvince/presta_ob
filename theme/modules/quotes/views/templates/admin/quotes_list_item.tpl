@@ -9,6 +9,7 @@
         <form action="{$index}" method="post" class="action_form">
             <input type="hidden" name="id_customer" value="{$quote.customer.id}" />
             <input type="hidden" name="id_quote" value="{$quote.id_quote}" />
+            <input type="hidden" name="action" value="view" />
             <div class="btn-group">
                 <button type="button" class="btn btn-default view_quote" >
                     <i class="icon-pencil"></i>
