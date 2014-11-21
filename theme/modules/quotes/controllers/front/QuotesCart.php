@@ -64,14 +64,17 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             }
             if(Tools::getValue('action') == 'add') {
                 $add = $this->ajaxAddToQuotesCart();
-
-                $this->context->smarty->assign('products', $this->quote->getProducts());
+                list($products, $cart) = $this->quote->getProducts();
+                $this->context->smarty->assign('products', $products);
+                $this->context->smarty->assign('cart', $cart);
                 die(Tools::jsonEncode(array('products' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"))));
             }
             if(Tools::getValue('action') == 'delete') {
                 $delete = $this->deleteQuoteById(Tools::getValue('item_id'));
 
-                $this->context->smarty->assign('products', $this->quote->getProducts());
+                list($products, $cart) = $this->quote->getProducts();
+                $this->context->smarty->assign('products', $products);
+                $this->context->smarty->assign('cart', $cart);
                 die(Tools::jsonEncode(array('products' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"))));
             }
             if(Tools::getValue('action') == 'recount') {
@@ -79,7 +82,9 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $items = explode('_', $item_id);
                 $this->quote->recountProductByValue((int)pSQL($items[0]), (int)pSQL($items[1]),1 ,pSQL(Tools::getValue('method')), pSQL($this->context->cookie->__get('request_id')));
 
-                $this->context->smarty->assign('products', $this->quote->getProducts());
+                list($products, $cart) = $this->quote->getProducts();
+                $this->context->smarty->assign('products', $products);
+                $this->context->smarty->assign('cart', $cart);
 
                 if ($this->context->customer->isLogged())
                     $this->context->smarty->assign('isLogged', '1');
@@ -113,10 +118,11 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $products = array();
                 if ($this->context->cookie->__isset('request_id')) {
                     $this->quote->id_quote = $this->context->cookie->__get('request_id');
-                    $products = $this->quote->getProducts();
+                    list($products, $cart) = $this->quote->getProducts();
                 }
                 $this->context->smarty->assign(array(
                     'products' => $products,
+                    'cart' => $cart,
                     'tpl_path' => $tpl_path,
                     'back' => $back,
                     'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
@@ -138,7 +144,9 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             if(Tools::getValue('action') == 'delete_from_cart') {
                 $delete = $this->deleteQuoteById(Tools::getValue('item_id'));
 
-                $this->context->smarty->assign('products', $this->quote->getProducts());
+                list($products, $cart) = $this->quote->getProducts();
+                $this->context->smarty->assign('products', $products);
+                $this->context->smarty->assign('cart', $cart);
 
                 if ($this->context->customer->isLogged())
                     $this->context->smarty->assign('isLogged', '1');
@@ -172,10 +180,11 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $products = array();
                 if ($this->context->cookie->__isset('request_id')) {
                     $this->quote->id_quote = $this->context->cookie->__get('request_id');
-                    $products = $this->quote->getProducts();
+                    list($products, $cart) = $this->quote->getProducts();
                 }
                 $this->context->smarty->assign(array(
                     'products' => $products,
+                    'cart' => $cart,
                     'tpl_path' => $tpl_path,
                     'back' => $back,
                     'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
@@ -211,7 +220,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             $quote->id_quote = $this->context->cookie->__get('request_id');
             // get all products
             $all_products = array();
-            foreach($quote->getProducts() as $key=>$product) {
+            list($products, $cart) = $quote->getProducts();
+            foreach($products as $key=>$product) {
                 if(is_numeric($key)) {
                     $all_products[] = array(
                         'id'           => $product['id'],
@@ -271,10 +281,11 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         $products = array();
         if ($this->context->cookie->__isset('request_id')) {
             $this->quote->id_quote = $this->context->cookie->__get('request_id');
-            $products = $this->quote->getProducts();
+            list($products, $cart) = $this->quote->getProducts();
         }
         $this->context->smarty->assign(array(
             'products' => $products,
+            'cart'     => $cart,
             'tpl_path' => $tpl_path,
             'back' => $back,
             'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
