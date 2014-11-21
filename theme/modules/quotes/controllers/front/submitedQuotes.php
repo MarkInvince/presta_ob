@@ -40,12 +40,18 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
             $this->id_quote = Tools::getValue('id_quote');
         }
 
-        if (Tools::isSubmit('addClientBargain'))
+        if (Tools::isSubmit('addClientBargain')) {
             $this->addClientBargain(Tools::getValue('id_quote'));
+            // clear post from duplicate message
+            header("Location: ".$_SERVER["REQUEST_URI"].'?id_quote='.Tools::getValue('id_quote'));
+        }
 
-        if (Tools::getValue('actionSubmitBargain'))
+
+
+        if (Tools::getValue('actionSubmitBargain')){
             $this->bargainCustomerSubmit();
-
+            header("Location: ".$_SERVER["REQUEST_URI"].'?id_quote='.Tools::getValue('id_quote'));
+        }
         if (Tools::getValue('quoteRename')) {
             $this->quoteRename(Tools::getValue('id_quote'));
         }
