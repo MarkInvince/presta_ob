@@ -219,10 +219,12 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         if ($this->context->cookie->__isset('request_id')) {
 
             $address_delivery = $this->context->customer->getAddresses($this->context->language->id);
-            $id_address_delivery = $address_delivery[0]['id_address'] ? $address_delivery[0]['id_address'] : 0;
+            $id_address_delivery = $address_delivery[0]['id_address'];
+
+            if(!$id_address_delivery)
+                $id_address_delivery = 0;
 
             $date_add = date('Y-m-d H:i:s', time());
-
 
             $sql = "INSERT INTO `"._DB_PREFIX_."cart` SET
                     `id_shop_group` = ".$this->context->shop->id_shop_group.",
@@ -243,7 +245,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $id_cart = Db::getInstance()->Insert_ID();
             }
             else{
-                $id_cart = 0;
                 die($sql);
             }
             $quote->id_quote = $this->context->cookie->__get('request_id');
@@ -438,8 +439,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         if (!Tools::getValue('is_new_customer', 1))
             $_POST['passwd'] = md5(time()._COOKIE_KEY_);
 
-        if (Tools::getIsset('guest_email') && Tools::getValue('guest_email'))
-            $_POST['email'] = Tools::getValue('guest_email');
+        if (isset($_POST['guest_email']) && $_POST['guest_email'])
+            $_POST['email'] = $_POST['guest_email'];
 
         // Checked the user address in case he changed his email address
         if (Validate::isEmail($email = Tools::getValue('email')) && !empty($email))
@@ -528,8 +529,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
         else // if address on or Guest account
         {
-            //$this->errors[] = Tools::displayError('first if - else');
-
             $_POST['lastname'] = $lastnameAddress;
             $_POST['firstname'] = $firstnameAddress;
             $post_back = $_POST;
@@ -587,11 +586,13 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             if (!count($this->errors))
             {
                 $customer->active = 1;
+
                 // New Guest customer
                 if (Tools::isSubmit('is_new_customer'))
                     $customer->is_guest = !Tools::getValue('is_new_customer', 1);
                 else
                     $customer->is_guest = 0;
+
                 if (!$customer->add())
                     $this->errors[] = Tools::displayError('An error occurred while creating your account.');
                 else

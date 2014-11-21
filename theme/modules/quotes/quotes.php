@@ -73,7 +73,7 @@ class Quotes extends Module
         Configuration::updateValue('MAIN_STATE', '1'); // Main module status
         Configuration::updateValue('MAIN_QUANTITY_FIELDS', '0'); // Quantity fields trigger
         Configuration::updateValue('MAIN_ANIMATE', '1'); // Quantity fields trigger
-        Configuration::updateValue('MAIN_GUEST_CHECK_OUT', '1'); // Quantity fields trigger
+        //Configuration::updateValue('MAIN_GUEST_CHECK_OUT', '1'); // Quantity fields trigger
         Configuration::updateValue('MAIN_TERMS_AND_COND', '0'); // Quantity fields trigger
         Configuration::updateValue('MAIN_CMS_PAGE', '0'); // Quantity fields trigger
 		Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', '0');
@@ -104,7 +104,7 @@ class Quotes extends Module
                                    AND Configuration::deleteByName('MODULE_TAB_ID')
                                    AND Configuration::deleteByName('MAIN_QUANTITY_FIELDS')
                                    AND Configuration::deleteByName('MAIN_ANIMATE')
-                                   AND Configuration::deleteByName('MAIN_GUEST_CHECK_OUT')
+                                   //AND Configuration::deleteByName('MAIN_GUEST_CHECK_OUT')
                                    AND Configuration::deleteByName('MAIN_TERMS_AND_COND')
                                    AND Configuration::deleteByName('MAIN_CMS_PAGE')
 									AND Configuration::deleteByName('PS_GUEST_QUOTES_ENABLED')
@@ -134,7 +134,7 @@ class Quotes extends Module
             Configuration::updateValue('MAIN_STATE', Tools::getValue('MAIN_STATE'));
             Configuration::updateValue('MAIN_QUANTITY_FIELDS', Tools::getValue('MAIN_QUANTITY_FIELDS'));
             Configuration::updateValue('MAIN_ANIMATE', Tools::getValue('MAIN_ANIMATE'));
-            Configuration::updateValue('MAIN_GUEST_CHECK_OUT', Tools::getValue('MAIN_GUEST_CHECK_OUT'));
+           // Configuration::updateValue('MAIN_GUEST_CHECK_OUT', Tools::getValue('MAIN_GUEST_CHECK_OUT'));
             Configuration::updateValue('MAIN_TERMS_AND_COND', Tools::getValue('MAIN_TERMS_AND_COND'));
             Configuration::updateValue('MAIN_CMS_PAGE', Tools::getValue('MAIN_CMS_PAGE'));
 			Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', Tools::getValue('PS_GUEST_QUOTES_ENABLED'));
@@ -210,7 +210,7 @@ class Quotes extends Module
 							),
 						),
 					),
-                    array(
+                    /*array(
 						'type' => 'switch',
 						'label' => $this->l('Enable Guest checkout'),
 						'name' => 'MAIN_GUEST_CHECK_OUT',
@@ -226,7 +226,7 @@ class Quotes extends Module
 								'label' => $this->l('No')
 							),
 						),
-					),
+					),*/
                     array(
 						'type' => 'switch',
 						'label' => $this->l('Required terms and conditions'),
@@ -339,7 +339,7 @@ class Quotes extends Module
 			'MAIN_STATE' => Configuration::get('MAIN_STATE'),
             'MAIN_QUANTITY_FIELDS' => Configuration::get('MAIN_QUANTITY_FIELDS'),
             'MAIN_ANIMATE' => Configuration::get('MAIN_ANIMATE'),
-            'MAIN_GUEST_CHECK_OUT' => Configuration::get('MAIN_GUEST_CHECK_OUT'),
+            //'MAIN_GUEST_CHECK_OUT' => Configuration::get('MAIN_GUEST_CHECK_OUT'),
             'MAIN_TERMS_AND_COND' => Configuration::get('MAIN_TERMS_AND_COND'),
             'MAIN_CMS_PAGE' => Configuration::get('MAIN_CMS_PAGE'),
 			'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),

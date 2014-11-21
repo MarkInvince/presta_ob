@@ -1,6 +1,5 @@
-
 {capture name=path}{l s='Ask for a Quote' mod='quotes'}{/capture}
-
+<p>address_enbl - {$address_enbl}</p>
 <div class="block">
     <h4 class="title_block">
         {l s='Your quotes cart' mod='quotes'}
@@ -26,7 +25,6 @@
         <p class="alert alert-warning">{l s='No quotes' mod='quotes'}</p>
     {/if}
 </div>
-
 
 {strip}
     {addJsDef authenticationUrl=$link->getPageLink("authentication", true)|escape:'quotes':'UTF-8'}
