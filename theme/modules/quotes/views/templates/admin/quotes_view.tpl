@@ -1,5 +1,5 @@
 <pre>
-    {print_r($order)}
+    {print_r($cartObj)}
 </pre>
 <script type="text/javascript">
     var confirmDelete   = '{l s="Are you sure you want delete?" mod="quotes"}';

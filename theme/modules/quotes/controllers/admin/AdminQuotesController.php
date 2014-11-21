@@ -285,9 +285,12 @@ class AdminQuotesController extends ModuleAdminController
                         $id_carrier = 0;
                     }
 
+                    $address_delivery = $this->context->customer->getAddresses($this->context->language->id);
+                    $id_address_delivery = $address_delivery[0]['id_address'];
+
                     $order->id_customer = (int)$this->context->cart->id_customer;
                     $order->id_address_invoice = (int)$this->context->cart->id_address_invoice;
-                    $order->id_address_delivery = (int)$id_address;
+                    $order->id_address_delivery = (int)$id_address_delivery;
                     $order->id_currency = $this->context->currency->id;
                     $order->id_lang = (int)$this->context->cart->id_lang;
                     $order->id_cart = (int)$this->context->cart->id;
@@ -786,13 +789,16 @@ class AdminQuotesController extends ModuleAdminController
             // Use the last order as currentOrder
             $this->currentOrder = (int)$order->id;
 
+            $this->displayConfirmation('Quote was successfully transformed to order '.(int)$order->id);
+
             return true;
         }
         else
         {
+            $this->errors[] = Tools::displayError('Cart cannot be loaded or an order has already been placed using this cart');
             $error = Tools::displayError('Cart cannot be loaded or an order has already been placed using this cart');
             PrestaShopLogger::addLog($error, 4, '0000001', 'Cart', intval($this->context->cart->id));
-            die($error);
+            $this->context->smarty->assign('cartObj', $this->context->cart);
         }
     }
 
