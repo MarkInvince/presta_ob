@@ -7,10 +7,12 @@ include_once(_PS_MODULE_DIR_ . 'quotes/classes/QuotesTools.php');
 class QuotesSubmitCore extends ObjectModel
 {
     public $id_quote;
+    public $id_cart;
     public $quote_name;
     public $id_shop;
     public $id_shop_group;
     public $id_lang;
+    public $id_currency;
     public $id_customer;
     public $products;
     public $burgain_price;
@@ -21,10 +23,12 @@ class QuotesSubmitCore extends ObjectModel
         'table' => 'quotes',
         'primary' => 'id_quote',
         'fields' => array(
+            'id_cart'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'quote_name'    => 	array('type' => self::TYPE_STRING,  'validate' => 'isAnything'),
             'id_shop'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'id_shop_group' => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'id_lang'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
+            'id_currency'   => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'id_customer'   => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'products'      => 	array('type' => self::TYPE_STRING,  'validate' => 'isAnything'),
             'burgain_price' => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
@@ -144,8 +148,10 @@ class QuotesSubmitCore extends ObjectModel
             'quote_static' => $price,
             'quote_normal' => Tools::displayPrice(Tools::ps_round($price,2), $this->context->currency)
         );
+
         $out['products'] = $product_arr;
         $out[] = $result[0];
         return $out;
     }
+    
 }

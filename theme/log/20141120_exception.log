@@ -1,0 +1,2 @@
+*ERROR* 	2014/11/20 - 10:39:35: Can't load Order status at line 188 in file modules/quotes/controllers/admin/AdminQuotesController.php
+*ERROR* 	2014/11/20 - 10:49:04: Property Order->module is empty at line 846 in file classes/ObjectModel.php
