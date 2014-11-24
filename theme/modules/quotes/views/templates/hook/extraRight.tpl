@@ -17,7 +17,7 @@
 				<span>{l s='Ask for a quote' mod='quotes'}</span>
 			</button>
         {else}
-            <a class="ajax_add_to_quote_cart_button btn btn-primary"  title="{l s='Ask for a quote' mod='quotes'}" >
+            <a class="ajax_add_to_quote_cart_button"  title="{l s='Ask for a quote' mod='quotes'}" >
 				<span>{l s='Ask for a quote' mod='quotes'}</span>
 			</a>
         {/if}

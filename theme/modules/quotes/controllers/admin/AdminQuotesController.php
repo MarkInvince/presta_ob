@@ -44,15 +44,15 @@ class AdminQuotesController extends ModuleAdminController
         global $currentIndex;
         if(Tools::getIsset('action')) {
             if(Tools::getValue('action') == 'view') {
-                header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote')).'&id_customer='.Tools::getValue('id_customer');
+                header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
             }
             if(Tools::getValue('action') == 'delete') {
-                die(Tools::jsonEncode(array('data' => $this->processDelete(Tools::getValue('item')))));
+                die(Tools::jsonEncode(array('data' => $this->processDeleteAdmin(Tools::getValue('item')))));
             }
         }
         if (Tools::isSubmit('addClientBargain')) {
             $this->addAdminBargain(Tools::getValue('id_quote'));
-            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote')).'&id_customer='.Tools::getValue('id_customer');
+            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
         }
 
         if (Tools::getValue('actionBargainDelete'))
@@ -60,11 +60,11 @@ class AdminQuotesController extends ModuleAdminController
 
         if (Tools::isSubmit('transformQuote')) {
             $this->transormQuote(Tools::getValue('id_cart'), 1, Tools::getValue('total_products'));
-            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote')).'&id_customer='.Tools::getValue('id_customer');
+            //header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
         }
 	}
 
-    public function processDelete($item_customer_id) {
+    public function processDeleteAdmin($item_customer_id) {
         $items = explode('_', $item_customer_id);
         if(!Validate::isInt($items[0]) OR !Validate::isInt($items[1]))
             return array('hasError' => true, 'message' => $this->l('There was some error!Please try again later'));

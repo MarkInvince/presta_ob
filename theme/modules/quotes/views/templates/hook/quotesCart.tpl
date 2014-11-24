@@ -59,11 +59,19 @@
                     {/if}
                 </div>
                 <p class="cart-buttons">
-                    <a id="button_order_cart" class="btn btn-default button button-small" href="{$quotesCart}" title="{l s='Submit quote' mod='quotes'}" rel="nofollow">
-				    <span>
-						{l s='Check out' mod='quotes'}<i class="icon-chevron-right right"></i>
-					</span>
-                    </a>
+                    {if isset($isLogged) && $isLogged > 0}
+                        <a id="button_order_cart" class="btn btn-default button button-small submit_quote" href="javascript:void(0);" title="{l s='Submit quote' mod='quotes'}" rel="nofollow">
+                            <span>
+                                {l s='Submit now' mod='quotes'}<i class="icon-chevron-right right"></i>
+                            </span>
+                        </a>
+                    {else}
+                        <a id="button_order_cart" class="btn btn-default button button-small" href="{$quotesCart}" title="{l s='Submit quote' mod='quotes'}" rel="nofollow">
+                            <span>
+                                {l s='Check out' mod='quotes'}<i class="icon-chevron-right right"></i>
+                            </span>
+                        </a>
+                    {/if}
                 </p>
             </div>
         </div>

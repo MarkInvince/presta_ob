@@ -127,6 +127,9 @@ class QuotesProductCart extends ObjectModel
                 case "remove":
                     $current_qty = $current_qty - (int)$value;
                     break;
+                case "set":
+                    $current_qty = (int)$value;
+                    break;
                 default:
                     break;
             }
@@ -224,7 +227,15 @@ class QuotesProductCart extends ObjectModel
                     $product['id_attribute'] = $row['id_product_attribute'];
                     $product['link'] = $link->getProductLink($p_obj, $p_obj->link_rewrite, $p_obj->category, null, null, $p_obj->id_shop, $this->id_product_attribute);
                     $product['link_rewrite'] = $p_obj->link_rewrite;
-                    $product['id_image'] = getProductAttributeImage($p_obj->id, $row['id_product_attribute'], $this->context->language->id);
+
+                    if(!empty(getProductAttributeImage($p_obj->id, $row['id_product_attribute'], $this->context->language->id)))
+                        $id_image = getProductAttributeImage($p_obj->id, $row['id_product_attribute'], $this->context->language->id);
+                    else {
+                        $image = $p_obj->getCover($p_obj->id);
+                        $id_image = $image['id_image'];
+                    }
+
+                    $product['id_image'] = $id_image;
                     $product['quantity'] = $row['quantity'];
                     $product['unit_price'] = Tools::displayPrice(Tools::ps_round(Product::getPriceStatic($p_obj->id, true, NULL, 6),2), $this->context->currency);
                     $product['total_price'] = Tools::displayPrice(Tools::ps_round((Product::getPriceStatic($p_obj->id, true, NULL, 6) * $row['quantity']),2), $this->context->currency);

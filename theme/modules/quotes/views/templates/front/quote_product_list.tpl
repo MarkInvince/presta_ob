@@ -30,7 +30,7 @@
                         <td class="quotes_cart_quantity">
                             <div class="row">
                                 <div class="col-lg-8">
-                                    <input size="2" readonly type="text" autocomplete="off" class="cart_quantity_input form-control grey" value="{$product.quantity}"  name="quantity_{$product.id}_{$product.id_attribute}" />
+                                    <input size="3" maxlength="3" rel="{$product.id}_{$product.id_attribute}" type="text" onkeypress="if(this.value.match(/\D/)) this.value=this.value.replace(/\D/g,'')" onkeyup="if(this.value.match(/\D/)) this.value=this.value.replace(/\D/g,'')" autocomplete="off" class="cart_quantity_input form-control grey" value="{$product.quantity}"  name="quantity_{$product.id}_{$product.id_attribute}" />
                                 </div>
                                 <div class="col-lg-2">
                                     <div class="quantity-block">
