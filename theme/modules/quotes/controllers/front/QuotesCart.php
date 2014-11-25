@@ -60,14 +60,24 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $this->context->smarty->assign('total', 0);
                 $this->context->smarty->assign('total_count', 0);
 
-                die(Tools::jsonEncode(array('popup' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/quotesCart.tpl"))));
+                die(Tools::jsonEncode(array('popup'  => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/quotesCart.tpl"))));
             }
             if(Tools::getValue('action') == 'add') {
                 $add = $this->ajaxAddToQuotesCart();
                 list($products, $cart) = $this->quote->getProducts();
                 $this->context->smarty->assign('products', $products);
                 $this->context->smarty->assign('cart', $cart);
-                die(Tools::jsonEncode(array('products' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"))));
+
+                $product_count = 0;
+                foreach($products as $key => $value)
+                    if(is_numeric($key))
+                        $product_count++;
+                $this->context->smarty->assign('cartTotalProducts', $product_count);
+
+                die(Tools::jsonEncode(array(
+                    'products' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"),
+                    'header' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/front/ajax_cart_header.tpl"),
+                )));
             }
             if(Tools::getValue('action') == 'delete') {
                 $delete = $this->deleteQuoteById(Tools::getValue('item_id'));
@@ -75,12 +85,28 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 list($products, $cart) = $this->quote->getProducts();
                 $this->context->smarty->assign('products', $products);
                 $this->context->smarty->assign('cart', $cart);
-                die(Tools::jsonEncode(array('products' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"))));
+
+                $product_count = 0;
+                foreach($products as $key => $value)
+                    if(is_numeric($key))
+                        $product_count++;
+                $this->context->smarty->assign('cartTotalProducts', $product_count);
+
+                die(Tools::jsonEncode(array(
+                    'products' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"),
+                    'header' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/front/ajax_cart_header.tpl"),
+                )));
             }
             if(Tools::getValue('action') == 'recount') {
                 $item_id = Tools::getValue('item_id');
                 $items = explode('_', $item_id);
-                $this->quote->recountProductByValue((int)pSQL($items[0]), (int)pSQL($items[1]),1 ,pSQL(Tools::getValue('method')), pSQL($this->context->cookie->__get('request_id')));
+
+                $value = 1;
+                if(!Tools::getIsset('button') AND !Tools::getValue('button'))
+                    $value = (int)pSQL(Tools::getValue('value'));
+
+
+                $this->quote->recountProductByValue((int)pSQL($items[0]), (int)pSQL($items[1]), $value ,pSQL(Tools::getValue('method')), pSQL($this->context->cookie->__get('request_id')));
 
                 list($products, $cart) = $this->quote->getProducts();
                 $this->context->smarty->assign('products', $products);
@@ -139,7 +165,18 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 if ($this->context->cookie->is_guest)
                     $this->context->smarty->assign('guestInformations', $this->_getGuestInformations());
 
-                die(Tools::jsonEncode(array('hasError' => false,'data' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/front/ajax_quote_product_list.tpl"))));
+                $product_count = 0;
+                foreach($products as $key => $value)
+                    if(is_numeric($key))
+                        $product_count++;
+                $this->context->smarty->assign('cartTotalProducts', $product_count);
+
+                die(Tools::jsonEncode(array(
+                    'hasError' => false,
+                    'data' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/front/ajax_quote_product_list.tpl"),
+                    'header' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/front/ajax_cart_header.tpl"),
+                    'products' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"),
+                )));
             }
             if(Tools::getValue('action') == 'delete_from_cart') {
                 $delete = $this->deleteQuoteById(Tools::getValue('item_id'));
@@ -201,7 +238,18 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 if ($this->context->cookie->is_guest)
                     $this->context->smarty->assign('guestInformations', $this->_getGuestInformations());
 
-                die(Tools::jsonEncode(array('hasError' => false,'data' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/front/ajax_quote_product_list.tpl"))));
+                $product_count = 0;
+                foreach($products as $key => $value)
+                    if(is_numeric($key))
+                        $product_count++;
+                $this->context->smarty->assign('cartTotalProducts', $product_count);
+
+                die(Tools::jsonEncode(array(
+                    'hasError' => false,
+                    'data' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/front/ajax_quote_product_list.tpl"),
+                    'header' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/front/ajax_cart_header.tpl"),
+                    'products' => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/product-cart-item.tpl"),
+                )));
             }
             if(Tools::getValue('action') == 'submit') {
                 if($this->submitQuote($this->quote)) {
