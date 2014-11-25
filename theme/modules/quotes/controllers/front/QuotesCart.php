@@ -316,6 +316,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 Db::getInstance()->execute($sql);
             }
 
+            $this->submit_quote->quote_name = "My quote #".quoteNum($this->context->customer->id);
             $this->submit_quote->id_cart = $id_cart;
             $this->submit_quote->id_lang = $this->context->language->id;
             $this->submit_quote->id_currency = $this->context->currency->id;
@@ -326,19 +327,29 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 //generate new user session id
                 $this->context->cookie->__set('request_id', uniqid());
 
-//                if (Validate::isEmail($this->context->customer->email))
-//                    Mail::Send(
-//                        (int)$this->context->language->id,
-//                        'order_conf',
-//                        'Quote was submited',
-//                        $data,
-//                        $this->context->customer->email,
-//                        $this->context->customer->firstname.' '.$this->context->customer->lastname,
-//                        null,
-//                        null,
-//                        null,
-//                        null, _PS_MAIL_DIR_, false, (int)$this->context->shop->id
-//                    );
+                // Prepare email information for submited quote
+                $subject = $this->module->l("New submited quote");
+                $message = '
+                            <html>
+                            <head>
+                              <title>'.$this->module->l("New submited quote").'</title>
+                            </head>
+                            <body>
+                              <table>
+                                <tr>
+                                  <th>'.$this->module->l("Quote name").'</th><th>'.$this->module->l("Date").'</th><th>'.$this->module->l("Details").'</th>
+                                </tr>
+                                <tr>
+                                  <td>'.$this->submit_quote->quote_name.'</td>
+                                  <td>'.$this->submit_quote->date_add.'</td>
+                                  <td><a href="'.$this->context->link->getModuleLink($this->module->name, 'SubmitedQuotes', array(), true).'">'.$this->module->l("See details in your shop profile").'</a></td>
+                                </tr>
+                              </table>
+                            </body>
+                            </html>
+                ';
+                // Send e-mail to customer
+                quotesMailConfirm($this->context->customer->email, $message, $subject);
 
                 // clear shop box
                 return $quote->deleteAllProduct();

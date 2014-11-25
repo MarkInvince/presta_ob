@@ -15,3 +15,32 @@ function getProductAttributeImage($id_product, $id_product_attribute, $id_lang) 
         return array();
     return $row[0]['id_image'];
 }
+
+function quoteNum($id_customer) {
+    $sql = "SELECT COUNT(`id_quote`) FROM `ps_quotes` WHERE `id_customer`=".$id_customer;
+    $result = Db::getInstance()->getValue($sql);
+    if($result)
+        $result++;
+    else
+        $result = 1;
+    return $result;
+}
+
+function quotesMailConfirm($to, $message, $subject){
+    $headers   = array();
+    $headers[] = "MIME-Version: 1.0";
+    $headers[] = "Content-type: text/html; charset=utf-8";
+    $headers[] = "From: ".Configuration::get('PS_SHOP_NAME')." <info@admin.com>";
+    //$headers[] = "Reply-To: Recipient Name <receiver@domain3.com>";
+
+//    $headers   = array();
+//    $headers[] = "MIME-Version: 1.0";
+//    $headers[] = "Content-type: text/plain; charset=iso-8859-1";
+//    $headers[] = "From: ".Configuration::get('PS_SHOP_NAME')." <sender@domain.com>";
+//    $headers[] = "Subject: ".$subject;
+//    $headers[] = "X-Mailer: PHP/".phpversion();
+
+    if(mail($to, $subject, $message, implode("\r\n", $headers)))
+        return true;
+    return false;
+}
