@@ -765,7 +765,8 @@
 #layer_cart p {
 	padding: 0px; }
 
-.ajax_add_to_quote_cart_button {
+.ajax_add_to_quote_cart_button, .fly_to_quote_cart_button {
+	cusrsor: pointer;
 	padding: 0;
 	border-top: 1px solid #0079b6;
 	border-right: 1px solid #006fa8;
@@ -784,7 +785,7 @@
 	background-image: -o-linear-gradient(#009ad0, #007ab7);
 	background-image: linear-gradient(#009ad0, #007ab7);
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#009ad0', endColorstr='#007ab7',GradientType=0 ); }
-.ajax_add_to_quote_cart_button:before {
+.ajax_add_to_quote_cart_button:before, .fly_to_quote_cart_button:before {
 	font-family: "FontAwesome";
 	position: absolute;
 	top: 0;
@@ -794,7 +795,7 @@
 	font-size: 25px;
 	line-height: 47px;
 	text-shadow: 0 1px #015883;
-	content: "\f07a";
+	content: "\f059";
 	z-index: 2;
 	width: 51px;
 	text-align: center;
@@ -805,17 +806,17 @@
 	-o-border-radius: 5px 0 0 5px;
 	border-radius: 5px 0 0 5px; }
 @media (max-width: 991px) {
-	.ajax_add_to_quote_cart_button:before {
+	.ajax_add_to_quote_cart_button:before, .fly_to_quote_cart_button:before {
 		display: none; } }
-.ajax_add_to_quote_cart_button.added:before {
+.ajax_add_to_quote_cart_button.added:before, .fly_to_quote_cart_button:before {
 	content: "\f00c"; }
-.ajax_add_to_quote_cart_button.disabled:before {
+.ajax_add_to_quote_cart_button.disabled:before, .fly_to_quote_cart_button:before {
 	content: "\f110";
 	animation: 2s linear 0s normal none infinite spin;
 	-webkit-animation: 2s linear 0s normal none infinite spin;
 	-moz-animation: 2s linear 0s normal none infinite spin;
 	border: none; }
-.ajax_add_to_quote_cart_button:after {
+.ajax_add_to_quote_cart_button:after, .fly_to_quote_cart_button:after {
 	background: url(../img/border-1.gif) repeat-y 0 0;
 	position: absolute;
 	top: 0;
@@ -825,9 +826,9 @@
 	width: 1px;
 	z-index: 2; }
 @media (max-width: 991px) {
-	.ajax_add_to_quote_cart_button:after {
+	.ajax_add_to_quote_cart_button:after, .fly_to_quote_cart_button:after {
 		display: none; } }
-.ajax_add_to_quote_cart_button span {
+.ajax_add_to_quote_cart_button span, .fly_to_quote_cart_button span {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	-ms-border-radius: 5px;
@@ -836,6 +837,7 @@
 	font-weight: 700;
 	font-size: 20px;
 	line-height: 22px;
+	cursor:pointer;
 	border-top: 1px solid #06b2e6;
 	border-right: 1px solid #06b2e6;
 	border-left: 1px solid #06b2e6;
@@ -849,14 +851,14 @@
 	-o-transition: all 0.3s ease;
 	transition: all 0.3s ease; }
 @media (max-width: 1199px) {
-	.ajax_add_to_quote_cart_button span {
+	.ajax_add_to_quote_cart_button span, .fly_to_quote_cart_button span {
 		padding: 12px 22px 14px 55px;
 		font-size: 14px; } }
 @media (max-width: 991px) {
-	.ajax_add_to_quote_cart_button span {
+	.ajax_add_to_quote_cart_button span, .fly_to_quote_cart_button span {
 		padding: 8px 12px 10px;
 		text-align: left; } }
-.ajax_add_to_quote_cart_button:hover {
+.ajax_add_to_quote_cart_button:hover, .fly_to_quote_cart_button:hover {
 	background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #007ab7), color-stop(100%, #009ad0));
 	background-image: -webkit-linear-gradient(#007ab7, #009ad0);
 	background-image: -moz-linear-gradient(#007ab7, #009ad0);
