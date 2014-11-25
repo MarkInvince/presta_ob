@@ -60,7 +60,7 @@ class AdminQuotesController extends ModuleAdminController
 
         if (Tools::isSubmit('transformQuote')) {
             $this->transormQuote(Tools::getValue('id_cart'), 1, Tools::getValue('total_products'));
-            //header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
+            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote')).'&id_customer='.Tools::getValue('id_customer');
         }
 	}
 
@@ -796,7 +796,7 @@ class AdminQuotesController extends ModuleAdminController
             // Use the last order as currentOrder
             $this->currentOrder = (int)$order->id;
 
-            $this->displayConfirmation('Quote was successfully transformed to order '.(int)$order->id);
+            $this->context->smarty->assign("successTransform", true);
 
             return true;
         }

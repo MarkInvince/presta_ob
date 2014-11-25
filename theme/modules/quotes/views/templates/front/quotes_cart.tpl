@@ -1,5 +1,4 @@
 {capture name=path}{l s='Ask for a Quote' mod='quotes'}{/capture}
-<p>address_enbl - {$address_enbl}</p>
 <div class="block">
     <h4 class="title_block">
         {l s='Your quotes cart' mod='quotes'}

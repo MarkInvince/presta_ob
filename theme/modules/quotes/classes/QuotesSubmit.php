@@ -8,6 +8,7 @@ class QuotesSubmitCore extends ObjectModel
 {
     public $id_quote;
     public $id_cart;
+    public $reference;
     public $quote_name;
     public $id_shop;
     public $id_shop_group;
@@ -25,6 +26,7 @@ class QuotesSubmitCore extends ObjectModel
         'fields' => array(
             'id_cart'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'quote_name'    => 	array('type' => self::TYPE_STRING,  'validate' => 'isAnything'),
+            'reference'    => 	array('type' => self::TYPE_STRING,  'validate' => 'isAnything'),
             'id_shop'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'id_shop_group' => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
             'id_lang'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
@@ -48,7 +50,7 @@ class QuotesSubmitCore extends ObjectModel
         $this->id_shop_group = (int)$this->context->shop->id_shop_group;
         $this->id_customer = (int)$this->context->customer->id;
         $this->date_add = date('Y-m-d H:i:s', time());
-        $this->quote_name = strtoupper(Tools::passwdGen(9, 'NO_NUMERIC'));
+        $this->reference = strtoupper(Tools::passwdGen(9, 'NO_NUMERIC'));
         $this->submited = 0;
     }
 

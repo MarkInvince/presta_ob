@@ -34,6 +34,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_bargains` (
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes` (
     `id_quote` int(11) NOT NULL AUTO_INCREMENT,
     `id_cart` int(11) NOT NULL,
+    `reference` varchar(250) NOT NULL,
     `quote_name` varchar(250) NOT NULL,
     `burgain_price` int(20) NOT NULL,
     `id_shop` int(11) NOT NULL,
