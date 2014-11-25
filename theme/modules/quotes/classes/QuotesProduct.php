@@ -211,7 +211,7 @@ class QuotesProductCart extends ObjectModel
         $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes_product` WHERE `id_quote` LIKE "'.$this->id_quote.'"');
         if (empty($result))
             return array();
-        //$order_total = 0;
+        $order_total = 0;
         foreach ($result as $key => $row) {
             if(is_numeric($key)) {
                 $products_ids[] = $row['id_product'];
