@@ -386,6 +386,11 @@ class Quotes extends Module
 		$this->context->smarty->assign('products', $products);
         $this->context->smarty->assign('cart', $cart);
         $this->context->smarty->assign('active_overlay', 0);
+
+        $customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
+
+        $this->context->smarty->assign('isLogged', $customer);
+
         $product_count = 0;
         foreach($products as $key => $value)
             if(is_numeric($key))
