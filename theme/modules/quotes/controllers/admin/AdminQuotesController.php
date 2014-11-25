@@ -44,7 +44,7 @@ class AdminQuotesController extends ModuleAdminController
         global $currentIndex;
         if(Tools::getIsset('action')) {
             if(Tools::getValue('action') == 'view') {
-                header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote')).'&id_customer='.Tools::getValue('id_customer');
+                header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
             }
             if(Tools::getValue('action') == 'delete') {
                 die(Tools::jsonEncode(array('data' => $this->processDelete(Tools::getValue('item')))));
@@ -52,7 +52,7 @@ class AdminQuotesController extends ModuleAdminController
         }
         if (Tools::isSubmit('addClientBargain')) {
             $this->addAdminBargain(Tools::getValue('id_quote'));
-            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote')).'&id_customer='.Tools::getValue('id_customer');
+            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
         }
 
         if (Tools::getValue('actionBargainDelete'))
@@ -60,7 +60,7 @@ class AdminQuotesController extends ModuleAdminController
 
         if (Tools::isSubmit('transformQuote')) {
             $this->transormQuote(Tools::getValue('id_cart'), 1, Tools::getValue('total_products'));
-            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote')).'&id_customer='.Tools::getValue('id_customer');
+            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
         }
 	}
 
@@ -796,7 +796,7 @@ class AdminQuotesController extends ModuleAdminController
             // Use the last order as currentOrder
             $this->currentOrder = (int)$order->id;
 
-            $this->displayConfirmation('Quote was successfully transformed to order '.(int)$order->id);
+            $this->context->smarty->assign("successTransform", true);
 
             return true;
         }

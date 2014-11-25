@@ -80,6 +80,7 @@ class Quotes extends Module
 		Configuration::updateValue('ADDRESS_ENABLED', '0');
 		Configuration::updateValue('MESSAGING_ENABLED', '1');
 
+
         return parent::install() &&
         $this->registerHook('header') &&
         $this->registerHook('extraRight') &&
@@ -88,6 +89,8 @@ class Quotes extends Module
         $this->registerHook('CustomerAccount') &&
         $this->registerHook('top') &&
         $this->registerHook('Header') &&
+		$this->registerHook('displayProductButtons') &&
+		$this->registerHook('displayProductListFunctionalButtons') &&
         $this->registerHook('displayMyAccountBlockfooter') &&
         $this->registerHook('displayBackOfficeHeader');
 
@@ -393,8 +396,9 @@ class Quotes extends Module
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__FILE__, 'quotesCart.tpl');
 	}
+
     /**
-	 * Add ask to quote button to product list
+	 * Add ask to quote button to product
 	 */
     public function hookextraRight($params)
 	{
@@ -412,11 +416,51 @@ class Quotes extends Module
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__FILE__, 'extraRight.tpl');
 	}
-	public function hookCustomerAccount($params)
+	/**
+	 * Add ask to quote button to product
+	 */
+	public function hookdisplayProductButtons($params)
+	{
+		$product = new Product(Tools::getValue('id_product'), (int)$this->context->language->id, true);
+
+		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
+
+		$this->context->smarty->assign('isLogged', $customer);
+		$this->context->smarty->assign('product', $product);
+		$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
+
+		$linkCore = new Link;
+		$this->context->smarty->assign('plink', $linkCore->getProductLink($product->id, $product->link_rewrite, $product->id_category_default));
+
+		if (Configuration::get('MAIN_STATE'))
+			return $this->display(__FILE__, 'extraRight.tpl');
+	}
+
+	/**
+	 * Add ask to quote button to product list
+	 */
+	public function hookdisplayProductListFunctionalButtons($params){
+		if (Configuration::get('MAIN_STATE'))
+			return $this->display(__FILE__, 'extraRight.tpl');
+	}
+
+	/**
+	 * Add quote link in my account
+	 */
+	public function hookCustomerAccount()
 	{
         if (Configuration::get('MAIN_STATE'))
 		    return $this->display(__FILE__, 'my-account.tpl');
 	}
+	/**
+	 * Add quote link in my account footer
+	 */
+	public function hookdisplayMyAccountBlockfooter()
+	{
+		if (Configuration::get('MAIN_STATE'))
+			return $this->display(__FILE__, 'blockMyaccountFooter.tpl');
+	}
+
     /**
 	 * Add ask to quote button to product list
 	 */

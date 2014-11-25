@@ -30,6 +30,31 @@ function setHiddenShow(elem_id) {
 }
 
 $(document).ready(function(){
+	// Quote details and bargains
+	$('.show_quote_details').on('click', function() {
+
+		var $id_quote = $(this).data('id');
+
+		$.ajax({
+			url: submitedQuotes,
+			method:'post',
+			data:
+			{
+				action : 'showQuoteDetails',
+				id_quote : $id_quote
+			},
+			dataType:'json',
+			success: function(data) {
+				$('.ajax_item').fadeOut(500);
+				$('.ajax_item').remove();
+
+				$('#quotes-list .quote_' + $id_quote).after('<tr class="item ajax_item" style="display: none"><td colspan="7">' + data.details + '</td></tr>');
+
+				$('#quotes-list .ajax_item').fadeIn(500);
+			}
+		});
+		return false;
+	});
 
 	$('#submit-added').fancybox();
 	// Change quote name
@@ -70,14 +95,54 @@ $(document).ready(function(){
 	});
 
 	// Show quote products
-	$(document).on('click', '#show_quote_products_info', function (e) {
+	$('body').on('click', '#show_quote_products_info', function (e) {
 		e.preventDefault();
 		$('#quote_products_info').toggle('slow');
-		//$(this).text();
+	});
+
+	// Add client bargain message
+	$('body').on('click', '#addClientBargain', function() {
+		$.ajax({
+			url: submitedQuotes,
+			method:'post',
+			data: $('#client_bargain_txt').serialize(),
+			dataType:'json',
+			success: function(data) {
+				if(data.errors) {
+					$.each(data.errors, function (key, value) {
+						$('#errors_bargain_message').append('<p>' + key + ": " + value + '</p>');
+					});
+					$('#errors_bargain_message').fadeIn(500);
+				}
+				else {
+					$('#errors_bargain_message').css('display','none');
+
+					var $out_msg = '<li class="customer_bargain clearfix"><div class="row"><div class="bargain_heading clearfix"><div class="date col-xs-9"><p class="bargain_whos">';
+					$out_msg += your_msg;
+					$out_msg += '</p></div><div class="date col-xs-3"><strong>';
+					$out_msg += added;
+					$out_msg += ' </strong>';
+					$out_msg += getDateTime();
+					$out_msg +='</div></div><div class="bargain_message col-xs-12 box">';
+					$out_msg += $('#bargain_text').val();
+					$out_msg += '</div></div></li>';
+					$('.bargains_list .bargains_list_warning').fadeOut(500);
+					$('.bargains_list').prepend($out_msg);
+
+					$('#bargain_text').val('');
+
+					$('#success_bargain_message').fadeIn(500);
+					setTimeout(function() {
+						$('#success_bargain_message').fadeOut(500);
+					}, 2000);
+				}
+			}
+		});
+		return false;
 	});
 
 	//Submit bargain price
-	$('.rejectBargainOffer, .acceptBargainOffer').on('click', function(e) {
+	$('body').on('click', '.rejectBargainOffer, .acceptBargainOffer', function() {
 		var $action = $(this).data('action');
 		var $id_bargain = $(this).data('id');
 		var $id_quote = $(this).data('quote');
@@ -225,7 +290,7 @@ $(document).ready(function(){
 						'top': score_y,
 						'width': '20px',
 						'height': '20px',
-						'opacity' : '0.2',
+						'opacity' : '0.2'
 					}, 800, function () {
 						$(this).remove();
 						if(!$('#box-body').hasClass('expanded'))
@@ -353,4 +418,31 @@ function showCart(selector)
 	}, function(){
 		self.hovering = false;
 	})
+}
+
+function getDateTime() {
+	var now     = new Date();
+	var year    = now.getFullYear();
+	var month   = now.getMonth()+1;
+	var day     = now.getDate();
+	var hour    = now.getHours();
+	var minute  = now.getMinutes();
+	var second  = now.getSeconds();
+	if(month.toString().length == 1) {
+		var month = '0'+month;
+	}
+	if(day.toString().length == 1) {
+		var day = '0'+day;
+	}
+	if(hour.toString().length == 1) {
+		var hour = '0'+hour;
+	}
+	if(minute.toString().length == 1) {
+		var minute = '0'+minute;
+	}
+	if(second.toString().length == 1) {
+		var second = '0'+second;
+	}
+	var dateTime = year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second;
+	return dateTime;
 }

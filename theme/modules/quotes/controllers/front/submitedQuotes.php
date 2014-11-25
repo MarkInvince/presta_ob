@@ -34,23 +34,16 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
 
     public function postProcess() {
 
-        if (!Tools::getValue('id_quote'))
-            $this->id_quote = 0;
-        else {
-            $this->id_quote = Tools::getValue('id_quote');
+        if (Tools::getValue('action') == 'showQuoteDetails'){
+            $this->showQuoteDetails();
         }
 
-        if (Tools::isSubmit('addClientBargain')) {
+        if (Tools::getValue('action') == 'addClientBargain') {
             $this->addClientBargain(Tools::getValue('id_quote'));
-            // clear post from duplicate message
-            header("Location: ".$_SERVER["REQUEST_URI"].'?id_quote='.Tools::getValue('id_quote'));
         }
-
-
 
         if (Tools::getValue('actionSubmitBargain')){
             $this->bargainCustomerSubmit();
-            header("Location: ".$_SERVER["REQUEST_URI"].'?id_quote='.Tools::getValue('id_quote'));
         }
         if (Tools::getValue('quoteRename')) {
             $this->quoteRename(Tools::getValue('id_quote'));
@@ -71,39 +64,45 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
 
     public function assign()
     {
-        // if id - get Quote information and Quote Bargains
-        if ($this->id_quote != 0) {
-            $quoteInfo = $this->quote->getQuoteInfo($this->id_quote);
-            $quoteInfo = $this->foreachQuotes($quoteInfo);
-            foreach ($quoteInfo as $quoteInf ) {
-                $quoteInfo = $quoteInf;
-            }
-            $this->context->smarty->assign('quote', $quoteInfo);
+        $quotes = $this->quote->getQuotesByCustomer($this->id_customer);
+        $quotes = $this->foreachQuotes($quotes);
 
+        $this->context->smarty->assign(array(
+            'quotes' => $quotes,
+            'id_customer' => $this->id_customer
+        ));
 
-            $bargains = $this->quote->getBargains($this->id_quote);
+        $this->setTemplate('submited_quotes.tpl');
+    }
 
-            foreach ($bargains as $key=>$bargain){
-                $bargains[$key]['bargain_price_display'] = Tools::displayPrice(Tools::ps_round($bargain['bargain_price'],2), $this->context->currency);
-            }
+    /**
+     * Show bargains and quote details
+     */
+    protected function showQuoteDetails(){
+        $this->id_quote = Tools::getValue('id_quote');
 
-            $this->context->smarty->assign('bargains', $bargains);
+        $quoteInfo = $this->quote->getQuoteInfo($this->id_quote);
+        $quoteInfo = $this->foreachQuotes($quoteInfo);
+        foreach ($quoteInfo as $quoteInf ) {
+            $quoteInfo = $quoteInf;
+        }
+        //$this->context->smarty->assign('quote', $quoteInfo);
 
-        } else // if 0 Get quotes list
-        {
-            $quotes = $this->quote->getQuotesByCustomer($this->id_customer);
-            $quotes = $this->foreachQuotes($quotes);
-
-            $this->context->smarty->assign('quotes', $quotes);
+        $bargains = $this->quote->getBargains($this->id_quote);
+        foreach ($bargains as $key=>$bargain){
+            $bargains[$key]['bargain_price_display'] = Tools::displayPrice(Tools::ps_round($bargain['bargain_price'],2), $this->context->currency);
         }
 
         $this->context->smarty->assign(array(
             'id_quote' => $this->id_quote,
-            'id_customer' => $this->id_customer,
+            'bargains' => $bargains,
+            'quote' => $quoteInfo,
             'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED')
         ));
 
-        $this->setTemplate('submited_quotes.tpl');
+        die(Tools::jsonEncode(array(
+            'details'  => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/front/quote_view.tpl")
+        )));
     }
 
     /**
@@ -153,10 +152,12 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
         if(!Tools::getValue('bargain_text'))
             $this->errors[] = Tools::displayError('You can not add empty message.');
 
-        if (!count($this->errors))
-            return $this->quote->addQuoteBargain(pSQL($id_quote), pSQL(Tools::getValue('bargain_text')));
+        if (!count($this->errors)) {
+            if ($this->quote->addQuoteBargain(pSQL($id_quote), pSQL(Tools::getValue('bargain_text'))))
+                die(Tools::jsonEncode(array('errors' => false)));
+        }
         else
-            $this->context->smarty->assign('bargain_errors', $this->errors);
+            die(Tools::jsonEncode(array('errors' => $this->errors)));
     }
 
     /**
@@ -180,7 +181,7 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
     protected function quoteRename($id_quote = false) {
         if(Tools::getValue('quoteName')){
             $quoteName = Tools::getValue('quoteName');
-            if(!Validate::isCatalogName($quoteName))
+            if(!Validate::isString($quoteName))
                 die(Tools::jsonEncode(array('hasError' => true, 'message' => $this->module->l('Wrong quote name'))));
         }else
             die(Tools::jsonEncode(array('hasError' => true, 'message' => $this->module->l('Name is empty'))));

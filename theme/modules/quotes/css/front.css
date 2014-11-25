@@ -478,7 +478,7 @@
     margin-bottom: 15px;
 }
 #quote_products_info {
-    display: none;
+
 }
 
 .quote_name {
@@ -516,12 +516,19 @@
 /************************************************************************
 						Bargains messages
 *************************************************************************/
+#client_bargain_txt .box {
+    margin-bottom: 0;
+    padding-top: 0;
+}
 .bargains_list {
     padding: 15px;
     max-height: 500px;
     overflow-y: scroll;
     margin-bottom: 30px;
     border-bottom: 1px solid #d6d4d4;
+}
+#success_bargain_message, #errors_bargain_message {
+    display: none;
 }
 .bargains_list li {
     padding: 10px 15px;
@@ -594,15 +601,6 @@
 .quotes_cart_quantity {
 	width: 15%;
 }
-/*.overlay {
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	z-index: 10;
-	background: rgba(0,0,0,0.3);
-	top: 0;
-	left:0;
-}*/
 .quote_row_total td {
 	border: none!important;
 }
