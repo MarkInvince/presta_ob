@@ -5,6 +5,9 @@
 <div class="row panel">
     <h3><i class="icon-hand-right"></i> {l s='Quote request:' mod="quotes"} #{$quote[0]['id_quote']}</h3>
 <br/>
+    <div {if $quote[0]['submited'] != 2}style="display: none"{/if} class="alert alert-success">
+        {l s='Transformed to order' mod='quotes'}
+    </div>
     <div class="col-lg-12 panel admin-panel">
         <h3><i class="icon-user"></i> {l s='Requisites' mod="quotes"}</h3>
         <div class="row">
@@ -180,7 +183,6 @@
 </div>
 
 <div class="col-lg-12 panel">
-    {$quote_transform}
     <h3><i class="icon-list-ul"></i> {l s='Quote bargains' mod='quotes'}</h3>
     {if $bargains && count($bargains) > 0}
         <ul class="bargains_list">
@@ -242,9 +244,6 @@
                                         <div id="danger_bargain_{$bargain.id_bargain}" class="alert alert-danger">
                                             {l s='Something wrong, try again' mod='quotes'}
                                         </div>
-                                        <div {if $quote[0]['submited'] == 2}style="display: block"{/if} class="alert alert-success">
-                                            {l s='Transformed to order' mod='quotes'}
-                                        </div>
                                     </div>
 
                                 </div>
@@ -263,6 +262,7 @@
                                                 <input type="hidden" name="id_quote" value="{$id_quote}"/>
                                                 <input type="hidden" name="id_customer" value="{$id_customer}">
                                                 <input type="hidden" name="total_products" value="{$quote.quote_total.quote_static}">
+                                                <input type="hidden" name="bargain_price" value="{$bargain.bargain_price}">
                                                 <input type="hidden" name="id_cart" value="{$quote[0]['id_cart']}">
                                                 <button type="submit" name="transformQuote" class="btn btn-primary">
                                                     {l s='Transform quote to order' mod='quotes'}

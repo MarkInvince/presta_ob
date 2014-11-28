@@ -223,13 +223,17 @@ class QuotesProductCart extends ObjectModel
                     $product['title'] = $p_obj->name;
                     $product['id_shop'] = $this->id_shop;
                     $product['category'] = $p_obj->category;
-                    $product['id_image'] = $p_obj->getCover($p_obj->id);
                     $product['id_attribute'] = $row['id_product_attribute'];
                     $product['link'] = $link->getProductLink($p_obj, $p_obj->link_rewrite, $p_obj->category, null, null, $p_obj->id_shop, $this->id_product_attribute);
                     $product['link_rewrite'] = $p_obj->link_rewrite;
 
-                    if(!empty(getProductAttributeImage($p_obj->id, $row['id_product_attribute'], $this->context->language->id)))
+                    if($row['id_product_attribute']!= 0) {
                         $id_image = getProductAttributeImage($p_obj->id, $row['id_product_attribute'], $this->context->language->id);
+                        if (!$id_image){
+                            $image = $p_obj->getCover($p_obj->id);
+                            $id_image = $image['id_image'];
+                        }
+                    }
                     else {
                         $image = $p_obj->getCover($p_obj->id);
                         $id_image = $image['id_image'];
@@ -252,16 +256,16 @@ class QuotesProductCart extends ObjectModel
         return array($products, $cart);
     }
 
-    public function deleteProduct($id_product, $id_product_attribute)
+    public function deleteProduct($id_product, $id_product_attribute = 0)
     {
         /* Product deletion */
         $result = Db::getInstance()->execute('
 		DELETE FROM `' . _DB_PREFIX_ . 'quotes_product`
-		WHERE `id_product` = ' . (int)$id_product . ' AND `id_quote` LIKE "' . $this->id_quote.'" AND `id_product_attribute` = '.$id_product_attribute);
+		WHERE `id_product` = ' . (int)$id_product . ' AND `id_quote` LIKE "' . $this->id_quote.'" AND `id_product_attribute` = '.(int)$id_product_attribute);
 
         if ($result) {
-            $this->update(true);
-            return $this->getProducts();
+            //$this->update(true);
+            return true;
         }
         return false;
     }

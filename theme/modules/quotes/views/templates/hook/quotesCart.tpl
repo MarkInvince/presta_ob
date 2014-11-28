@@ -27,7 +27,7 @@
                                 {if is_numeric($key)}
                                     <dt class="item">
                                         <a class="cart-images" href="{$product.link}" title="{$product.title}">
-                                            <img src="{$link->getImageLink($product.link_rewrite, $product.id_image['id_image'], 'cart_default')}" alt="{$product.title}">
+                                            <img src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'cart_default')}" alt="{$product.title}">
                                         </a>
                                         <div class="cart-info">
                                             <div class="product-name">

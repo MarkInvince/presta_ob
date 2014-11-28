@@ -164,7 +164,7 @@ class Quotes extends Module
 				'input' => array(
 					array(
 						'type' => 'switch',
-						'label' => $this->l('Enable bargain'),
+						'label' => $this->l('Turn bargain'),
 						'name' => 'MAIN_STATE',
 						'values' => array(
 							array(
@@ -181,7 +181,7 @@ class Quotes extends Module
 					),
                     array(
 						'type' => 'switch',
-						'label' => $this->l('Show quantity field'),
+						'label' => $this->l('Quantity field'),
 						'name' => 'MAIN_QUANTITY_FIELDS',
 						'values' => array(
 							array(
@@ -198,7 +198,7 @@ class Quotes extends Module
 					),
                     array(
 						'type' => 'switch',
-						'label' => $this->l('Animate product to fly to cart '),
+						'label' => $this->l('Animate product to fly to cart (else popup option)'),
 						'name' => 'MAIN_ANIMATE',
 						'values' => array(
 							array(
@@ -213,10 +213,10 @@ class Quotes extends Module
 							),
 						),
 					),
-                    /*array(
+					array(
 						'type' => 'switch',
 						'label' => $this->l('Enable Guest checkout'),
-						'name' => 'MAIN_GUEST_CHECK_OUT',
+						'name' => 'PS_GUEST_QUOTES_ENABLED',
 						'values' => array(
 							array(
 								'id' => 'on',
@@ -228,8 +228,8 @@ class Quotes extends Module
 								'value' => 0,
 								'label' => $this->l('No')
 							),
-						),
-					),*/
+						)
+					),
                     array(
 						'type' => 'switch',
 						'label' => $this->l('Required terms and conditions'),
@@ -255,23 +255,6 @@ class Quotes extends Module
                         'name' => 'MAIN_CMS_PAGE',
                         'options' => array('query' => $options,'id' => 'id','name' => 'name'),
                         'identifier' => 'id',
-					),
-					array(
-						'type' => 'switch',
-						'label' => $this->l('Guest option'),
-						'name' => 'PS_GUEST_QUOTES_ENABLED',
-						'values' => array(
-							array(
-								'id' => 'on',
-								'value' => 1,
-								'label' => $this->l('Yes')
-							),
-							array(
-								'id' => 'off',
-								'value' => 0,
-								'label' => $this->l('No')
-							),
-						)
 					),
 					array(
 						'type' => 'switch',
@@ -405,12 +388,12 @@ class Quotes extends Module
     /**
 	 * Add ask to quote button to product
 	 */
-    public function hookextraRight($params)
+    public function hookextraRight()
 	{
 		$product = new Product(Tools::getValue('id_product'), (int)$this->context->language->id, true);
 
 		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
-        
+
 		$this->context->smarty->assign('isLogged', $customer);
         $this->context->smarty->assign('product', $product);
         $this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
@@ -424,29 +407,33 @@ class Quotes extends Module
 	/**
 	 * Add ask to quote button to product
 	 */
-	public function hookdisplayProductButtons($params)
-	{
-		$product = new Product(Tools::getValue('id_product'), (int)$this->context->language->id, true);
-
-		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
-
-		$this->context->smarty->assign('isLogged', $customer);
-		$this->context->smarty->assign('product', $product);
-		$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
-
-		$linkCore = new Link;
-		$this->context->smarty->assign('plink', $linkCore->getProductLink($product->id, $product->link_rewrite, $product->id_category_default));
-
-		if (Configuration::get('MAIN_STATE'))
-			return $this->display(__FILE__, 'extraRight.tpl');
-	}
+//	public function hookdisplayProductButtons()
+//	{
+//		$product = new Product(Tools::getValue('id_product'), (int)$this->context->language->id, true);
+//
+//		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
+//
+//		$this->context->smarty->assign('isLogged', $customer);
+//		$this->context->smarty->assign('product', $product);
+//		$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
+//
+//		$linkCore = new Link;
+//		$this->context->smarty->assign('plink', $linkCore->getProductLink($product->id, $product->link_rewrite, $product->id_category_default));
+//
+//		if (Configuration::get('MAIN_STATE'))
+//			return $this->display(__FILE__, 'extraRight.tpl');
+//	}
 
 	/**
 	 * Add ask to quote button to product list
 	 */
 	public function hookdisplayProductListFunctionalButtons($params){
+		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
+		$this->context->smarty->assign('isLogged', $customer);
+		$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
+		$this->smarty->assign('product', $params['product']);
 		if (Configuration::get('MAIN_STATE'))
-			return $this->display(__FILE__, 'extraRight.tpl');
+			return $this->display(__FILE__, 'product-list.tpl');
 	}
 
 	/**

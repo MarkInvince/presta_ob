@@ -75,9 +75,11 @@ class QuotesSubmitCore extends ObjectModel
     public function deleteQuoteById($id_quote = false, $id_customer = false)
     {
         if($id_quote AND $id_customer) {
-            if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.(int)$id_quote.' AND `id_customer` = '.(int)$id_customer))
-                return false;
-            return true;
+            if (Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.(int)$id_quote.' AND `id_customer` = '.(int)$id_customer)){
+                if (Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes_bargains` WHERE `id_quote` = '.(int)$id_quote))
+                    return true;
+            }
+            return false;
         }
         else
             return false;

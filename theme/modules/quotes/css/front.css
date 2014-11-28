@@ -244,6 +244,13 @@
     text-align: right;
     width: 15px; }
 
+.submit_quote {
+    float: right;
+}
+.show_phone_field {
+    display: none;
+}
+
 /*****************************************************************************
 					Layer Cart Css
 *****************************************************************************/
@@ -763,9 +770,14 @@
 #layer_cart p {
 	padding: 0px; }
 
+ul.product_list.grid > li .product-container .functional-buttons div.ask_offer {
+    width: 100%;
+}
+
 .ajax_add_to_quote_cart_button, .fly_to_quote_cart_button {
 	cusrsor: pointer;
 	padding: 0;
+    margin-bottom: 10px;
 	border-top: 1px solid #0079b6;
 	border-right: 1px solid #006fa8;
 	border-left: 1px solid #006fa8;
@@ -806,16 +818,7 @@
 @media (max-width: 991px) {
 	.ajax_add_to_quote_cart_button:before, .fly_to_quote_cart_button:before {
 		display: none; } }
-.ajax_add_to_quote_cart_button.added:before, .fly_to_quote_cart_button:before {
-	content: "\f00c"; }
-.ajax_add_to_quote_cart_button.disabled:before, .fly_to_quote_cart_button:before {
-	content: "\f110";
-	animation: 2s linear 0s normal none infinite spin;
-	-webkit-animation: 2s linear 0s normal none infinite spin;
-	-moz-animation: 2s linear 0s normal none infinite spin;
-	border: none; }
 .ajax_add_to_quote_cart_button:after, .fly_to_quote_cart_button:after {
-	background: url(../img/border-1.gif) repeat-y 0 0;
 	position: absolute;
 	top: 0;
 	bottom: 0;
