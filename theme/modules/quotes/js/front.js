@@ -257,11 +257,28 @@ $(document).ready(function(){
 		}
 	});
 
+	$('#contact_via_phone').click(function() {
+		if ($(this).is(':checked'))
+			$('.show_phone_field').show();
+		else
+			$('.show_phone_field').hide();
+	});
+
 	$('body').on('click', '.submit_quote', function() {
+		var $contact_via = 0;
+		if(messagingEnabled == 1){
+			if ($('#contact_via_mail').is(':checked')) {
+				$contact_via = 'mail';
+			}
+		} else {
+			if ($('#contact_via_phone').is(':checked')) {
+				$contact_via = 'phone&contact_phone=' + $('#contact_phone').val();
+			}
+		}
 		$.ajax({
 			url: quotesCart,
 			method:'post',
-			data: 'action=submit',
+			data: 'action=submit&contact_via='+$contact_via,
 			dataType:'json',
 			success: function(response) {
 				console.log(response);
@@ -299,34 +316,33 @@ $(document).ready(function(){
 
     $('body').on('click','.fly_to_quote_cart_button', function(){
 		var this_element = $(this);
-		$('#ipa').val($('#idCombination').val());
+		if (this_element.closest('form.quote_ask_form').find('.product_list_opt').val() == 1)
+			var product_list = 1;
+		if (product_list != 1)
+			this_element.closest('form.quote_ask_form').find('.ipa').val($('#idCombination').val());
+
 		if(catalogMode == false) {
-			$('#pqty').val(parseInt($('#quantity_wanted').val()));
+			if (product_list != 1)
+				this_element.closest('form.quote_ask_form').find('.pqty').val(parseInt($('#quantity_wanted').val()));
 		}
-
-		/*var selects = document.getElementsByTagName('select');
-		var uniquecode = '';
-		for(i=0;i<selects.length;i++){
-			sel = selects[i];
-			if(sel.id.substr(0,5) == 'group') {
-				uniquecode+= '&'+sel.id.substr(6,sel.id.length-6)+'='+sel.value;
-			}
-		}*/
-
-		// fly to cart animation
-		var top = parseInt($(window).height() / 2 - 150 + $(window).scrollTop(), 10);
-		var left = parseInt($(window).width() / 2 - 150, 10);
-		var class_name = 'basket_add_indicator_' + new Date().getTime();
 
 		var score_x = $('#quotes-cart-link').offset().left;
 		var score_y = $('#quotes-cart-link').offset().top;
 
-		var image = $("#bigpic");
+		if (product_list != 1)
+			var image = $("#bigpic");
+		else
+			var image = this_element.closest('.product-container').find('.product_img_link img');
+
+		// fly to cart animation
+		var top =  this_element.offset().top - 150;
+		var left = this_element.offset().left;
+		var class_name = 'basket_add_indicator_' + new Date().getTime();
 
 		$.ajax({
 			url: quotesCart,
 			method:'post',
-			data: $('#quote_ask_form').serialize(),
+			data: this_element.closest('form.quote_ask_form').serialize(),
 			dataType:'json',
 			success: function(response) {
 				$("body").append('<img src="'+image.attr('src')+'" style="width: 150px;height:150px;position:absolute;z-index: 99999;opacity:0;left:' + left+ 'px;top:' + top + 'px" class="'+class_name+'" alt="" />');
@@ -370,29 +386,39 @@ $(document).ready(function(){
 	$('#columns #quotes_layer_cart, #columns .quotes_layer_cart_overlay').detach().prependTo('#columns');
 	//add product to quotes with popup
 	$('body').on('click','.ajax_add_to_quote_cart_button', function(){
-		$('#ipa').val($('#idCombination').val());
+		var this_element = $(this);
+
+		if (this_element.closest('form.quote_ask_form').find('.product_list_opt').val() != 1)
+			this_element.closest('form.quote_ask_form').find('.ipa').val($('#idCombination').val());
+		//$('#ipa').val($('#idCombination').val());
 		$.ajax({
 			url: quotesCart,
 			method:'post',
-			data: $('#quote_ask_form').serialize(),
+			data: this_element.closest('form.quote_ask_form').serialize(),
 			dataType:'json',
 			success: function(response) {
+
 				$.ajax({
 					url: quotesCart,
 					method:'post',
-					data: $('#quote_ask_form').serialize()+'&showpop&action=popup',
+					data: this_element.closest('form.quote_ask_form').serialize()+'&showpop&action=popup',
 					dataType:'json',
 					success: function(response) {
-
 						$('#columns').append(response.popup);
 						$('#quotes_layer_cart').css('display', 'block');
-						$('#quotes_layer_cart').css('top', '345px');
+						var $scroll = $(window).scrollTop();
+						$scroll = $scroll + 'px';
+						$('#quotes_layer_cart').css('top', $scroll);
 
 						$('.quotes_layer_cart_overlay').css('display', 'block');
 						$('.quotes_layer_cart_overlay').css('width', '100%');
 						$('.quotes_layer_cart_overlay').css('height', '100%');
 					}
 				});
+
+				// insert cart header
+				$('#quotes-cart-link').empty();
+				$('#quotes-cart-link').html(response.header);
 
 				$('#product-list').empty();
 				$('#product-list').html(response.products);

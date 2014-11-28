@@ -63,7 +63,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 die(Tools::jsonEncode(array('popup'  => $this->context->smarty->fetch(_PS_MODULE_DIR_."quotes/views/templates/hook/quotesCart.tpl"))));
             }
             if(Tools::getValue('action') == 'add') {
-                $add = $this->ajaxAddToQuotesCart();
+                $this->ajaxAddToQuotesCart();
                 list($products, $cart) = $this->quote->getProducts();
                 $this->context->smarty->assign('products', $products);
                 $this->context->smarty->assign('cart', $cart);
@@ -80,7 +80,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 )));
             }
             if(Tools::getValue('action') == 'delete') {
-                $delete = $this->deleteQuoteById(Tools::getValue('item_id'));
+
+                $this->deleteQuoteById(Tools::getValue('item_id'));
 
                 list($products, $cart) = $this->quote->getProducts();
                 $this->context->smarty->assign('products', $products);
@@ -252,7 +253,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 )));
             }
             if(Tools::getValue('action') == 'submit') {
-                if($this->submitQuote($this->quote)) {
+                if($this->submitQuote($this->quote, Tools::getValue('contact_via'), Tools::getValue('contact_phone'))) {
                     die(Tools::jsonEncode(array('hasError' => false,'redirectUrl' => $this->context->link->getModuleLink($this->module->name, 'SubmitedQuotes', array(), true))));
                 }
                 else {
@@ -262,7 +263,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
     }
 
-    protected function submitQuote($quote) {
+    protected function submitQuote($quote, $contact_via = false, $contact_phone = null) {
         // check for user session
         if ($this->context->cookie->__isset('request_id')) {
 
@@ -351,6 +352,54 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 // Send e-mail to customer
                 quotesMailConfirm($this->context->customer->email, $message, $subject);
 
+                $additional_info = $this->module->l("There is no information from customer");
+
+                if ($contact_via == 'mail') {
+                    $additional_info =  $this->module->l("Please, contact me via E-mail");
+                    if(Tools::getValue('contact_phone'))
+                        $additional_info .= '<br>'.Tools::getValue('contact_phone');
+                }
+                if ($contact_via == 'phone') {
+                    $additional_info =  $this->module->l("Please, contact me via telephone");
+                    if($contact_phone)
+                        $additional_info .= '<br>'.$contact_phone;
+                }
+
+                $message = '
+                            <html>
+                            <head>
+                              <title>'.$this->module->l("New submited quote").'</title>
+                            </head>
+                            <body>
+                                <h2>'.$this->module->l("Quote information").'</h2>
+                                  <table>
+                                    <tr>
+                                      <th>'.$this->module->l("Quote name").'</th><th>'.$this->module->l("Date").'</th><th>'.$this->module->l("Additional information").'</th>
+                                    </tr>
+                                    <tr>
+                                      <td>'.$this->submit_quote->quote_name.'</td>
+                                      <td>'.$this->submit_quote->date_add.'</td>
+                                      <td>'.$additional_info.'</td>
+                                    </tr>
+                                  </table>
+                                <h2>'.$this->module->l("User information").'</h2>
+                                  <table>
+                                    <tr>
+                                      <th>'.$this->module->l("user ID").'</th><th>'.$this->module->l("firstname").'</th><th>'.$this->module->l("lastname").'</th><th>'.$this->module->l("Email").'</th>
+                                    </tr>
+                                    <tr>
+                                      <td>'.$this->context->customer->id.'</td>
+                                      <td>'.$this->context->customer->firstname.'</td>
+                                      <td>'.$this->context->customer->lastname.'</td>
+                                      <td>'.$this->context->customer->email.'</td>
+                                    </tr>
+                                  </table>
+                            </body>
+                            </html>
+                ';
+                // Send e-mail to admin
+                quotesMailConfirm(Configuration::get('PS_SHOP_EMAIL'), $message, $subject);
+
                 // clear shop box
                 return $quote->deleteAllProduct();
             }
@@ -405,6 +454,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             'back' => $back,
             'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
             'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED'),
+            'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED'),
             'isGuest' => isset($this->context->cookie->is_guest) ? $this->context->cookie->is_guest : 0,
             'countries' => $countries,
             'sl_country' => isset($selectedCountry) ? $selectedCountry : 0,
@@ -421,12 +471,14 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
     }
     protected function deleteQuoteById($id) {
         $vals = explode('_',$id);
-        $pid = !empty($vals[0]) ? $vals[0] : false;
-        $ipa = !empty($vals[1]) ? $vals[1] : false;
+        $pid = $vals[0];
+        $ipa = $vals[1];
+
         if (!$pid || !is_numeric($pid)) {
             die(Tools::jsonEncode(array('message' => Tools::displayError($this->module->l('Nothing to delete')),'hasError' => true)));
         }
-        if ($this->context->cookie->__isset('request_id') AND $pid AND $ipa) {
+        if ($this->context->cookie->__isset('request_id') AND $pid) {
+
             $this->quote->id_quote = $this->context->cookie->__get('request_id');
             $this->quote->id_product = $pid;
             $this->quote->id_guest = (int)$this->context->cookie->id_guest;
@@ -436,9 +488,12 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 return true;
             }
             else {
+
                 return false;
             }
         }
+        else
+            die(Tools::jsonEncode(array('pid' => $pid, 'ipa' => $ipa,'request' => $this->context->cookie->__get('request_id'))));
     }
     protected function ajaxAddToQuotesCart() {
         if (Tools::getValue('pqty') <= 0) {
@@ -465,7 +520,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 $this->quote->id_shop_group = $this->context->shop->id_shop_group;
                 $this->quote->id_lang = $this->context->language->id;
                 $this->quote->id_product = $product->id;
-                $this->quote->id_product_attribute = pSQL(Tools::getValue('ipa'));
+                $this->quote->id_product_attribute = pSQL(Tools::getValue('ipa')) ? pSQL(Tools::getValue('ipa')) : 0;
                 $this->quote->id_guest = (int)$this->context->cookie->id_guest;
                 $this->quote->id_customer = (int)$this->context->customer->id;
                 $this->quote->quantity = 1;

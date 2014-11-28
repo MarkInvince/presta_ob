@@ -126,7 +126,16 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
                         $quoteIn[$key][$k]['link_rewrite'] = $productObj->link_rewrite;
                         $quoteIn[$key][$k]['link'] = $this->context->link->getProductLink($productObj, $productObj->link_rewrite, $productObj->category, null, null);
 
-                        $quoteIn[$key][$k]['id_image'] = getProductAttributeImage($productObj->id, $product['id_attribute'], $this->context->language->id);
+                        if($product['id_attribute'] != 0){
+                            $id_image = getProductAttributeImage($productObj->id, $product['id_attribute'], $this->context->language->id);
+                            if($id_image)
+                                $quoteIn[$key][$k]['id_image'] = $id_image;
+                            else
+                                $quoteIn[$key][$k]['id_image'] = $productObj->getCover($productObj->id)['id_image'];
+                        }
+                        else {
+                            $quoteIn[$key][$k]['id_image'] = $productObj->getCover($productObj->id)['id_image'];
+                        }
 
                         $quote_total_price = $quote_total_price + $prod_price*$product['quantity'];
                     }

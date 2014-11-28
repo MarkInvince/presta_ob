@@ -2,10 +2,6 @@
 
 <p><a href="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" id="show_quote_products_info">&raquo; {l s='Click to hide/show quote products info'}</a></p>
 
-{*<pre>*}
-{*{print_r($quote.products)}*}
-{*</pre>*}
-
 <table id="quote_products_info" class="table table-bordered">
     <tr>
         <th class="quotes_cart_product first_item">{l s='Product' mod="quotes"}</th>
@@ -145,5 +141,3 @@
             <p class="alert alert-warning bargains_list_warning">{l s='There are no any bargains yet' mod='quotes'}</p>
         {/if}
     </ul>
-
-1212
