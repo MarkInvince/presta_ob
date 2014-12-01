@@ -79,6 +79,7 @@ class Quotes extends Module
 		Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', '0');
 		Configuration::updateValue('ADDRESS_ENABLED', '0');
 		Configuration::updateValue('MESSAGING_ENABLED', '1');
+        Configuration::updateValue('CATEGORY_BOX','');
 
 
         return parent::install() &&
@@ -112,7 +113,8 @@ class Quotes extends Module
                                    AND Configuration::deleteByName('MAIN_CMS_PAGE')
 									AND Configuration::deleteByName('PS_GUEST_QUOTES_ENABLED')
 									AND Configuration::deleteByName('ADDRESS_ENABLED')
-									AND Configuration::deleteByName('MESSAGING_ENABLED');
+									AND Configuration::deleteByName('MESSAGING_ENABLED')
+                                    AND Configuration::deleteByName('CATEGORY_BOX');
 	}
 
 	private function deleteTables()
@@ -143,6 +145,9 @@ class Quotes extends Module
 			Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', Tools::getValue('PS_GUEST_QUOTES_ENABLED'));
 			Configuration::updateValue('ADDRESS_ENABLED', Tools::getValue('ADDRESS_ENABLED'));
 			Configuration::updateValue('MESSAGING_ENABLED', Tools::getValue('MESSAGING_ENABLED'));
+            Configuration::updateValue('CATEGORY_BOX', implode(',',Tools::getValue('CATEGORY_BOX')));
+
+
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
 		$this->context->smarty->assign('module_dir', $this->_path);
@@ -289,7 +294,18 @@ class Quotes extends Module
 								'label' => $this->l('No')
 							),
 						)
-					)
+					),
+                    array(
+                        'type' => 'categories',
+                        'name' => 'CATEGORY_BOX',
+                        'tree' => array(
+                            'id'    => 'associated-categories-tree',
+                            'title' => $this->l('Select category'),
+                            'use_search' => 1,
+                            'use_checkbox' => 1,
+                            'selected_categories' => explode(',',Configuration::get('CATEGORY_BOX'))
+                        )
+                    )
 				),
                 'bottom' => '<script type="text/javascript">showBlock(element);hideBlock(element);</script>',
 				'submit' => array(
@@ -297,8 +313,8 @@ class Quotes extends Module
 				)
 			),
 		);
-		
-		$helper = new HelperForm();
+
+        $helper = new HelperForm();
         $helper->show_toolbar = false;
         $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
         $helper->default_form_language = $lang->id;
@@ -313,7 +329,9 @@ class Quotes extends Module
             'id_language' => $this->context->language->id
         );
 
-		return $helper->generateForm(array($fields_form));
+        $output.= $helper->generateForm(array($fields_form));
+
+		return $output;
 	}
     
 	/**
@@ -330,7 +348,8 @@ class Quotes extends Module
             'MAIN_CMS_PAGE' => Configuration::get('MAIN_CMS_PAGE'),
 			'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
 			'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED'),
-			'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED')
+			'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED'),
+            'CATEGORY_BOX' => explode(',',Configuration::get('CATEGORY_BOX'))
 		);
 	}
 
@@ -431,6 +450,7 @@ class Quotes extends Module
 		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
 		$this->context->smarty->assign('isLogged', $customer);
 		$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
+
 		$this->smarty->assign('product', $params['product']);
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__FILE__, 'product-list.tpl');
