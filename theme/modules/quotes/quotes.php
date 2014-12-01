@@ -416,8 +416,7 @@ class Quotes extends Module
 			'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
 			'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED'),
 			'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED'),
-            'CATEGORY_BOX' => explode(',',Configuration::get('CATEGORY_BOX'))
-			'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED'),
+            'CATEGORY_BOX' => explode(',',Configuration::get('CATEGORY_BOX')),
 			'MAIN_PRODUCT_STATUS' => Configuration::get('MAIN_PRODUCT_STATUS'),
 			'MAIN_PRODUCT_PAGE' => Configuration::get('MAIN_PRODUCT_PAGE'),
 			'MAIN_PRODUCT_LIST' => Configuration::get('MAIN_PRODUCT_LIST'),
@@ -524,6 +523,7 @@ class Quotes extends Module
 		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
 		$this->context->smarty->assign('isLogged', $customer);
 		$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
+		$this->context->smarty->assign('present_on_product_list',Configuration::get('MAIN_PRODUCT_LIST'));
 		$this->smarty->assign('product', $params['product']);
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__FILE__, 'product-list.tpl');
