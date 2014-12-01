@@ -73,12 +73,15 @@ class Quotes extends Module
         Configuration::updateValue('MAIN_STATE', '1'); // Main module status
         Configuration::updateValue('MAIN_QUANTITY_FIELDS', '0'); // Quantity fields trigger
         Configuration::updateValue('MAIN_ANIMATE', '1'); // Quantity fields trigger
-        //Configuration::updateValue('MAIN_GUEST_CHECK_OUT', '1'); // Quantity fields trigger
         Configuration::updateValue('MAIN_TERMS_AND_COND', '0'); // Quantity fields trigger
         Configuration::updateValue('MAIN_CMS_PAGE', '0'); // Quantity fields trigger
 		Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', '0');
 		Configuration::updateValue('ADDRESS_ENABLED', '0');
 		Configuration::updateValue('MESSAGING_ENABLED', '1');
+		Configuration::updateValue('MAIN_PRODUCT_STATUS', '0');
+		Configuration::updateValue('MAIN_PRODUCT_PAGE', '1');
+		Configuration::updateValue('MAIN_PRODUCT_LIST', '1');
+		Configuration::updateValue('MAIN_MAILS', Configuration::get('PS_SHOP_EMAIL'));
 
 
         return parent::install() &&
@@ -107,12 +110,15 @@ class Quotes extends Module
                                    AND Configuration::deleteByName('MODULE_TAB_ID')
                                    AND Configuration::deleteByName('MAIN_QUANTITY_FIELDS')
                                    AND Configuration::deleteByName('MAIN_ANIMATE')
-                                   //AND Configuration::deleteByName('MAIN_GUEST_CHECK_OUT')
                                    AND Configuration::deleteByName('MAIN_TERMS_AND_COND')
                                    AND Configuration::deleteByName('MAIN_CMS_PAGE')
 									AND Configuration::deleteByName('PS_GUEST_QUOTES_ENABLED')
 									AND Configuration::deleteByName('ADDRESS_ENABLED')
-									AND Configuration::deleteByName('MESSAGING_ENABLED');
+									AND Configuration::deleteByName('MESSAGING_ENABLED')
+									AND Configuration::deleteByName('MAIN_PRODUCT_STATUS')
+									AND Configuration::deleteByName('MAIN_PRODUCT_PAGE')
+									AND Configuration::deleteByName('MAIN_PRODUCT_LIST')
+									AND Configuration::deleteByName('MAIN_MAILS');
 	}
 
 	private function deleteTables()
@@ -130,6 +136,7 @@ class Quotes extends Module
 	 */
 	public function getContent()
 	{
+		$output = '';
 		/**
 		 * If values have been submitted in the form, process.
 		 */
@@ -137,12 +144,15 @@ class Quotes extends Module
             Configuration::updateValue('MAIN_STATE', Tools::getValue('MAIN_STATE'));
             Configuration::updateValue('MAIN_QUANTITY_FIELDS', Tools::getValue('MAIN_QUANTITY_FIELDS'));
             Configuration::updateValue('MAIN_ANIMATE', Tools::getValue('MAIN_ANIMATE'));
-           // Configuration::updateValue('MAIN_GUEST_CHECK_OUT', Tools::getValue('MAIN_GUEST_CHECK_OUT'));
             Configuration::updateValue('MAIN_TERMS_AND_COND', Tools::getValue('MAIN_TERMS_AND_COND'));
             Configuration::updateValue('MAIN_CMS_PAGE', Tools::getValue('MAIN_CMS_PAGE'));
 			Configuration::updateValue('PS_GUEST_QUOTES_ENABLED', Tools::getValue('PS_GUEST_QUOTES_ENABLED'));
 			Configuration::updateValue('ADDRESS_ENABLED', Tools::getValue('ADDRESS_ENABLED'));
 			Configuration::updateValue('MESSAGING_ENABLED', Tools::getValue('MESSAGING_ENABLED'));
+			Configuration::updateValue('MAIN_PRODUCT_STATUS', Tools::getValue('MAIN_PRODUCT_STATUS'));
+			Configuration::updateValue('MAIN_PRODUCT_PAGE', Tools::getValue('MAIN_PRODUCT_PAGE'));
+			Configuration::updateValue('MAIN_PRODUCT_LIST', Tools::getValue('MAIN_PRODUCT_LIST'));
+			Configuration::updateValue('MAIN_MAILS', Tools::getValue('MAIN_MAILS'));
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
 		$this->context->smarty->assign('module_dir', $this->_path);
@@ -277,6 +287,7 @@ class Quotes extends Module
 						'type' => 'switch',
 						'label' => $this->l('User messaging'),
 						'name' => 'MESSAGING_ENABLED',
+						'desc' => 'Allows the user to send bargain messages to admin',
 						'values' => array(
 							array(
 								'id' => 'on',
@@ -289,6 +300,64 @@ class Quotes extends Module
 								'label' => $this->l('No')
 							),
 						)
+					),
+					array(
+						'type' => 'switch',
+						'label' => $this->l('Filtered on product status'),
+						'name' => 'MAIN_PRODUCT_STATUS',
+						'desc' => 'Present only if product not available for order',
+						'values' => array(
+							array(
+								'id' => 'on',
+								'value' => 1,
+								'label' => $this->l('Yes')
+							),
+							array(
+								'id' => 'off',
+								'value' => 0,
+								'label' => $this->l('No')
+							),
+						)
+					),
+					array(
+						'type' => 'switch',
+						'label' => $this->l('Button on product page'),
+						'name' => 'MAIN_PRODUCT_PAGE',
+						'values' => array(
+							array(
+								'id' => 'on',
+								'value' => 1,
+								'label' => $this->l('Yes')
+							),
+							array(
+								'id' => 'off',
+								'value' => 0,
+								'label' => $this->l('No')
+							),
+						)
+					),
+					array(
+						'type' => 'switch',
+						'label' => $this->l('Button on product list'),
+						'name' => 'MAIN_PRODUCT_LIST',
+						'values' => array(
+							array(
+								'id' => 'on',
+								'value' => 1,
+								'label' => $this->l('Yes')
+							),
+							array(
+								'id' => 'off',
+								'value' => 0,
+								'label' => $this->l('No')
+							),
+						)
+					),
+					array(
+						'type' => 'text',
+						'label' => $this->l('Email addresses:'),
+						'name' => 'MAIN_MAILS',
+						'desc' => 'Enter the email addresses separated by a comma (",") where you need submitted quotes to be sent'
 					)
 				),
                 'bottom' => '<script type="text/javascript">showBlock(element);hideBlock(element);</script>',
@@ -325,12 +394,15 @@ class Quotes extends Module
 			'MAIN_STATE' => Configuration::get('MAIN_STATE'),
             'MAIN_QUANTITY_FIELDS' => Configuration::get('MAIN_QUANTITY_FIELDS'),
             'MAIN_ANIMATE' => Configuration::get('MAIN_ANIMATE'),
-            //'MAIN_GUEST_CHECK_OUT' => Configuration::get('MAIN_GUEST_CHECK_OUT'),
             'MAIN_TERMS_AND_COND' => Configuration::get('MAIN_TERMS_AND_COND'),
             'MAIN_CMS_PAGE' => Configuration::get('MAIN_CMS_PAGE'),
 			'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
 			'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED'),
-			'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED')
+			'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED'),
+			'MAIN_PRODUCT_STATUS' => Configuration::get('MAIN_PRODUCT_STATUS'),
+			'MAIN_PRODUCT_PAGE' => Configuration::get('MAIN_PRODUCT_PAGE'),
+			'MAIN_PRODUCT_LIST' => Configuration::get('MAIN_PRODUCT_LIST'),
+			'MAIN_MAILS' => Configuration::get('MAIN_MAILS')
 		);
 	}
 
@@ -397,6 +469,8 @@ class Quotes extends Module
 		$this->context->smarty->assign('isLogged', $customer);
         $this->context->smarty->assign('product', $product);
         $this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
+		$this->context->smarty->assign('filtered_on_status',Configuration::get('MAIN_PRODUCT_STATUS'));
+		$this->context->smarty->assign('present_on_product',Configuration::get('MAIN_PRODUCT_PAGE'));
 
         $linkCore = new Link;
 		$this->context->smarty->assign('plink', $linkCore->getProductLink($product->id, $product->link_rewrite, $product->id_category_default));
@@ -431,6 +505,8 @@ class Quotes extends Module
 		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
 		$this->context->smarty->assign('isLogged', $customer);
 		$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
+		$this->context->smarty->assign('filtered_on_status',Configuration::get('MAIN_PRODUCT_STATUS'));
+		$this->context->smarty->assign('present_on_product_list',Configuration::get('MAIN_PRODUCT_LIST'));
 		$this->smarty->assign('product', $params['product']);
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__FILE__, 'product-list.tpl');
