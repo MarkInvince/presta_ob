@@ -82,6 +82,7 @@ class Quotes extends Module
 		Configuration::updateValue('MAIN_PRODUCT_PAGE', '1');
 		Configuration::updateValue('MAIN_PRODUCT_LIST', '1');
 		Configuration::updateValue('MAIN_MAILS', Configuration::get('PS_SHOP_EMAIL'));
+        Configuration::updateValue('CATEGORY_BOX','');
 
 
         return parent::install() &&
@@ -118,7 +119,9 @@ class Quotes extends Module
 									AND Configuration::deleteByName('MAIN_PRODUCT_STATUS')
 									AND Configuration::deleteByName('MAIN_PRODUCT_PAGE')
 									AND Configuration::deleteByName('MAIN_PRODUCT_LIST')
-									AND Configuration::deleteByName('MAIN_MAILS');
+									AND Configuration::deleteByName('MAIN_MAILS')
+									AND Configuration::deleteByName('MESSAGING_ENABLED')
+                                    AND Configuration::deleteByName('CATEGORY_BOX');
 	}
 
 	private function deleteTables()
@@ -153,6 +156,9 @@ class Quotes extends Module
 			Configuration::updateValue('MAIN_PRODUCT_PAGE', Tools::getValue('MAIN_PRODUCT_PAGE'));
 			Configuration::updateValue('MAIN_PRODUCT_LIST', Tools::getValue('MAIN_PRODUCT_LIST'));
 			Configuration::updateValue('MAIN_MAILS', Tools::getValue('MAIN_MAILS'));
+            Configuration::updateValue('CATEGORY_BOX', implode(',',Tools::getValue('CATEGORY_BOX')));
+
+
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
 		$this->context->smarty->assign('module_dir', $this->_path);
@@ -358,7 +364,18 @@ class Quotes extends Module
 						'label' => $this->l('Email addresses:'),
 						'name' => 'MAIN_MAILS',
 						'desc' => 'Enter the email addresses separated by a comma (",") where you need submitted quotes to be sent'
-					)
+					),
+                    array(
+                        'type' => 'categories',
+                        'name' => 'CATEGORY_BOX',
+                        'tree' => array(
+                            'id'    => 'associated-categories-tree',
+                            'title' => $this->l('Select category'),
+                            'use_search' => 1,
+                            'use_checkbox' => 1,
+                            'selected_categories' => explode(',',Configuration::get('CATEGORY_BOX'))
+                        )
+                    )
 				),
                 'bottom' => '<script type="text/javascript">showBlock(element);hideBlock(element);</script>',
 				'submit' => array(
@@ -366,8 +383,8 @@ class Quotes extends Module
 				)
 			),
 		);
-		
-		$helper = new HelperForm();
+        
+        $helper = new HelperForm();
         $helper->show_toolbar = false;
         $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
         $helper->default_form_language = $lang->id;
@@ -398,6 +415,8 @@ class Quotes extends Module
             'MAIN_CMS_PAGE' => Configuration::get('MAIN_CMS_PAGE'),
 			'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
 			'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED'),
+			'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED'),
+            'CATEGORY_BOX' => explode(',',Configuration::get('CATEGORY_BOX'))
 			'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED'),
 			'MAIN_PRODUCT_STATUS' => Configuration::get('MAIN_PRODUCT_STATUS'),
 			'MAIN_PRODUCT_PAGE' => Configuration::get('MAIN_PRODUCT_PAGE'),
@@ -505,8 +524,6 @@ class Quotes extends Module
 		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
 		$this->context->smarty->assign('isLogged', $customer);
 		$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
-		$this->context->smarty->assign('filtered_on_status',Configuration::get('MAIN_PRODUCT_STATUS'));
-		$this->context->smarty->assign('present_on_product_list',Configuration::get('MAIN_PRODUCT_LIST'));
 		$this->smarty->assign('product', $params['product']);
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__FILE__, 'product-list.tpl');
