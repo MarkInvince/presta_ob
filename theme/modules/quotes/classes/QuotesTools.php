@@ -30,15 +30,8 @@ function quotesMailConfirm($to, $message, $subject){
     $headers   = array();
     $headers[] = "MIME-Version: 1.0";
     $headers[] = "Content-type: text/html; charset=utf-8";
-    $headers[] = "From: ".Configuration::get('PS_SHOP_NAME')." <info@admin.com>";
-    //$headers[] = "Reply-To: Recipient Name <receiver@domain3.com>";
-
-//    $headers   = array();
-//    $headers[] = "MIME-Version: 1.0";
-//    $headers[] = "Content-type: text/plain; charset=iso-8859-1";
-//    $headers[] = "From: ".Configuration::get('PS_SHOP_NAME')." <sender@domain.com>";
-//    $headers[] = "Subject: ".$subject;
-//    $headers[] = "X-Mailer: PHP/".phpversion();
+    $headers[] = "From: ".Configuration::get('PS_SHOP_NAME')." <".Configuration::get('PS_SHOP_EMAIL').">";
+    $headers[] = "Reply-To: ".Configuration::get('PS_SHOP_NAME')." <".Configuration::get('PS_SHOP_EMAIL').">";
 
     if(mail($to, $subject, $message, implode("\r\n", $headers)))
         return true;

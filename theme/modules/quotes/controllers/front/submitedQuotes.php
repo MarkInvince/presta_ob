@@ -82,6 +82,7 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
         $this->id_quote = Tools::getValue('id_quote');
 
         $quoteInfo = $this->quote->getQuoteInfo($this->id_quote);
+
         $quoteInfo = $this->foreachQuotes($quoteInfo);
         foreach ($quoteInfo as $quoteInf ) {
             $quoteInfo = $quoteInf;
@@ -175,10 +176,64 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController {
     protected function bargainCustomerSubmit() {
         $action = Tools::getValue('actionSubmitBargain');
 
-//        if ($action == 'accept')
-        $order = new Order();
-
         if($this->quote->submitBargain(Tools::getValue('id_bargain'), $action, Tools::getValue('id_quote'))) {
+            if ($action == 'accept') {
+                $quoteInfo = $this->quote->getQuoteInfo(Tools::getValue('id_quote'));
+                if($quoteInfo){
+
+                    foreach ($quoteInfo as $quoteInf ) {
+                        $quote = $quoteInf;
+                    }
+
+                    $customer = new Customer($quote['id_customer']);
+
+                    $subject = $this->module->l("Accepted offer by customer");
+                    $message = '
+                            <html>
+                            <head>
+                              <title>'.$this->module->l("Accepted offer").'</title>
+                            </head>
+                            <body>
+                                <h2>'.$this->module->l("Accepted quote information").'</h2>
+                                  <table>
+                                    <tr>
+                                      <th>'.$this->module->l("Quote ID").'</th>
+                                      <th>'.$this->module->l("Quote name").'</th>
+                                      <th>'.$this->module->l("Reference").'</th>
+                                      <th>'.$this->module->l("Burgain offer").'</th>
+                                      <th>'.$this->module->l("Date add").'</th>
+                                    </tr>
+                                    <tr>
+                                      <td>'.$quote['id_quote'].'</td>
+                                      <td>'.$quote['quote_name'].'</td>
+                                      <td>'.$quote['reference'].'</td>
+                                      <td>'.$quote['burgain_price'].'</td>
+                                      <td>'.$quote['date_add'].'</td>
+                                    </tr>
+                                  </table>
+                                <h2>'.$this->module->l("User information").'</h2>
+                                  <table>
+                                    <tr>
+                                      <th>'.$this->module->l("user ID").'</th><th>'.$this->module->l("firstname").'</th><th>'.$this->module->l("lastname").'</th><th>'.$this->module->l("Email").'</th>
+                                    </tr>
+                                    <tr>
+                                      <td>'.$customer->id.'</td>
+                                      <td>'.$customer->firstname.'</td>
+                                      <td>'.$customer->lastname.'</td>
+                                      <td>'.$customer->email.'</td>
+                                    </tr>
+                                  </table>
+                            </body>
+                            </html>
+                    ';
+                    // Send e-mail to admin
+                    $to = Configuration::get('PS_SHOP_EMAIL');
+                    if(Configuration::get('MAIN_MAILS'))
+                        $to .= ', '.Configuration::get('MAIN_MAILS');
+                    quotesMailConfirm($to, $message, $subject);
+                }
+
+            }
             die(Tools::jsonEncode(array('submited' => $action)));
         }else
             die(Tools::jsonEncode(array('hasError' => true)));
