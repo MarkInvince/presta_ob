@@ -1,3 +1,4 @@
+
 {if $present_on_product_list == 1}
     <div class="ask_offer clearfix {if $filtered_on_status == 1 && (isset($product.available_for_order) && $product.available_for_order)}unvisible{/if}">
         <form class="quote_ask_form" action="{$actionAddQuotes}" method="post">

@@ -370,7 +370,7 @@ class Quotes extends Module
                         'name' => 'CATEGORY_BOX',
                         'tree' => array(
                             'id'    => 'associated-categories-tree',
-                            'title' => $this->l('Select category'),
+                            'title' => $this->l('Filter on category base'),
                             'use_search' => 1,
                             'use_checkbox' => 1,
                             'selected_categories' => explode(',',Configuration::get('CATEGORY_BOX'))
@@ -523,6 +523,7 @@ class Quotes extends Module
 		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
 		$this->context->smarty->assign('isLogged', $customer);
 		$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
+        $this->context->smarty->assign('attr', '');
 		$this->context->smarty->assign('present_on_product_list',Configuration::get('MAIN_PRODUCT_LIST'));
 		$this->smarty->assign('product', $params['product']);
 		if (Configuration::get('MAIN_STATE'))
