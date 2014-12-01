@@ -150,3 +150,6 @@
     <div class="quotes_layer_cart_overlay"></div>
 {/if}
 <!-- /MODULE Quotes cart -->
+{strip}
+    {addJsDef messagingEnabled=$MESSAGING_ENABLED}
+{/strip}

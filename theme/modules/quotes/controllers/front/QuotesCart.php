@@ -398,7 +398,10 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                             </html>
                 ';
                 // Send e-mail to admin
-                quotesMailConfirm(Configuration::get('PS_SHOP_EMAIL'), $message, $subject);
+                $to = Configuration::get('PS_SHOP_EMAIL');
+                if(Configuration::get('MAIN_MAILS'))
+                    $to .= ', '.Configuration::get('MAIN_MAILS');
+                quotesMailConfirm($to, $message, $subject);
 
                 // clear shop box
                 return $quote->deleteAllProduct();
