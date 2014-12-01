@@ -524,6 +524,7 @@ class Quotes extends Module
 		$this->context->smarty->assign('isLogged', $customer);
 		$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
         $this->context->smarty->assign('attr', '');
+		$this->context->smarty->assign('present_on_product_list',Configuration::get('MAIN_PRODUCT_LIST'));
 		$this->smarty->assign('product', $params['product']);
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__FILE__, 'product-list.tpl');

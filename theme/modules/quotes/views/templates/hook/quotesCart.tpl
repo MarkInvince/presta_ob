@@ -1,13 +1,11 @@
 <!-- MODULE Quotes cart -->
 {if $active_overlay == 0}
     <script type="text/javascript">
-        var quotesCart = "{$actionAddQuotes}";
         {if $PS_CATALOG_MODE}
         var catalogMode = true;
         {else}
         var catalogMode = false;
         {/if}
-
     </script>
 <div class="clearfix col-sm-3">
     <div class="row quotes_cart">
@@ -152,4 +150,7 @@
 <!-- /MODULE Quotes cart -->
 {strip}
     {addJsDef messagingEnabled=$MESSAGING_ENABLED}
+    {addJsDef quotesCart=$actionAddQuotes}
 {/strip}
+
+{*var quotesCart = "{$actionAddQuotes}";*}
