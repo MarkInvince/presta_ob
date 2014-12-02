@@ -1,13 +1,9 @@
 <!-- MODULE Quotes cart -->
+<script type="text/javascript">
+    var quotesCartEmpty  = '{l s="Your quotes cart is empty" mod="quotes"}';
+</script>
 {if $active_overlay == 0}
-    <script type="text/javascript">
-        {if $PS_CATALOG_MODE}
-        var catalogMode = true;
-        {else}
-        var catalogMode = false;
-        {/if}
-    </script>
-<div class="clearfix col-sm-3">
+    <div class="clearfix col-sm-3">
     <div class="row quotes_cart">
         <a href="{$quotesCart}" rel="nofollow" id="quotes-cart-link">
             <b>{l s='Quotes' mod='quotes'}</b>
@@ -151,6 +147,13 @@
 {strip}
     {addJsDef messagingEnabled=$MESSAGING_ENABLED}
     {addJsDef quotesCart=$actionAddQuotes}
+    {addJsDef catalogMode=$PS_CATALOG_MODE}
 {/strip}
 
-{*var quotesCart = "{$actionAddQuotes}";*}
+{*<script type="text/javascript">*}
+    {*{if $PS_CATALOG_MODE}*}
+    {*var catalogMode = true;*}
+    {*{else}*}
+    {*var catalogMode = false;*}
+    {*{/if}*}
+{*</script>*}
