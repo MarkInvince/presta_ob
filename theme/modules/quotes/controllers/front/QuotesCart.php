@@ -267,6 +267,14 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         // check for user session
         if ($this->context->cookie->__isset('request_id')) {
 
+            $quote->id_quote = $this->context->cookie->__get('request_id');
+            // get all products
+            $all_products = array();
+            list($products, $cart) = $quote->getProducts();
+
+            if(!$products)
+                return false;
+
             $address_delivery = $this->context->customer->getAddresses($this->context->language->id);
             $id_address_delivery = $address_delivery[0]['id_address'];
 
@@ -296,10 +304,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             else{
                 die($sql);
             }
-            $quote->id_quote = $this->context->cookie->__get('request_id');
-            // get all products
-            $all_products = array();
-            list($products, $cart) = $quote->getProducts();
+
             foreach($products as $product) {
                 $all_products[] = array(
                     'id'           => $product['id'],
