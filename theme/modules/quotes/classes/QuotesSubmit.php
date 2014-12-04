@@ -157,5 +157,5 @@ class QuotesSubmitCore extends ObjectModel
         $out[] = $result[0];
         return $out;
     }
-    
+
 }

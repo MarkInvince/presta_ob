@@ -1,30 +1,30 @@
 /**
-* 2007-2014 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2014 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*
-* Don't forget to prefix your containers with your own identifier
-* to avoid any conflicts with others containers.
-*/
+ * 2007-2014 PrestaShop
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ *  @author    PrestaShop SA <contact@prestashop.com>
+ *  @copyright 2007-2014 PrestaShop SA
+ *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *  International Registered Trademark & Property of PrestaShop SA
+ *
+ * Don't forget to prefix your containers with your own identifier
+ * to avoid any conflicts with others containers.
+ */
 function setHiddenShow(elem_id) {
 	document.getElementById(elem_id).value = 1;
 }
@@ -104,8 +104,8 @@ $(document).ready(function(){
 				dataType:'json',
 				success: function(data) {
 					if(data.hasError){
-							alert(data.message);
-							$thisQuoteName.html('<i class="icon-pencil"></i>' + $oldName);
+						alert(data.message);
+						$thisQuoteName.html('<i class="icon-pencil"></i>' + $oldName);
 					}
 					if(data.renamed){
 						$thisQuoteName.html('<i class="icon-pencil"></i>' + data.renamed);
@@ -174,7 +174,7 @@ $(document).ready(function(){
 			data:
 			{
 				actionSubmitBargain : $action,
-        		id_quote : $id_quote,
+				id_quote : $id_quote,
 				id_bargain : $id_bargain
 			},
 			dataType:'json',
@@ -222,30 +222,30 @@ $(document).ready(function(){
 	// minus item quote cart
 	$('body').on('click', '.quote-plus-button', function(){
 		var current = $(this).closest('.quotes_cart_quantity').find('.cart_quantity_input');
-			if($('#order-detail-content').find('.overlay').length == 0)
-				$('#order-detail-content').append('<div class="overlay-wrapper"><div class="overlay"></div></div>');
-			var button = $(this);
-			$.ajax({
-				url: quotesCart,
-				method:'post',
-				data: 'action=recount&method=add&item_id='+button.attr('rel')+'&value='+current.val()+'&button=1',
-				dataType:'json',
-				success: function(response) {
-					if(response.hasError == false) {
-						$('#quotes-cart-wrapper').empty();
-						$('#quotes-cart-wrapper').html(response.data);
+		if($('#order-detail-content').find('.overlay').length == 0)
+			$('#order-detail-content').append('<div class="overlay-wrapper"><div class="overlay"></div></div>');
+		var button = $(this);
+		$.ajax({
+			url: quotesCart,
+			method:'post',
+			data: 'action=recount&method=add&item_id='+button.attr('rel')+'&value='+current.val()+'&button=1',
+			dataType:'json',
+			success: function(response) {
+				if(response.hasError == false) {
+					$('#quotes-cart-wrapper').empty();
+					$('#quotes-cart-wrapper').html(response.data);
 
-						// insert cart header
-						$('#quotes-cart-link').empty();
-						$('#quotes-cart-link').html(response.header);
+					// insert cart header
+					$('#quotes-cart-link').empty();
+					$('#quotes-cart-link').html(response.header);
 
-						$('#product-list').empty();
-						$('#product-list').html(response.products);
-					}
-					else
-						alert(response.data.message);
+					$('#product-list').empty();
+					$('#product-list').html(response.products);
 				}
-			});
+				else
+					alert(response.data.message);
+			}
+		});
 	});
 	// plus item quote cart
 	$('body').on('click', '.quote-minus-button', function(){
@@ -336,7 +336,7 @@ $(document).ready(function(){
 		});
 	});
 
-    $('body').on('click','.fly_to_quote_cart_button', function(){
+	$('body').on('click','.fly_to_quote_cart_button', function(){
 
 		var this_element = $(this);
 		var product_list = 0;
@@ -398,7 +398,7 @@ $(document).ready(function(){
 			}
 		});
 		return false;
-    });
+	});
 
 	//close popup events
 	$(document).on('click', '#quotes_layer_cart .cross, #quotes_layer_cart .continue, .quotes_layer_cart_overlay', function(e){
@@ -484,7 +484,7 @@ $(document).ready(function(){
 
 	$("#header .quotes_cart a:first").hover(
 		function(){
-				$("#header .quotes_cart_block").stop(true, true).slideDown(450);
+			$("#header .quotes_cart_block").stop(true, true).slideDown(450);
 		},
 		function(){
 			setTimeout(function(){

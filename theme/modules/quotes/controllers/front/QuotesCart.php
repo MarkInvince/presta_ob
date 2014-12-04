@@ -4,9 +4,9 @@ include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesSubmit.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesTools.php');
 class quotesQuotesCartModuleFrontController extends ModuleFrontController {
-    
+
     public $ssl = true;
-	public $display_column_left = true;
+    public $display_column_left = true;
     private $user_token;
 
     public function __construct()
@@ -36,7 +36,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
         $this->addJS($this->module->getLocalPath().'js/quotes_cart.js');
     }
-    
+
     public function initContent()
     {
         // Send noindex to avoid ghost carts by bots
@@ -419,8 +419,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         }
     }
 
-	public function assign()
-	{
+    public function assign()
+    {
         if ($this->context->customer->isLogged())
             $this->context->smarty->assign('isLogged', '1');
         else
@@ -577,8 +577,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         $_POST['firstname'] = Tools::getValue('customer_firstname', $firstnameAddress);
         $addresses_types = array('address');
 
-//        if (!Configuration::get('PS_ORDER_PROCESS_TYPE') && Configuration::get('PS_GUEST_CHECKOUT_ENABLED') && Tools::getValue('invoice_address'))
-//            $addresses_types[] = 'address_invoice';
+        //        if (!Configuration::get('PS_ORDER_PROCESS_TYPE') && Configuration::get('PS_GUEST_CHECKOUT_ENABLED') && Tools::getValue('invoice_address'))
+        //            $addresses_types[] = 'address_invoice';
 
         /*
         $error_phone = false;
@@ -950,5 +950,5 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
             'invoice_id_state' => (int)($address_invoice->id_state),
         );
     }
-    
+
 }

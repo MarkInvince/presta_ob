@@ -3,9 +3,9 @@ include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesSubmit.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesObj.php');
 class AdminQuotesController extends ModuleAdminController
 {
-	public function __construct()
-	{
-	    $this->bootstrap = true;
+    public function __construct()
+    {
+        $this->bootstrap = true;
         $this->context = Context::getContext();
         $this->_defaultorderWay = 'DESC';
 
@@ -13,24 +13,24 @@ class AdminQuotesController extends ModuleAdminController
 
         $this->bargains = new QuotesObj;
 
-		$this->display = 'view';
-        
-		parent::__construct();
-		if (!$this->module->active)
-			Tools::redirectAdmin($this->context->link->getAdminLink('AdminHome'));
-        
+        $this->display = 'view';
+
+        parent::__construct();
+        if (!$this->module->active)
+            Tools::redirectAdmin($this->context->link->getAdminLink('AdminHome'));
+
         parent::init();
-	    parent::setMedia();
-    	// fix for 1.6.0.8
-    	if(file_exists(_PS_THEME_DIR_.'global.tpl'))
-    	{
+        parent::setMedia();
+        // fix for 1.6.0.8
+        if(file_exists(_PS_THEME_DIR_.'global.tpl'))
+        {
             $this->context->smarty->fetch(_PS_THEME_DIR_.'global.tpl');
             $this->context->smarty->assign('js_defer' , (bool)Configuration::get('PS_JS_DEFER'));
-    	}	
-    	// End
-    	parent::displayHeader();
+        }
+        // End
+        parent::displayHeader();
 
-	}
+    }
     public function initContent()
     {
         // default template
@@ -39,8 +39,8 @@ class AdminQuotesController extends ModuleAdminController
         $this->content.= $this->assign();
         parent::initContent();
     }
-	public function postProcess()
-	{
+    public function postProcess()
+    {
         global $currentIndex;
         if(Tools::getIsset('action')) {
             if(Tools::getValue('action') == 'view') {
@@ -62,7 +62,7 @@ class AdminQuotesController extends ModuleAdminController
             $this->transormQuote(Tools::getValue('id_cart'), 1, Tools::getValue('total_products'));
             header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
         }
-	}
+    }
 
     public function processDeleteAdmin($item_customer_id) {
         $items = explode('_', $item_customer_id);
@@ -78,7 +78,7 @@ class AdminQuotesController extends ModuleAdminController
         ));
         return array('hasError' => false, 'quotes' => $this->context->smarty->fetch($this->getTemplatePath(). 'quotes_ajax_list_item.tpl'));
     }
-    
+
     protected function assign() {
         global $currentIndex;
         if(!Tools::getValue('id_customer') AND !Tools::getValue('id_quote')) {
@@ -172,9 +172,9 @@ class AdminQuotesController extends ModuleAdminController
      * @return bool
      * @throws PrestaShopException
      */
-	public function transormQuote($id_cart, $id_order_state, $amount_paid, $payment_method = 'Unknown',
-                                  $message = null, $extra_vars = array(), $currency_special = null, $dont_touch_amount = false,
-                                  $secure_key = false, Shop $shop = null)
+    public function transormQuote($id_cart, $id_order_state, $amount_paid, $payment_method = 'Unknown',
+        $message = null, $extra_vars = array(), $currency_special = null, $dont_touch_amount = false,
+        $secure_key = false, Shop $shop = null)
     {
 
         $this->context->cart = new Cart($id_cart);
@@ -712,13 +712,13 @@ class AdminQuotesController extends ModuleAdminController
                             '{delivery_block_txt}' => $this->_getFormatedAddress($delivery, "\n"),
                             '{invoice_block_txt}' => $this->_getFormatedAddress($invoice, "\n"),
                             '{delivery_block_html}' => $this->_getFormatedAddress($delivery, '<br />', array(
-                                'firstname'	=> '<span style="font-weight:bold;">%s</span>',
-                                'lastname'	=> '<span style="font-weight:bold;">%s</span>'
-                            )),
+                                    'firstname'	=> '<span style="font-weight:bold;">%s</span>',
+                                    'lastname'	=> '<span style="font-weight:bold;">%s</span>'
+                                )),
                             '{invoice_block_html}' => $this->_getFormatedAddress($invoice, '<br />', array(
-                                'firstname'	=> '<span style="font-weight:bold;">%s</span>',
-                                'lastname'	=> '<span style="font-weight:bold;">%s</span>'
-                            )),
+                                    'firstname'	=> '<span style="font-weight:bold;">%s</span>',
+                                    'lastname'	=> '<span style="font-weight:bold;">%s</span>'
+                                )),
                             '{delivery_company}' => $delivery->company,
                             '{delivery_firstname}' => $delivery->firstname,
                             '{delivery_lastname}' => $delivery->lastname,
@@ -864,7 +864,7 @@ class AdminQuotesController extends ModuleAdminController
 
     private function getMessage($message, $type = 'success') {
         $output = '<div class="alert alert-'.$type.'">';
-            $output.= $message;
+        $output.= $message;
         $output.= '</div>';
         return $output;
     }

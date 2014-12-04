@@ -54,18 +54,18 @@
                     <!-- Error return block -->
                     <div id="opc_account_errors" class="alert alert-danger" style="display:none;"></div>
                     {if isset($authentification_error)}
-                    <div class="alert alert-danger">
-                        {*{if {$authentification_error|@count} == 1}*}
+                        <div class="alert alert-danger">
+                            {*{if {$authentification_error|@count} == 1}*}
                             {*<p>{l s='There\'s at least one error'} :</p>*}
                             {*{else}*}
                             {*<p>{l s='There are %s errors' sprintf=[$account_error|@count]} :</p>*}
-                        {*{/if}*}
-                        <ol>
-                            {foreach from=$authentification_error item=v}
-                                <li>{$v}</li>
-                            {/foreach}
-                        </ol>
-                    </div>
+                            {*{/if}*}
+                            <ol>
+                                {foreach from=$authentification_error item=v}
+                                    <li>{$v}</li>
+                                {/foreach}
+                            </ol>
+                        </div>
                     {/if}
                     <!-- END Error return block -->
                     <!-- Account -->
@@ -221,7 +221,7 @@
 
                     </div>
 
-                <!-- END Account -->
+                    <!-- END Account -->
                 </div>
             </div>
         </fieldset>
