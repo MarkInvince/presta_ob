@@ -23,6 +23,7 @@
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
+
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesSubmit.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesObj.php');
 class AdminQuotesController extends ModuleAdminController
@@ -481,7 +482,6 @@ class AdminQuotesController extends ModuleAdminController
                     //$orderDetail->createList($order, $this->context->cart, $id_order_state);
 
                     // Construct order detail table for the email
-                    $products_list = '';
                     $virtual_product = true;
 
                     $product_var_tpl_list = array();
@@ -573,7 +573,7 @@ class AdminQuotesController extends ModuleAdminController
                             // Set a new voucher code
                             $voucher->code = empty($voucher->code) ? Tools::substr(md5($order->id.'-'.$order->id_customer.'-'.$cart_rule['obj']->id), 0, 16) : $voucher->code.'-2';
                             if (preg_match('/\-([0-9]{1,2})\-([0-9]{1,2})$/', $voucher->code, $matches) && $matches[1] == $matches[2])
-                                $voucher->code = preg_replace('/'.$matches[0].'$/', '-'.(intval($matches[1]) + 1), $voucher->code);
+                                $voucher->code = preg_replace('/'.$matches[0].'$/', '-'.((int)$matches[1] + 1), $voucher->code);
 
                             // Set the new voucher value
                             if ($voucher->reduction_tax)
@@ -823,7 +823,7 @@ class AdminQuotesController extends ModuleAdminController
                 else
                 {
                     $error = Tools::displayError('Order creation failed');
-                    PrestaShopLogger::addLog($error, 4, '0000002', 'Cart', intval($order->id_cart));
+                    PrestaShopLogger::addLog($error, 4, '0000002', 'Cart', (int)$order->id_cart);
                     die($error);
                 }
             } // End foreach $order_detail_list
@@ -836,7 +836,7 @@ class AdminQuotesController extends ModuleAdminController
         {
             $this->errors[] = Tools::displayError('Cart cannot be loaded or an order has already been placed using this cart');
             $error = Tools::displayError('Cart cannot be loaded or an order has already been placed using this cart');
-            PrestaShopLogger::addLog($error, 4, '0000001', 'Cart', intval($this->context->cart->id));
+            PrestaShopLogger::addLog($error, 4, '0000001', 'Cart', (int)$this->context->cart->id);
             $this->context->smarty->assign('cartObj', $this->context->cart);
         }
     }

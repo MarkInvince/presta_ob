@@ -26,6 +26,7 @@
  * Don't forget to prefix your containers with your own identifier
  * to avoid any conflicts with others containers.
  */
+
 $sql = array();
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'quotes_product` (

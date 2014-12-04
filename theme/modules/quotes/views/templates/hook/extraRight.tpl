@@ -22,6 +22,7 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
+
 {if $present_on_product == 1}
     <div class="ask_offer clearfix {if $filtered_on_status == 1 && $product->available_for_order}unvisible{/if}">
         <form class="quote_ask_form" action="{$actionAddQuotes}" method="post">

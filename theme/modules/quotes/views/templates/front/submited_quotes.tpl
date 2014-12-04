@@ -22,6 +22,7 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
+
 {capture name=path}{l s='Your quotes' mod='quotes'}{/capture}
 <h1 class="page-heading bottom-indent">{l s='Submited quotes' mod='quotes'}</h1>
 <p class="info-title">{l s='Here are the quotes you\'ve submited since your account was created.' mod='quotes'}</p>

@@ -22,6 +22,7 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
+
 <tr class="quote_item">
     <td class="text-center">{$quote.id_quote}</td>
     <td class="text-center">{$quote.quote_name}</td>

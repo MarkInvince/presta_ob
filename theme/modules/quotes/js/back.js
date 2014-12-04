@@ -25,6 +25,7 @@
  * Don't forget to prefix your containers with your own identifier
  * to avoid any conflicts with others containers.
  */
+
 $(document).ready(function(){
 	$('#cms_page_select').parent().parent().css('display', 'none');
 	$('#MAIN_TERMS_AND_COND_on').on('change', function(){

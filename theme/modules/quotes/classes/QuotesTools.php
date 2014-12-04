@@ -23,6 +23,7 @@
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
+
 function getProductAttributeImage($id_product, $id_product_attribute, $id_lang) {
     $mysql = '  SELECT pa.`id_product_attribute` , pa.`id_product` , pa.`price` , pac.`id_attribute` , al.`name` , paimg.`id_image`
                 FROM  `'._DB_PREFIX_.'_product_attribute` pa

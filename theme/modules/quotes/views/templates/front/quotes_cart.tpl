@@ -22,6 +22,7 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
+
 {capture name=path}{l s='Ask for a Quote' mod='quotes'}{/capture}
 <div class="block">
     <h4 class="title_block">

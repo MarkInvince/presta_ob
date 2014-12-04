@@ -22,6 +22,7 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
+
 <h3><i class="icon-legal"></i> {l s='Current quotes list' mod="quotes"} <span class="badge">{$totalQuotes}</span></h3>
 {if $totalQuotes < 1}
     <div class="alert alert-warning">{l s='No quotes found' mod="quotes"}</div>

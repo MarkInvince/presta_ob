@@ -23,6 +23,7 @@
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
+
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesSubmit.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesTools.php');
@@ -216,15 +217,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                     $countries = Carrier::getDeliveredCountries($this->context->language->id, true, true);
                 else
                     $countries = Country::getCountries($this->context->language->id, true);
-
-                // If a rule offer free-shipping, force hidding shipping prices
-                $free_shipping = false;
-                foreach ($this->context->cart->getCartRules() as $rule)
-                    if ($rule['free_shipping'] && !$rule['carrier_restriction'])
-                    {
-                        $free_shipping = true;
-                        break;
-                    }
 
                 if (Tools::getValue('userRegistry'))
                     $this->context->smarty->assign('userRegistry', '1');
@@ -542,7 +534,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
                 $this->quote->setOperator($operator);
                 $this->quote->setQuantity(pSql(Tools::getValue('pqty')));
-                $add = $this->quote->add();
+                $this->quote->add();
             }
         }
         return true;
@@ -729,8 +721,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                         $$addresses_type->id_customer = (int)$customer->id;
                         if ($addresses_type == 'address_invoice')
                             foreach($_POST as $key => &$post)
-                                if (isset($_POST[$key.'_invoice']))
-                                    $post = $_POST[$key.'_invoice'];
+                                if (Tools::getValue($key.'_invoice'))
+                                    $post = Tools::getValue($key.'_invoice');
 
                         $this->errors = array_unique(array_merge($this->errors, $$addresses_type->validateController()));
                         if ($addresses_type == 'address_invoice')

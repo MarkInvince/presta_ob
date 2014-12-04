@@ -22,6 +22,7 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
+
 <div class="panel">
     <ul class="list-group">
         <li class="list-group-item"><i class="icon-remove color-red btn"></i> {l s="Not submited quotes" mod="quotes"}</li>

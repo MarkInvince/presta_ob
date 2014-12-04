@@ -21,8 +21,9 @@
 *  @copyright  2007-2014 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
-*}{
-if count($products) > 0}
+*}
+
+{if count($products) > 0}
     <dl class="products" id="quotes-products">
         {foreach $products as $key=>$product}
             {if is_numeric($key)}

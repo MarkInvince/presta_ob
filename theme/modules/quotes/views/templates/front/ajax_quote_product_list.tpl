@@ -22,6 +22,7 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
+
 {if isset($products) && count($products) > 0}
     {include file="$tpl_path/quote_product_list.tpl"}
     {if isset($isLogged) && $isLogged == 1 && count($products) > 0}

@@ -22,6 +22,7 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
+
 <div id="opc_new_account" class="opc-main-block">
     <div id="opc_new_account-overlay" class="opc-overlay" style="display: none;"></div>
 
