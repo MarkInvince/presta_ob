@@ -1,5 +1,28 @@
 <?php
-
+/**
+ * 2007-2014 PrestaShop
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ *  @author    PrestaShop SA <contact@prestashop.com>
+ *  @copyright 2007-2014 PrestaShop SA
+ *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *  International Registered Trademark & Property of PrestaShop SA
+ */
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesSubmit.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesTools.php');
@@ -130,15 +153,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 else
                     $countries = Country::getCountries($this->context->language->id, true);
 
-                // If a rule offer free-shipping, force hidding shipping prices
-                $free_shipping = false;
-                foreach ($this->context->cart->getCartRules() as $rule)
-                    if ($rule['free_shipping'] && !$rule['carrier_restriction'])
-                    {
-                        $free_shipping = true;
-                        break;
-                    }
-
                 if (Tools::getValue('userRegistry'))
                     $this->context->smarty->assign('userRegistry', '1');
 
@@ -180,7 +194,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                 )));
             }
             if(Tools::getValue('action') == 'delete_from_cart') {
-                $delete = $this->deleteQuoteById(Tools::getValue('item_id'));
+                $this->deleteQuoteById(Tools::getValue('item_id'));
 
                 list($products, $cart) = $this->quote->getProducts();
                 $this->context->smarty->assign('products', $products);
@@ -438,15 +452,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         else
             $countries = Country::getCountries($this->context->language->id, true);
 
-        // If a rule offer free-shipping, force hidding shipping prices
-        $free_shipping = false;
-        foreach ($this->context->cart->getCartRules() as $rule)
-            if ($rule['free_shipping'] && !$rule['carrier_restriction'])
-            {
-                $free_shipping = true;
-                break;
-            }
-
         if (Tools::getValue('userRegistry'))
             $this->context->smarty->assign('userRegistry', '1');
 
@@ -561,8 +566,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         if (!Tools::getValue('is_new_customer', 1))
             $_POST['passwd'] = md5(time()._COOKIE_KEY_);
 
-        if (isset($_POST['guest_email']) && $_POST['guest_email'])
-            $_POST['email'] = $_POST['guest_email'];
+        if (Tools::getIsset('guest_email'))
+            $_POST['email'] = Tools::getValue('guest_email');
 
         // Checked the user address in case he changed his email address
         if (Validate::isEmail($email = Tools::getValue('email')) && !empty($email))
@@ -617,7 +622,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                     $this->processCustomerNewsletter($customer);
 
                 $customer->firstname = Tools::ucwords($customer->firstname);
-                $customer->birthday = (empty($_POST['years']) ? '' : (int)$_POST['years'].'-'.(int)$_POST['months'].'-'.(int)$_POST['days']);
+                $customer->birthday = (empty(Tools::getValue('years')) ? '' : (int)Tools::getValue('years').'-'.(int)Tools::getValue('months').'-'.(int)Tools::getValue('days'));
                 if (!Validate::isBirthDate($customer->birthday))
                     $this->errors[] = Tools::displayError('Invalid date of birth.');
 
@@ -662,8 +667,8 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
                 if ($addresses_type == 'address_invoice')
                     foreach($_POST as $key => &$post)
-                        if (isset($_POST[$key.'_invoice']))
-                            $post = $_POST[$key.'_invoice'];
+                        if (isset(Tools::getValue($key.'_invoice')))
+                            $post = Tools::getValue($key.'_invoice');
 
                 $this->errors = array_unique(array_merge($this->errors, $$addresses_type->validateController()));
                 if ($addresses_type == 'address_invoice')
@@ -753,8 +758,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
                         $this->updateContext($customer);
                         $this->context->cart->id_address_delivery = (int)Address::getFirstCustomerAddressId((int)$customer->id);
                         $this->context->cart->id_address_invoice = (int)Address::getFirstCustomerAddressId((int)$customer->id);
-                        if (isset($address_invoice) && Validate::isLoadedObject($address_invoice))
-                            $this->context->cart->id_address_invoice = (int)$address_invoice->id;
+
 
                         if ($this->ajax && Configuration::get('PS_ORDER_PROCESS_TYPE'))
                         {
@@ -865,9 +869,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
         foreach ($requireFormFieldsList as $fieldName)
             if (!in_array($fieldName, $inv_adr_fields))
                 $inv_adr_fields[] = trim($fieldName);
-
-        $inv_all_fields = array();
-        $dlv_all_fields = array();
 
         foreach (array('inv', 'dlv') as $adr_type)
         {

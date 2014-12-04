@@ -1,4 +1,28 @@
 <?php
+/**
+ * 2007-2014 PrestaShop
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ *  @author    PrestaShop SA <contact@prestashop.com>
+ *  @copyright 2007-2014 PrestaShop SA
+ *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *  International Registered Trademark & Property of PrestaShop SA
+ */
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesSubmit.php');
 include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesObj.php');
 class AdminQuotesController extends ModuleAdminController
@@ -44,7 +68,7 @@ class AdminQuotesController extends ModuleAdminController
         global $currentIndex;
         if(Tools::getIsset('action')) {
             if(Tools::getValue('action') == 'view') {
-                header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
+                Tools::redirect($currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
             }
             if(Tools::getValue('action') == 'delete') {
                 die(Tools::jsonEncode(array('data' => $this->processDeleteAdmin(Tools::getValue('item')))));
@@ -52,7 +76,7 @@ class AdminQuotesController extends ModuleAdminController
         }
         if (Tools::isSubmit('addClientBargain')) {
             $this->addAdminBargain(Tools::getValue('id_quote'));
-            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
+            Tools::redirect($currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
         }
 
         if (Tools::getValue('actionBargainDelete'))
@@ -60,7 +84,7 @@ class AdminQuotesController extends ModuleAdminController
 
         if (Tools::isSubmit('transformQuote')) {
             $this->transormQuote(Tools::getValue('id_cart'), 1, Tools::getValue('total_products'));
-            header("Location: ".$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
+            Tools::redirect(.$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
         }
     }
 
@@ -428,11 +452,7 @@ class AdminQuotesController extends ModuleAdminController
                 }
             }
 
-            // Next !
-            $only_one_gift = false;
             $cart_rule_used = array();
-            $products = $this->context->cart->getProducts();
-
             // Make sure CarRule caches are empty
             CartRule::cleanCache();
             foreach ($order_detail_list as $key => $order_detail)
@@ -450,7 +470,7 @@ class AdminQuotesController extends ModuleAdminController
                         if (Validate::isCleanHtml($message))
                         {
                             $msg->message = $message;
-                            $msg->id_order = intval($order->id);
+                            $msg->id_order = (int)$order->id;
                             $msg->private = 1;
                             $msg->add();
                         }
@@ -551,7 +571,7 @@ class AdminQuotesController extends ModuleAdminController
                             unset($voucher->id);
 
                             // Set a new voucher code
-                            $voucher->code = empty($voucher->code) ? substr(md5($order->id.'-'.$order->id_customer.'-'.$cart_rule['obj']->id), 0, 16) : $voucher->code.'-2';
+                            $voucher->code = empty($voucher->code) ? Tools::substr(md5($order->id.'-'.$order->id_customer.'-'.$cart_rule['obj']->id), 0, 16) : $voucher->code.'-2';
                             if (preg_match('/\-([0-9]{1,2})\-([0-9]{1,2})$/', $voucher->code, $matches) && $matches[1] == $matches[2])
                                 $voucher->code = preg_replace('/'.$matches[0].'$/', '-'.(intval($matches[1]) + 1), $voucher->code);
 
@@ -761,6 +781,7 @@ class AdminQuotesController extends ModuleAdminController
                             $data = array_merge($data, $extra_vars);
 
                         // Join PDF invoice
+                        $file_attachement = array();
                         if ((int)Configuration::get('PS_INVOICE') && $order_status->invoice && $order->invoice_number)
                         {
                             $pdf = new PDF($order->getInvoicesCollection(), PDF::TEMPLATE_INVOICE, $this->context->smarty);
@@ -768,9 +789,6 @@ class AdminQuotesController extends ModuleAdminController
                             $file_attachement['name'] = Configuration::get('PS_INVOICE_PREFIX', (int)$order->id_lang, null, $order->id_shop).sprintf('%06d', $order->invoice_number).'.pdf';
                             $file_attachement['mime'] = 'application/pdf';
                         }
-                        else
-                            $file_attachement = null;
-
 
                         if (Validate::isEmail($this->context->customer->email))
                             Mail::Send(

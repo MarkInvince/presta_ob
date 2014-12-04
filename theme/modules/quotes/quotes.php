@@ -68,7 +68,7 @@ class Quotes extends Module
         $tab->position = Tab::getNewLastPosition($tab->id_parent);
 
         /* parent tab id */
-        $r = $tab->save(); // saving your tab
+        $tab->save(); // saving your tab
         Configuration::updateValue('MODULE_TAB_ID', $tab->id); // saving tab ID to remove it when uninstall
         Configuration::updateValue('MAIN_STATE', '1'); // Main module status
         Configuration::updateValue('MAIN_QUANTITY_FIELDS', '0'); // Quantity fields trigger

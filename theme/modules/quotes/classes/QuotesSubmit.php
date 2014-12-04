@@ -1,5 +1,28 @@
 <?php
-
+/**
+ * 2007-2014 PrestaShop
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ *  @author    PrestaShop SA <contact@prestashop.com>
+ *  @copyright 2007-2014 PrestaShop SA
+ *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *  International Registered Trademark & Property of PrestaShop SA
+ */
 if (!defined('_PS_VERSION_'))
     exit;
 
@@ -50,16 +73,16 @@ class QuotesSubmitCore extends ObjectModel
         $this->id_shop_group = (int)$this->context->shop->id_shop_group;
         $this->id_customer = (int)$this->context->customer->id;
         $this->date_add = date('Y-m-d H:i:s', time());
-        $this->reference = strtoupper(Tools::passwdGen(9, 'NO_NUMERIC'));
+        $this->reference =  Tools::strtoupper(Tools::passwdGen(9, 'NO_NUMERIC'));
         $this->submited = 0;
     }
 
-    public function add($autodate = true, $null_values = false )
+    public function add($autodate = true)
     {
         return parent::add($autodate);
     }
 
-    public function update($null_values = false)
+    public function update()
     {
         $return = parent::update();
         return $return;
@@ -112,12 +135,12 @@ class QuotesSubmitCore extends ObjectModel
         return $quotes;
     }
     public function getQuoteById($id_quote, $id_customer) {
-        global $currentIndex;
         $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.$id_quote.' AND `id_customer` = '.$id_customer);
         if (empty($result))
             return array();
 
         $customer = new Customer($id_customer);
+        $out = array();
         $out['customer'] = array(
             'id'       => $customer->id,
             'name'     => $customer->firstname.' '.$customer->lastname,
