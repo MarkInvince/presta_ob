@@ -96,7 +96,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController
 				$this->context->smarty->assign('cart', $cart);
 
 				$product_count = 0;
-                foreach ($products as $key => $value) {
+                foreach ($products as $value) {
                     $product_count = $product_count + (int)$value['quantity'];
                 }
 				$this->context->smarty->assign('cartTotalProducts', $product_count);

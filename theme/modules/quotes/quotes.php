@@ -423,8 +423,8 @@ class Quotes extends Module
 		$this->context->smarty->assign('isLogged', $customer);
 
 		$product_count = 0;
-		foreach ($products as $key => $value) {
-			$product_count = $product_count + (int)$value['quantity'];
+		for($i = 0; $i < count($products); $i++) {
+			$product_count = $product_count + (int)$products[$i]['quantity'];
 		}
 		$this->context->smarty->assign('cartTotalProducts', (int)$product_count);
 		$this->context->smarty->assign('quotesCart', $this->context->link->

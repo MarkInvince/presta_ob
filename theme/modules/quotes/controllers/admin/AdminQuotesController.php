@@ -245,12 +245,15 @@ class AdminQuotesController extends ModuleAdminController
 			$cart_delivery_option = $this->context->cart->getDeliveryOption();
 
 			// If some delivery options are not defined, or not valid, use the first valid option
-			foreach ($delivery_option_list as $id_address => $package)
-				if (!isset($cart_delivery_option[$id_address]) || !array_key_exists($cart_delivery_option[$id_address], $package))
-					foreach ($package as $key => $val) {
-						$cart_delivery_option[$id_address] = $key;
+			foreach ($delivery_option_list as $id_address => $package) {
+				if (!isset($cart_delivery_option[$id_address]) || !array_key_exists($cart_delivery_option[$id_address], $package)) {
+					$id_addresses_keys = array_keys($package);
+					foreach ($id_addresses_keys as $val) {
+						$cart_delivery_option[$id_address] = $val;
 						break;
 					}
+				}
+			}
 
 			$order_list = array();
 			$order_detail_list = array();
