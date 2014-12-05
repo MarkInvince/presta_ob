@@ -48,7 +48,7 @@
                 </div>
                 <div class="required form-group show_phone_field">
                     <label for="contact_phone">{l s='Enter your phone number'}</label>
-                    <input type="text" class="text form-control validate" name="contact_phone" id="contact_phone" data-validate="isPhoneNumber" value="{if isset($guestInformations) && isset($guestInformations.phone_mobile) && $guestInformations.phone_mobile}{$guestInformations.phone_mobile}{else}{$post.phone_mobile}{/if}" />
+                    <input type="text" class="text form-control validate" name="contact_phone" id="contact_phone" data-validate="isPhoneNumber" value="{if isset($guestInformations) && isset($guestInformations.phone_mobile) && $guestInformations.phone_mobile}{$guestInformations.phone_mobile|escape:'html':'UTF-8'}{else}{$post.phone_mobile|escape:'html':'UTF-8'}{/if}" />
                 </div>
             {/if}
         </form>
@@ -79,6 +79,6 @@
     {addJsDef quoteCartUrl=$link->getModuleLink('quotes', 'QuotesCart', array(), true)|escape:'html':'UTF-8'}
     {addJsDef guestCheckoutEnabled=$PS_GUEST_QUOTES_ENABLED|intval}
     {addJsDef isGuest=$isGuest|intval}
-    {addJsDef addressEnabled=$ADDRESS_ENABLED}
-    {addJsDef messagingEnabled=$MESSAGING_ENABLED}
+    {addJsDef addressEnabled=$ADDRESS_ENABLED|intval}
+    {addJsDef messagingEnabled=$MESSAGING_ENABLED|intval}
 {/strip}

@@ -27,10 +27,10 @@
     {if $categories}
         {if in_array($category->id, $categories)}
             <div class="ask_offer clearfix {if $filtered_on_status == 1 && (isset($product.available_for_order) && $product.available_for_order)}unvisible{/if}">
-                <form class="quote_ask_form" action="{$actionAddQuotes}" method="post">
+                <form class="quote_ask_form" action="{$actionAddQuotes|escape:'html':'UTF-8'}" method="post">
                     <input type="hidden" name="action" value="add" />
                     <input type="hidden" name="ajax" value="true" />
-                    <input type="hidden" name="pid" value="{$product.id_product}" />
+                    <input type="hidden" name="pid" value="{$product.id_product|intval}" />
                     <input type="hidden" name="ipa" class="ipa" value="" />
                     <input type="hidden" class="pqty" name="pqty" value="1" />
                     <input type="hidden" class="product_list_opt" name="product_list_opt" value="1" />
@@ -48,10 +48,10 @@
         {/if}
     {else}
         <div class="ask_offer clearfix {if $filtered_on_status == 1 && (isset($product.available_for_order) && $product.available_for_order)}unvisible{/if}">
-            <form class="quote_ask_form" action="{$actionAddQuotes}" method="post">
+            <form class="quote_ask_form" action="{$actionAddQuotes|escape:'html':'UTF-8'}" method="post">
                 <input type="hidden" name="action" value="add" />
                 <input type="hidden" name="ajax" value="true" />
-                <input type="hidden" name="pid" value="{$product.id_product}" />
+                <input type="hidden" name="pid" value="{$product.id_product|intval}" />
                 <input type="hidden" name="ipa" class="ipa" value="" />
                 <input type="hidden" class="pqty" name="pqty" value="1" />
                 <input type="hidden" class="product_list_opt" name="product_list_opt" value="1" />

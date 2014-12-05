@@ -25,7 +25,7 @@
 
 {if $present_on_product == 1}
     <div class="ask_offer clearfix {if $filtered_on_status == 1 && $product->available_for_order}unvisible{/if}">
-        <form class="quote_ask_form" action="{$actionAddQuotes}" method="post">
+        <form class="quote_ask_form" action="{$actionAddQuotes|escape:'html':'UTF-8'}" method="post">
             <input type="hidden" name="action" value="add" />
             <input type="hidden" name="ajax" value="true" />
             <input type="hidden" name="pid" value="{$product->id|intval}" />

@@ -37,7 +37,7 @@
     </tr>
     {foreach from=$quote.products item=product}
 
-        <tr id="product_{$product.id|escape:'intval'}_{$product.id_attribute|escape:'intval'}">
+        <tr id="product_{$product.id|intval}_{$product.id_attribute|intval}">
             <td class="quotes_cart_product">
                 <a href="{$product.link|escape:'html':'UTF-8'}">
                     <img src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'cart_default')|escape:'html':'UTF-8'}" alt="{$product.name|escape:'html':'UTF-8'}" />
@@ -49,13 +49,13 @@
                 </p>
             </td>
             <td class="quotes_cart_unit">
-                {$product.price|escape:'intval'}
+                {$product.price|intval}
             </td>
             <td class="quotes_cart_quantity">
-                {$product.quantity|escape:'intval'}
+                {$product.quantity|intval}
             </td>
             <td class="quotes_cart_total">
-                {$product.price_total|escape:'intval'}
+                {$product.price_total|intval}
             </td>
 
         </tr>
@@ -133,23 +133,23 @@
                                 {if !$bargain.bargain_customer_confirm}
                                     <form  action="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" method="post" class="burgainSubmitForm std">
                                         <fieldset>
-                                            <a  data-action="reject" data-id="{$bargain.id_bargain}" data-quote="{$id_quote|escape:'intval'}" class="btn btn-default button button-medium rejectBargainOffer">
+                                            <a  data-action="reject" data-id="{$bargain.id_bargain|intval}" data-quote="{$id_quote|intval}" class="btn btn-default button button-medium rejectBargainOffer">
                                                 <span>{l s='Reject offer' mod='quotes'}</span>
                                             </a>
-                                            <a  data-action="accept" data-id="{$bargain.id_bargain}" data-quote="{$id_quote|escape:'intval'}" class="btn btn-default button button-medium acceptBargainOffer">
+                                            <a  data-action="accept" data-id="{$bargain.id_bargain|intval}" data-quote="{$id_quote|intval}" class="btn btn-default button button-medium acceptBargainOffer">
                                                 <span>{l s='Accept offer' mod='quotes'}</span>
                                             </a>
                                         </fieldset>
                                     </form>
                                 {/if}
                                 <div class="bargain_alerts">
-                                    <div id="success_bargain_{$bargain.id_bargain|escape:'intval'}" {if $bargain.bargain_customer_confirm == 1}style="display: block"{/if} class="alert alert-success">
+                                    <div id="success_bargain_{$bargain.id_bargain|intval}" {if $bargain.bargain_customer_confirm == 1}style="display: block"{/if} class="alert alert-success">
                                         {l s='Bargain offer accepted' mod='quotes'}
                                     </div>
-                                    <div id="reject_bargain_{$bargain.id_bargain|escape:'intval'}" {if $bargain.bargain_customer_confirm == 2}style="display: block"{/if} class="alert alert-warning">
+                                    <div id="reject_bargain_{$bargain.id_bargain|intval}" {if $bargain.bargain_customer_confirm == 2}style="display: block"{/if} class="alert alert-warning">
                                         {l s='Bargain offer rejected' mod='quotes'}
                                     </div>
-                                    <div id="danger_bargain_{$bargain.id_bargain|escape:'intval'}" class="alert alert-danger">
+                                    <div id="danger_bargain_{$bargain.id_bargain|intval}" class="alert alert-danger">
                                         {l s='Submit error, try again' mod='quotes'}
                                     </div>
                                     <div {if $quote.submited == 2}style="display: block"{/if} class="alert alert-success">

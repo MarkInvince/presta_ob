@@ -31,7 +31,7 @@
     </ul>
 </div>
 <div class="panel" id="quotes_panel">
-    <h3><i class="icon-legal"></i> {l s='Current quotes list' mod="quotes"} <span class="badge">{$totalQuotes}</span></h3>
+    <h3><i class="icon-legal"></i> {l s='Current quotes list' mod="quotes"} <span class="badge">{$totalQuotes|escape:'html':'UTF-8'}</span></h3>
     {if $totalQuotes < 1}
         <div class="alert alert-warning">{l s='No quotes found' mod="quotes"}</div>
     {else}

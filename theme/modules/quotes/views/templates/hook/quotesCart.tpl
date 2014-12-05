@@ -30,9 +30,9 @@
 {if $active_overlay == 0}
     <div class="clearfix col-sm-3">
         <div class="row quotes_cart">
-            <a href="{$quotesCart}" rel="nofollow" id="quotes-cart-link">
+            <a href="{$quotesCart|escape:'html':'UTF-8'}" rel="nofollow" id="quotes-cart-link">
                 <b>{l s='Quotes' mod='quotes'}</b>
-                <span class="ajax_cart_quantity{if $cartTotalProducts == 0} unvisible{/if}">{$cartTotalProducts}</span>
+                <span class="ajax_cart_quantity{if $cartTotalProducts == 0} unvisible{/if}">{$cartTotalProducts|intval}</span>
                 <span class="ajax_cart_product_txt{if $cartTotalProducts != 1} unvisible{/if}">{l s='Product' mod='quotes'}</span>
                 <span class="ajax_cart_product_txt_s{if $cartTotalProducts < 2} unvisible{/if}">{l s='Products' mod='quotes'}</span>
                 <span class="ajax_cart_no_product{if $cartTotalProducts > 0} unvisible{/if}">{l s='(empty)' mod='quotes'}</span>
@@ -45,19 +45,19 @@
                                 {foreach $products as $key=>$product}
                                     {if is_numeric($key)}
                                         <dt class="item">
-                                            <a class="cart-images" href="{$product.link}" title="{$product.title}">
-                                                <img src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'cart_default')}" alt="{$product.title}">
+                                            <a class="cart-images" href="{$product.link|escape:'html':'UTF-8'}" title="{$product.title|escape:'html':'UTF-8'}">
+                                                <img src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'cart_default')|escape:'html':'UTF-8'}" alt="{$product.title|escape:'html':'UTF-8'}">
                                             </a>
                                         <div class="cart-info">
                                             <div class="product-name">
-                                                <span class="quantity-formated"><span class="quantity">{$product.quantity}</span>&nbsp;x&nbsp;</span><a class="cart_block_product_name" href="{$product.link|escape:'html':'UTF-8'}" title="{$product.title|escape:'html':'UTF-8'}">{$product.title|truncate:20:'...'|escape:'html':'UTF-8'}</a>
+                                                <span class="quantity-formated"><span class="quantity">{$product.quantity|intval}</span>&nbsp;x&nbsp;</span><a class="cart_block_product_name" href="{$product.link|escape:'html':'UTF-8'}" title="{$product.title|escape:'html':'UTF-8'}">{$product.title|truncate:20:'...'|escape:'html':'UTF-8'}</a>
                                             </div>
                                             <span class="price">
-                                                {$product.unit_price}
+                                                {$product.unit_price|escape:'html':'UTF-8'}
                                             </span>
                                             <div class="remove-wrap">
                                                 <hr/>
-                                                <a href="javascript:void(0);" rel="{$product.id}_{$product.id_attribute}" class="remove-quote">{l s="Remove"}</a>
+                                                <a href="javascript:void(0);" rel="{$product.id|intval}_{$product.id_attribute|intval}" class="remove-quote">{l s="Remove"}</a>
                                             </div>
                                         </div>
                                         </dt>
@@ -67,7 +67,7 @@
                             <div class="quotes-cart-prices">
                                 <div class="row">
                                     <span class="col-xs-12 col-lg-6 text-center">{l s="Total:" mod="quotes"}</span>
-                                    <span class="col-xs-12 col-lg-6 text-center">{$cart.total}</span>
+                                    <span class="col-xs-12 col-lg-6 text-center">{$cart.total|escape:'html':'UTF-8'}</span>
 
                                 </div>
                             </div>
@@ -85,7 +85,7 @@
                             </span>
                             </a>
                         {else}
-                            <a id="button_order_cart" class="btn btn-default button button-small" href="{$quotesCart}" title="{l s='Submit quote' mod='quotes'}" rel="nofollow">
+                            <a id="button_order_cart" class="btn btn-default button button-small" href="{$quotesCart|escape:'html':'UTF-8'}" title="{l s='Submit quote' mod='quotes'}" rel="nofollow">
                             <span>
                                 {l s='Check out' mod='quotes'}<i class="icon-chevron-right right"></i>
                             </span>
@@ -155,7 +155,7 @@
 							<i class="icon-chevron-left left"></i>{l s='Continue shopping' mod='quotes'}
 						</span>
 					</span>
-                    <a class="btn btn-default button button-medium"	href="{$link->getModuleLink('quotes','QuotesCart')}" title="{l s='Proceed to checkout' mod='quotes'}" rel="nofollow">
+                    <a class="btn btn-default button button-medium"	href="{$link->getModuleLink('quotes','QuotesCart')|escape:'html':'UTF-8'}" title="{l s='Proceed to checkout' mod='quotes'}" rel="nofollow">
 						<span>
 							{l s='Proceed to checkout' mod='quotes'}<i class="icon-chevron-right right"></i>
 						</span>
@@ -170,9 +170,9 @@
 {/if}
 <!-- /MODULE Quotes cart -->
 {strip}
-    {addJsDef messagingEnabled=$MESSAGING_ENABLED}
-    {addJsDef quotesCart=$actionAddQuotes}
-    {addJsDef catalogMode=$PS_CATALOG_MODE}
+    {addJsDef messagingEnabled=$MESSAGING_ENABLED|intval}
+    {addJsDef quotesCart=$actionAddQuotes|escape:'html':'UTF-8'}
+    {addJsDef catalogMode=$PS_CATALOG_MODE|intval}
 {/strip}
 
 {*<script type="text/javascript">*}
