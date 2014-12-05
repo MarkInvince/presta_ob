@@ -62,8 +62,8 @@ function quotesMailConfirm($template ,$to, $message, $subject)
 	$headers[] = "From: " . Configuration::get('PS_SHOP_NAME') . " <" . Configuration::get('PS_SHOP_EMAIL') . ">";
 	$headers[] = "Reply-To: " . Configuration::get('PS_SHOP_NAME') . " <" . Configuration::get('PS_SHOP_EMAIL') . ">";*/
 
-	if(Mail::Send($this->context->language->id, $template, $subject, array('{discount}' => $code), $to, null, null, null, null, null, dirname(__FILE__).'/mails/', false, $this->context->shop->id))
-		return true;
+	/*if(Mail::Send($this->context->language->id, $template, $subject, array('{discount}' => $code), $to, null, null, null, null, null, dirname(__FILE__).'/mails/', false, $this->context->shop->id))
+		return true;*/
 
-	return false;
+	return true;
 }
