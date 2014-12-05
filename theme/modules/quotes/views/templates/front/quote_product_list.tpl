@@ -75,7 +75,7 @@
             {/if}
         {/foreach}
         <tr class="quote_row_total">
-            <td><h5>{l s="Cart total:"}</h5></td>
+            <td><h5>{l s="Cart total:" mod='quotes'}</h5></td>
             <td></td>
             <td></td>
             <td></td>

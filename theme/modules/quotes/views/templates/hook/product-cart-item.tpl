@@ -41,7 +41,7 @@
                         </span>
                     <div class="remove-wrap">
                         <hr/>
-                        <a href="javascript:void(0);" rel="{$product.id|intval}_{$product.id_attribute|intval}" class="remove-quote">{l s="Remove"}</a>
+                        <a href="javascript:void(0);" rel="{$product.id|intval}_{$product.id_attribute|intval}" class="remove-quote">{l s="Remove" mod='quotes'}</a>
                     </div>
                 </div>
                 </dt>

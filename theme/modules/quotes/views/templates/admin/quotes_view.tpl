@@ -46,7 +46,7 @@
                             </tr>
                             <tr>
                                 <td>{l s="Gender:" mod="quotes"}</td>
-                                <td><strong>{if $quote.customer.gender == 1}<i class="icon-male"></i>{elseif $quote.customer.gender == 2}<i class="icon-female"></i>{else}{l s="Not selected"}{/if}</strong></td>
+                                <td><strong>{if $quote.customer.gender == 1}<i class="icon-male"></i>{elseif $quote.customer.gender == 2}<i class="icon-female"></i>{else}{l s="Not selected" mod='quotes'}{/if}</strong></td>
                             </tr>
                             <tr>
                                 <td>{l s="Email:" mod="quotes"}</td>
@@ -108,7 +108,7 @@
                             {/foreach}
                         {else}
                             <div class="alert alert-warning">
-                                {$quote.customer.name|escape:'html':'UTF-8'} {l s="has not registered any addresses yet"}
+                                {$quote.customer.name|escape:'html':'UTF-8'} {l s="has not registered any addresses yet" mod='quotes'}
                             </div>
                         {/if}
                     </div>
@@ -310,5 +310,5 @@
 
     <div class="panel-footer">
         <button onclick="javascript:history.go(-1);" class="btn btn-default pull-right"><i
-                    class="icon-chevron-left"></i> {l s="Back"}</button>
+                    class="icon-chevron-left"></i> {l s="Back" mod='quotes'}</button>
     </div>

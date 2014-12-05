@@ -41,8 +41,8 @@
         <table id="quotes-list" class="table table-bordered footab">
             <thead>
             <tr>
-                <th class="first_item">{l s='Reference'}</th>
-                <th class="item">{l s='Quote name'}</th>
+                <th class="first_item">{l s='Reference' mod='quotes'}</th>
+                <th class="item">{l s='Quote name' mod='quotes'}</th>
                 <th class="item">{l s='Date' mod='quotes'}</th>
                 <th class="item">{l s='Total price' mod='quotes'}</th>
                 <th class="item">{l s='Quote bargains' mod='quotes'}</th>
@@ -103,6 +103,6 @@
 
 {strip}
     {addJsDef submitedQuotes=$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}
-    {addJsDefL name=your_msg}{l s='Your bargain message:' js=1}{/addJsDefL}
-    {addJsDefL name=added}{l s='Added:' js=1}{/addJsDefL}
+    {addJsDefL name=your_msg}{l s='Your bargain message:' mod='quotes' js=1|escape:'html':'UTF-8'}{/addJsDefL}
+    {addJsDefL name=added}{l s='Added:' mod='quotes' js=1|escape:'html':'UTF-8'}{/addJsDefL}
 {/strip}

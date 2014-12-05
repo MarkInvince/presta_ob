@@ -47,7 +47,7 @@
                     </label>
                 </div>
                 <div class="required form-group show_phone_field">
-                    <label for="contact_phone">{l s='Enter your phone number'}</label>
+                    <label for="contact_phone">{l s='Enter your phone number' mod='quotes'}</label>
                     <input type="text" class="text form-control validate" name="contact_phone" id="contact_phone" data-validate="isPhoneNumber" value="{if isset($guestInformations) && isset($guestInformations.phone_mobile) && $guestInformations.phone_mobile}{$guestInformations.phone_mobile|escape:'html':'UTF-8'}{else}{$post.phone_mobile|escape:'html':'UTF-8'}{/if}" />
                 </div>
             {/if}
@@ -74,8 +74,8 @@
 
 {strip}
     {addJsDef authenticationUrl=$link->getPageLink("authentication", true)|escape:'quotes':'UTF-8'}
-    {addJsDefL name=txtThereis}{l s='There is' js=1}{/addJsDefL}
-    {addJsDefL name=txtErrors}{l s='Error(s)' js=1}{/addJsDefL}
+    {addJsDefL name=txtThereis}{l s='There is' mod='quotes' js=1|escape:'html':'UTF-8'}{/addJsDefL}
+    {addJsDefL name=txtErrors}{l s='Error(s)' mod='quotes' js=1|escape:'html':'UTF-8'}{/addJsDefL}
     {addJsDef quoteCartUrl=$link->getModuleLink('quotes', 'QuotesCart', array(), true)|escape:'html':'UTF-8'}
     {addJsDef guestCheckoutEnabled=$PS_GUEST_QUOTES_ENABLED|intval}
     {addJsDef isGuest=$isGuest|intval}
