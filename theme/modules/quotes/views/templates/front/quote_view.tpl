@@ -25,7 +25,7 @@
 
 <h1 class="page-heading bottom-indent">{l s='Quote information' mod='quotes'}</h1>
 
-<p><a href="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" id="show_quote_products_info">&raquo; {l s='Click to hide/show quote products info'mod='quotes'}</a></p>
+<p><a href="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" id="show_quote_products_info">&raquo; {l s='Click to hide/show quote products info' mod='quotes'}</a></p>
 
 <table id="quote_products_info" class="table table-bordered">
     <tr>

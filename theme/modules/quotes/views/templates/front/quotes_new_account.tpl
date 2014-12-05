@@ -29,7 +29,7 @@
     <form action="{$link->getPageLink('authentication', true, NULL, "back=order-opc")|escape:'html':'UTF-8'}" method="post" id="login_form" class="box">
         <fieldset>
             <h3 class="page-subheading">{l s='Already registered?' mod='quotes'}</h3>
-            <p><a href="{$link->getPageLink('authentication', true)|escape:'html':'UTF-8'}" id="openLoginFormBlock">&raquo; {l s='Click here'}</a></p>
+            <p><a href="{$link->getPageLink('authentication', true)|escape:'html':'UTF-8'}" id="openLoginFormBlock">&raquo; {l s='Click here' mod='quotes'}</a></p>
             <div id="login_form_content" style="display:none;">
                 <!-- Error return block -->
                 <div id="opc_login_errors" class="alert alert-danger" style="display:none;"></div>
@@ -45,7 +45,7 @@
                 <a href="{$link->getPageLink('password', true)|escape:'html':'UTF-8'}" class="lost_password">{l s='Forgot your password?' mod='quotes'}</a>
                 <p class="submit">
                     {if isset($back)}<input type="hidden" class="hidden" name="back" value="{$back|escape:'html':'UTF-8'}" />{/if}
-                    <button type="submit" id="SubmitLogin" name="SubmitLogin" class="button btn btn-default button-medium"><span><i class="icon-lock left"></i>{l s='Sign in'}</span></button>
+                    <button type="submit" id="SubmitLogin" name="SubmitLogin" class="button btn btn-default button-medium"><span><i class="icon-lock left"></i>{l s='Sign in' mod='quotes'}</span></button>
                 </p>
             </div>
         </fieldset>
@@ -71,7 +71,7 @@
                             <li>- {l s='Separate billing and shipping addresses' mod='quotes'}</li>
                         </ul>
                         <p class="opc-button">
-                            <button type="submit" class="btn btn-default button button-medium exclusive" id="opc_createAccount"><span><i class="icon-user left"></i>{l s='Create an account'}</span></button>
+                            <button type="submit" class="btn btn-default button button-medium exclusive" id="opc_createAccount"><span><i class="icon-user left"></i>{l s='Create an account' mod='quotes'}</span></button>
                         </p>
                     </div>
                 </div>

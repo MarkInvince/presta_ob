@@ -553,8 +553,8 @@
 	padding-top: 0;
 }
 .bargains_list {
-	padding: 15px;
-	max-height: 500px;
+	/*padding: 15px;
+	max-height: 500px;*/
 	overflow-y: scroll;
 	margin-bottom: 30px;
 	border-bottom: 1px solid #d6d4d4;
@@ -608,10 +608,10 @@
 	text-align: left;
 	display: none;
 }
-#quotes-products {
+/*#quotes-products {
 	max-height: 330px;
 	overflow: auto;
-}
+}*/
 .cart_quantity_input {
 	float: left;
 	padding-right: 25px;
@@ -802,7 +802,7 @@ ul.product_list.grid > li .product-container .functional-buttons div.ask_offer {
 .ajax_add_to_quote_cart_button, .fly_to_quote_cart_button {
 	cusrsor: pointer;
 	padding: 0;
-	margin-bottom: 10px;
+	margin: 0 auto!important;
 	border-top: 1px solid #0079b6;
 	border-right: 1px solid #006fa8;
 	border-left: 1px solid #006fa8;
