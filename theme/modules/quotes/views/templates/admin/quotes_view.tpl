@@ -274,7 +274,7 @@
                                     </div>
                                     {if !$bargain.bargain_customer_confirm}
                                         <div class="col-lg-1 bargain_action">
-                                            <form  action="{$index}" method="post" class="burgainSubmitForm std">
+                                            <form  action="{$index|escape:'html':'UTF-8'}" method="post" class="burgainSubmitForm std">
                                                 <a data-action="deleteBargain" data-id="{$bargain.id_bargain|intval}" class="btn btn-default deleteBargainOffer">
                                                     <i class="icon-trash"></i><span> {l s='Delete' mod='quotes'}</span>
                                                 </a>

@@ -18,9 +18,9 @@
  * versions in the future. If you wish to customize PrestaShop for your
  * needs please refer to http://www.prestashop.com for more information.
  *
- *  @author    PrestaShop SA <contact@prestashop.com>
- *  @copyright 2007-2014 PrestaShop SA
- *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2014 PrestaShop SA
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
 
@@ -55,7 +55,7 @@ class Quotes extends Module
      */
     public function install()
     {
-        include(dirname(__FILE__).'/sql/install.php');
+        include(dirname(__FILE__) . '/sql/install.php');
 
         /* create new tab on backoffice Customers - Quotes */
         $tab = new Tab();
@@ -82,7 +82,7 @@ class Quotes extends Module
         Configuration::updateValue('MAIN_PRODUCT_PAGE', '1');
         Configuration::updateValue('MAIN_PRODUCT_LIST', '1');
         Configuration::updateValue('MAIN_MAILS', Configuration::get('PS_SHOP_EMAIL'));
-        Configuration::updateValue('CATEGORY_BOX','');
+        Configuration::updateValue('CATEGORY_BOX', '');
 
 
         return parent::install() &&
@@ -128,9 +128,9 @@ class Quotes extends Module
     {
         return Db::getInstance()->execute(
             'DROP TABLE IF EXISTS
-            `'._DB_PREFIX_.'quotes_product`,
-			`'._DB_PREFIX_.'quotes_bargains`,
-			`'._DB_PREFIX_.'quotes`'
+            `' . _DB_PREFIX_ . 'quotes_product`,
+			`' . _DB_PREFIX_ . 'quotes_bargains`,
+			`' . _DB_PREFIX_ . 'quotes`'
         );
     }
 
@@ -143,7 +143,7 @@ class Quotes extends Module
         /**
          * If values have been submitted in the form, process.
          */
-        if(Tools::getValue('submitMainSettings')) {
+        if (Tools::getValue('submitMainSettings')) {
             Configuration::updateValue('MAIN_STATE', Tools::getValue('MAIN_STATE'));
             Configuration::updateValue('MAIN_QUANTITY_FIELDS', Tools::getValue('MAIN_QUANTITY_FIELDS'));
             Configuration::updateValue('MAIN_ANIMATE', Tools::getValue('MAIN_ANIMATE'));
@@ -156,13 +156,14 @@ class Quotes extends Module
             Configuration::updateValue('MAIN_PRODUCT_PAGE', Tools::getValue('MAIN_PRODUCT_PAGE'));
             Configuration::updateValue('MAIN_PRODUCT_LIST', Tools::getValue('MAIN_PRODUCT_LIST'));
             Configuration::updateValue('MAIN_MAILS', Tools::getValue('MAIN_MAILS'));
-            Configuration::updateValue('CATEGORY_BOX', implode(',',Tools::getValue('CATEGORY_BOX')));
+            Configuration::updateValue('CATEGORY_BOX', implode(',', Tools::getValue('CATEGORY_BOX')));
 
 
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
         $this->context->smarty->assign('module_dir', $this->_path);
-        return $output.$this->renderForm();
+
+        return $output . $this->renderForm();
     }
 
     /**
@@ -175,205 +176,205 @@ class Quotes extends Module
             'form' => array(
                 'legend' => array(
                     'title' => $this->l('Settings'),
-                    'icon' => 'icon-cogs'
+                    'icon'  => 'icon-cogs'
                 ),
-                'input' => array(
+                'input'  => array(
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('Turn bargain'),
-                        'name' => 'MAIN_STATE',
+                        'type'   => 'switch',
+                        'label'  => $this->l('Turn bargain'),
+                        'name'   => 'MAIN_STATE',
                         'values' => array(
                             array(
-                                'id' => 'on',
+                                'id'    => 'on',
                                 'value' => 1,
                                 'label' => $this->l('Enabled')
                             ),
                             array(
-                                'id' => 'off',
+                                'id'    => 'off',
                                 'value' => 0,
                                 'label' => $this->l('Disabled')
                             ),
                         ),
                     ),
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('Quantity field'),
-                        'name' => 'MAIN_QUANTITY_FIELDS',
+                        'type'   => 'switch',
+                        'label'  => $this->l('Quantity field'),
+                        'name'   => 'MAIN_QUANTITY_FIELDS',
                         'values' => array(
                             array(
-                                'id' => 'on',
+                                'id'    => 'on',
                                 'value' => 1,
                                 'label' => $this->l('Show')
                             ),
                             array(
-                                'id' => 'off',
+                                'id'    => 'off',
                                 'value' => 0,
                                 'label' => $this->l('Hide')
                             ),
                         ),
                     ),
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('Animate product to fly to cart (else popup option)'),
-                        'name' => 'MAIN_ANIMATE',
+                        'type'   => 'switch',
+                        'label'  => $this->l('Animate product to fly to cart (else popup option)'),
+                        'name'   => 'MAIN_ANIMATE',
                         'values' => array(
                             array(
-                                'id' => 'on',
+                                'id'    => 'on',
                                 'value' => 1,
                                 'label' => $this->l('Yes')
                             ),
                             array(
-                                'id' => 'off',
+                                'id'    => 'off',
                                 'value' => 0,
                                 'label' => $this->l('No')
                             ),
                         ),
                     ),
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('Enable Guest checkout'),
-                        'name' => 'PS_GUEST_QUOTES_ENABLED',
+                        'type'   => 'switch',
+                        'label'  => $this->l('Enable Guest checkout'),
+                        'name'   => 'PS_GUEST_QUOTES_ENABLED',
                         'values' => array(
                             array(
-                                'id' => 'on',
+                                'id'    => 'on',
                                 'value' => 1,
                                 'label' => $this->l('Yes')
                             ),
                             array(
-                                'id' => 'off',
+                                'id'    => 'off',
                                 'value' => 0,
                                 'label' => $this->l('No')
                             ),
                         )
                     ),
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('Required terms and conditions'),
-                        'name' => 'MAIN_TERMS_AND_COND',
+                        'type'   => 'switch',
+                        'label'  => $this->l('Required terms and conditions'),
+                        'name'   => 'MAIN_TERMS_AND_COND',
                         'values' => array(
                             array(
-                                'id' => 'on',
+                                'id'    => 'on',
                                 'value' => 1,
                                 'label' => $this->l('Yes')
                             ),
                             array(
-                                'id' => 'off',
+                                'id'    => 'off',
                                 'value' => 0,
                                 'label' => $this->l('No')
                             ),
                         )
                     ),
                     array(
-                        'title' => $this->l('Please select CMS Page with Terms and Conditions'),
-                        'label' => $this->l('Select CMS Page with Terms and Rules'),
-                        'type' => 'select',
-                        'id' => 'cms_page_select',
-                        'name' => 'MAIN_CMS_PAGE',
-                        'options' => array('query' => $options,'id' => 'id','name' => 'name'),
+                        'title'      => $this->l('Please select CMS Page with Terms and Conditions'),
+                        'label'      => $this->l('Select CMS Page with Terms and Rules'),
+                        'type'       => 'select',
+                        'id'         => 'cms_page_select',
+                        'name'       => 'MAIN_CMS_PAGE',
+                        'options'    => array('query' => $options, 'id' => 'id', 'name' => 'name'),
                         'identifier' => 'id',
                     ),
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('Delivery address option'),
-                        'name' => 'ADDRESS_ENABLED',
+                        'type'   => 'switch',
+                        'label'  => $this->l('Delivery address option'),
+                        'name'   => 'ADDRESS_ENABLED',
                         'values' => array(
                             array(
-                                'id' => 'on',
+                                'id'    => 'on',
                                 'value' => 1,
                                 'label' => $this->l('Yes')
                             ),
                             array(
-                                'id' => 'off',
+                                'id'    => 'off',
                                 'value' => 0,
                                 'label' => $this->l('No')
                             ),
                         )
                     ),
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('User messaging'),
-                        'name' => 'MESSAGING_ENABLED',
-                        'desc' => 'Allows the user to send bargain messages to admin',
+                        'type'   => 'switch',
+                        'label'  => $this->l('User messaging'),
+                        'name'   => 'MESSAGING_ENABLED',
+                        'desc'   => 'Allows the user to send bargain messages to admin',
                         'values' => array(
                             array(
-                                'id' => 'on',
+                                'id'    => 'on',
                                 'value' => 1,
                                 'label' => $this->l('Yes')
                             ),
                             array(
-                                'id' => 'off',
+                                'id'    => 'off',
                                 'value' => 0,
                                 'label' => $this->l('No')
                             ),
                         )
                     ),
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('Filtered on product status'),
-                        'name' => 'MAIN_PRODUCT_STATUS',
-                        'desc' => 'Present only if product not available for order',
+                        'type'   => 'switch',
+                        'label'  => $this->l('Filtered on product status'),
+                        'name'   => 'MAIN_PRODUCT_STATUS',
+                        'desc'   => 'Present only if product not available for order',
                         'values' => array(
                             array(
-                                'id' => 'on',
+                                'id'    => 'on',
                                 'value' => 1,
                                 'label' => $this->l('Yes')
                             ),
                             array(
-                                'id' => 'off',
+                                'id'    => 'off',
                                 'value' => 0,
                                 'label' => $this->l('No')
                             ),
                         )
                     ),
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('Button on product page'),
-                        'name' => 'MAIN_PRODUCT_PAGE',
+                        'type'   => 'switch',
+                        'label'  => $this->l('Button on product page'),
+                        'name'   => 'MAIN_PRODUCT_PAGE',
                         'values' => array(
                             array(
-                                'id' => 'on',
+                                'id'    => 'on',
                                 'value' => 1,
                                 'label' => $this->l('Yes')
                             ),
                             array(
-                                'id' => 'off',
+                                'id'    => 'off',
                                 'value' => 0,
                                 'label' => $this->l('No')
                             ),
                         )
                     ),
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('Button on product list'),
-                        'name' => 'MAIN_PRODUCT_LIST',
+                        'type'   => 'switch',
+                        'label'  => $this->l('Button on product list'),
+                        'name'   => 'MAIN_PRODUCT_LIST',
                         'values' => array(
                             array(
-                                'id' => 'on',
+                                'id'    => 'on',
                                 'value' => 1,
                                 'label' => $this->l('Yes')
                             ),
                             array(
-                                'id' => 'off',
+                                'id'    => 'off',
                                 'value' => 0,
                                 'label' => $this->l('No')
                             ),
                         )
                     ),
                     array(
-                        'type' => 'text',
+                        'type'  => 'text',
                         'label' => $this->l('Email addresses:'),
-                        'name' => 'MAIN_MAILS',
-                        'desc' => 'Enter the email addresses separated by a comma (",") where you need submitted quotes to be sent'
+                        'name'  => 'MAIN_MAILS',
+                        'desc'  => 'Enter the email addresses separated by a comma (",") where you need submitted quotes to be sent'
                     ),
                     array(
                         'type' => 'categories',
                         'name' => 'CATEGORY_BOX',
                         'tree' => array(
-                            'id'    => 'associated-categories-tree',
-                            'title' => $this->l('Filter on category base'),
-                            'use_search' => 1,
-                            'use_checkbox' => 1,
-                            'selected_categories' => explode(',',Configuration::get('CATEGORY_BOX'))
+                            'id'                  => 'associated-categories-tree',
+                            'title'               => $this->l('Filter on category base'),
+                            'use_search'          => 1,
+                            'use_checkbox'        => 1,
+                            'selected_categories' => explode(',', Configuration::get('CATEGORY_BOX'))
                         )
                     )
                 ),
@@ -388,15 +389,16 @@ class Quotes extends Module
         $helper->show_toolbar = false;
         $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
         $helper->default_form_language = $lang->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG')
+            ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitMainSettings';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = array(
             'fields_value' => $this->getConfigFormValues(),
-            'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id
+            'languages'    => $this->context->controller->getLanguages(),
+            'id_language'  => $this->context->language->id
         );
 
         return $helper->generateForm(array($fields_form));
@@ -408,19 +410,19 @@ class Quotes extends Module
     protected function getConfigFormValues()
     {
         return array(
-            'MAIN_STATE' => Configuration::get('MAIN_STATE'),
-            'MAIN_QUANTITY_FIELDS' => Configuration::get('MAIN_QUANTITY_FIELDS'),
-            'MAIN_ANIMATE' => Configuration::get('MAIN_ANIMATE'),
-            'MAIN_TERMS_AND_COND' => Configuration::get('MAIN_TERMS_AND_COND'),
-            'MAIN_CMS_PAGE' => Configuration::get('MAIN_CMS_PAGE'),
+            'MAIN_STATE'              => Configuration::get('MAIN_STATE'),
+            'MAIN_QUANTITY_FIELDS'    => Configuration::get('MAIN_QUANTITY_FIELDS'),
+            'MAIN_ANIMATE'            => Configuration::get('MAIN_ANIMATE'),
+            'MAIN_TERMS_AND_COND'     => Configuration::get('MAIN_TERMS_AND_COND'),
+            'MAIN_CMS_PAGE'           => Configuration::get('MAIN_CMS_PAGE'),
             'PS_GUEST_QUOTES_ENABLED' => Configuration::get('PS_GUEST_QUOTES_ENABLED'),
-            'ADDRESS_ENABLED' => Configuration::get('ADDRESS_ENABLED'),
-            'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED'),
-            'CATEGORY_BOX' => explode(',',Configuration::get('CATEGORY_BOX')),
-            'MAIN_PRODUCT_STATUS' => Configuration::get('MAIN_PRODUCT_STATUS'),
-            'MAIN_PRODUCT_PAGE' => Configuration::get('MAIN_PRODUCT_PAGE'),
-            'MAIN_PRODUCT_LIST' => Configuration::get('MAIN_PRODUCT_LIST'),
-            'MAIN_MAILS' => Configuration::get('MAIN_MAILS')
+            'ADDRESS_ENABLED'         => Configuration::get('ADDRESS_ENABLED'),
+            'MESSAGING_ENABLED'       => Configuration::get('MESSAGING_ENABLED'),
+            'CATEGORY_BOX'            => explode(',', Configuration::get('CATEGORY_BOX')),
+            'MAIN_PRODUCT_STATUS'     => Configuration::get('MAIN_PRODUCT_STATUS'),
+            'MAIN_PRODUCT_PAGE'       => Configuration::get('MAIN_PRODUCT_PAGE'),
+            'MAIN_PRODUCT_LIST'       => Configuration::get('MAIN_PRODUCT_LIST'),
+            'MAIN_MAILS'              => Configuration::get('MAIN_MAILS')
         );
     }
 
@@ -429,8 +431,8 @@ class Quotes extends Module
      */
     public function hookdisplayBackOfficeHeader()
     {
-        $this->context->controller->addJS($this->_path.'js/back.js');
-        $this->context->controller->addCSS($this->_path.'css/back.css');
+        $this->context->controller->addJS($this->_path . 'js/back.js');
+        $this->context->controller->addCSS($this->_path . 'css/back.css');
     }
 
     /**
@@ -438,24 +440,24 @@ class Quotes extends Module
      */
     public function hookHeader()
     {
-        $this->context->controller->addJS($this->_path.'/js/front.js');
-        $this->context->controller->addCSS($this->_path.'/css/front.css');
+        $this->context->controller->addJS($this->_path . '/js/front.js');
+        $this->context->controller->addCSS($this->_path . '/css/front.css');
     }
 
     public function hookTop()
     {
         //load model
-        include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesProduct.php');
+        include_once(_PS_MODULE_DIR_ . 'quotes/classes/QuotesProduct.php');
         $quote_obj = new QuotesProductCart;
 
         $products = array();
         // check for user cart session. Defined in QuotesCart if user add product to quote box
-        if($this->context->cookie->__isset('request_id')) {
+        if ($this->context->cookie->__isset('request_id')) {
             $quote_obj->id_quote = $this->context->cookie->__get('request_id');
             list($products, $cart) = $quote_obj->getProducts();
         }
         $this->context->smarty->assign('session', $this->context->cookie->__get('request_id'));
-        $this->context->smarty->assign('actionAddQuotes',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
+        $this->context->smarty->assign('actionAddQuotes', $this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
         $this->context->smarty->assign('products', $products);
         $this->context->smarty->assign('cart', $cart);
         $this->context->smarty->assign('active_overlay', 0);
@@ -465,7 +467,7 @@ class Quotes extends Module
         $this->context->smarty->assign('isLogged', $customer);
 
         $this->context->smarty->assign('cartTotalProducts', (int)count($products));
-        $this->context->smarty->assign('quotesCart',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
+        $this->context->smarty->assign('quotesCart', $this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
 
         if (Configuration::get('MAIN_STATE'))
             return $this->display(__FILE__, 'quotesCart.tpl');
@@ -482,9 +484,9 @@ class Quotes extends Module
 
         $this->context->smarty->assign('isLogged', $customer);
         $this->context->smarty->assign('product', $product);
-        $this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
-        $this->context->smarty->assign('filtered_on_status',Configuration::get('MAIN_PRODUCT_STATUS'));
-        $this->context->smarty->assign('present_on_product',Configuration::get('MAIN_PRODUCT_PAGE'));
+        $this->context->smarty->assign('enableAnimation', Configuration::get('MAIN_ANIMATE'));
+        $this->context->smarty->assign('filtered_on_status', Configuration::get('MAIN_PRODUCT_STATUS'));
+        $this->context->smarty->assign('present_on_product', Configuration::get('MAIN_PRODUCT_PAGE'));
 
         $linkCore = new Link;
         $this->context->smarty->assign('plink', $linkCore->getProductLink($product->id, $product->link_rewrite, $product->id_category_default));
@@ -515,14 +517,15 @@ class Quotes extends Module
     /**
      * Add ask to quote button to product list
      */
-    public function hookdisplayProductListFunctionalButtons($params){
+    public function hookdisplayProductListFunctionalButtons($params)
+    {
         $customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
         $this->context->smarty->assign('isLogged', $customer);
-        $this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
+        $this->context->smarty->assign('enableAnimation', Configuration::get('MAIN_ANIMATE'));
         $category_box = Configuration::get('CATEGORY_BOX');
-        $categories = !empty($category_box) ? explode(',',$category_box) : false;
+        $categories = !empty($category_box) ? explode(',', $category_box) : false;
         $this->context->smarty->assign('categories', $categories);
-        $this->context->smarty->assign('present_on_product_list',Configuration::get('MAIN_PRODUCT_LIST'));
+        $this->context->smarty->assign('present_on_product_list', Configuration::get('MAIN_PRODUCT_LIST'));
         $this->smarty->assign('product', $params['product']);
         if (Configuration::get('MAIN_STATE'))
             return $this->display(__FILE__, 'product-list.tpl');
@@ -536,6 +539,7 @@ class Quotes extends Module
         if (Configuration::get('MAIN_STATE'))
             return $this->display(__FILE__, 'my-account.tpl');
     }
+
     /**
      * Add quote link in my account footer
      */
@@ -548,11 +552,12 @@ class Quotes extends Module
     /**
      * Add ask to quote button to product list
      */
-    private function _generateCMS() {
+    private function _generateCMS()
+    {
         $pages = CMS::getCMSPages((int)$this->context->language->id, null, true);
         $out = array();
-        if(!empty($pages)) {
-            foreach($pages as $page) {
+        if (!empty($pages)) {
+            foreach ($pages as $page) {
                 $out[] = array(
                     'id'    => $page['id_cms'],
                     'value' => $page['id_cms'],
@@ -562,6 +567,7 @@ class Quotes extends Module
         }
         else
             $out[] = array('name' => $this->l('No cms pages found'));
+
         return $out;
     }
 

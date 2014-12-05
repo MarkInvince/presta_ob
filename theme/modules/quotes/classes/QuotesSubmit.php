@@ -18,9 +18,9 @@
  * versions in the future. If you wish to customize PrestaShop for your
  * needs please refer to http://www.prestashop.com for more information.
  *
- *  @author    PrestaShop SA <contact@prestashop.com>
- *  @copyright 2007-2014 PrestaShop SA
- *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2014 PrestaShop SA
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
 
@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_'))
     exit;
 
 include_once(_PS_MODULE_DIR_ . 'quotes/classes/QuotesTools.php');
+
 class QuotesSubmitCore extends ObjectModel
 {
     public $id_quote;
@@ -45,21 +46,21 @@ class QuotesSubmitCore extends ObjectModel
     public $submited;
 
     public static $definition = array(
-        'table' => 'quotes',
+        'table'   => 'quotes',
         'primary' => 'id_quote',
-        'fields' => array(
-            'id_cart'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
-            'quote_name'    => 	array('type' => self::TYPE_STRING,  'validate' => 'isAnything'),
-            'reference'    => 	array('type' => self::TYPE_STRING,  'validate' => 'isAnything'),
-            'id_shop'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
-            'id_shop_group' => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
-            'id_lang'       => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
-            'id_currency'   => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
-            'id_customer'   => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
-            'products'      => 	array('type' => self::TYPE_STRING,  'validate' => 'isAnything'),
-            'burgain_price' => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
-            'date_add'      => 	array('type' => self::TYPE_DATE,    'validate' => 'isDateFormat'),
-            'submited'      => 	array('type' => self::TYPE_INT,     'validate' => 'isUnsignedId'),
+        'fields'  => array(
+            'id_cart'       => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
+            'quote_name'    => array('type' => self::TYPE_STRING, 'validate' => 'isAnything'),
+            'reference'     => array('type' => self::TYPE_STRING, 'validate' => 'isAnything'),
+            'id_shop'       => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
+            'id_shop_group' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
+            'id_lang'       => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
+            'id_currency'   => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
+            'id_customer'   => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
+            'products'      => array('type' => self::TYPE_STRING, 'validate' => 'isAnything'),
+            'burgain_price' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
+            'date_add'      => array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
+            'submited'      => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
         ),
     );
 
@@ -69,12 +70,13 @@ class QuotesSubmitCore extends ObjectModel
 
         $this->context = Context::getContext();
         if (!is_null($id_lang))
-            $this->id_lang = (int)(Language::getLanguage($id_lang) !== false) ? $id_lang : Configuration::get('PS_LANG_DEFAULT');
+            $this->id_lang = (int)(Language::getLanguage($id_lang) !== false) ? $id_lang
+                : Configuration::get('PS_LANG_DEFAULT');
         $this->id_shop = (int)$this->context->shop->id;
         $this->id_shop_group = (int)$this->context->shop->id_shop_group;
         $this->id_customer = (int)$this->context->customer->id;
         $this->date_add = date('Y-m-d H:i:s', time());
-        $this->reference =  Tools::strtoupper(Tools::passwdGen(9, 'NO_NUMERIC'));
+        $this->reference = Tools::strtoupper(Tools::passwdGen(9, 'NO_NUMERIC'));
         $this->submited = 0;
     }
 
@@ -86,32 +88,43 @@ class QuotesSubmitCore extends ObjectModel
     public function update()
     {
         $return = parent::update();
+
         return $return;
     }
 
     public function delete()
     {
-        if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.(int)$this->id_quote))
+        if (!Db::getInstance()
+            ->execute('DELETE FROM `' . _DB_PREFIX_ . 'quotes` WHERE `id_quote` = ' . (int)$this->id_quote)
+        )
             return false;
 
         return parent::delete();
     }
+
     public function deleteQuoteById($id_quote = false, $id_customer = false)
     {
-        if($id_quote AND $id_customer) {
-            if (Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.(int)$id_quote.' AND `id_customer` = '.(int)$id_customer)){
-                if (Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'quotes_bargains` WHERE `id_quote` = '.(int)$id_quote))
+        if ($id_quote AND $id_customer) {
+            if (Db::getInstance()
+                ->execute('DELETE FROM `' . _DB_PREFIX_ . 'quotes` WHERE `id_quote` = ' . (int)$id_quote . ' AND `id_customer` = ' . (int)$id_customer)
+            ) {
+                if (Db::getInstance()
+                    ->execute('DELETE FROM `' . _DB_PREFIX_ . 'quotes_bargains` WHERE `id_quote` = ' . (int)$id_quote)
+                )
                     return true;
             }
+
             return false;
         }
         else
             return false;
     }
-    public function getAllQuotes() {
+
+    public function getAllQuotes()
+    {
 
         $quotes = array();
-        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes`');
+        $result = Db::getInstance()->ExecuteS('SELECT * FROM `' . _DB_PREFIX_ . 'quotes`');
         if (empty($result))
             return array();
 
@@ -124,61 +137,68 @@ class QuotesSubmitCore extends ObjectModel
             $quote['id_lang'] = $row['id_lang'];
             $customer = new Customer($row['id_customer']);
             $quote['customer'] = array(
-                'id' => $customer->id,
-                'name' => $customer->firstname.' '.$customer->lastname,
-                'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
+                'id'   => $customer->id,
+                'name' => $customer->firstname . ' ' . $customer->lastname,
+                'link' => 'index.php?tab=AdminCustomers&addcustomer&id_customer=' . $customer->id . '&token=' . Tools::getAdminTokenLite('AdminCustomers'),
             );
             $quote['products'] = unserialize($row['products']);
             $quote['date_add'] = $row['date_add'];
             $quote['submited'] = $row['submited'];
             $quotes[] = $quote;
         }
+
         return $quotes;
     }
-    public function getQuoteById($id_quote, $id_customer) {
-        $result = Db::getInstance()->ExecuteS('SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.$id_quote.' AND `id_customer` = '.$id_customer);
+
+    public function getQuoteById($id_quote, $id_customer)
+    {
+        $result = Db::getInstance()
+            ->ExecuteS('SELECT * FROM `' . _DB_PREFIX_ . 'quotes` WHERE `id_quote` = ' . $id_quote . ' AND `id_customer` = ' . $id_customer);
         if (empty($result))
             return array();
 
         $customer = new Customer($id_customer);
         $out = array();
         $out['customer'] = array(
-            'id'       => $customer->id,
-            'name'     => $customer->firstname.' '.$customer->lastname,
-            'gender'   => $customer->id_gender,
-            'email'    => $customer->email,
-            'birthday' => $customer->birthday,
-            'addresses'=> $customer->getAddresses($this->context->language->id),
-            'date_add' => $customer->date_add,
-            'link'     => 'index.php?tab=AdminCustomers&addcustomer&id_customer='.$customer->id.'&token='.Tools::getAdminTokenLite('AdminCustomers'),
+            'id'        => $customer->id,
+            'name'      => $customer->firstname . ' ' . $customer->lastname,
+            'gender'    => $customer->id_gender,
+            'email'     => $customer->email,
+            'birthday'  => $customer->birthday,
+            'addresses' => $customer->getAddresses($this->context->language->id),
+            'date_add'  => $customer->date_add,
+            'link'      => 'index.php?tab=AdminCustomers&addcustomer&id_customer=' . $customer->id . '&token=' . Tools::getAdminTokenLite('AdminCustomers'),
         );
 
         $product_arr = array();
         $products = unserialize($result[0]['products']);
         $price = 0;
-        foreach($products as $item) {
+        foreach ($products as $item) {
             $itemp = new Product($item['id'], true, $this->context->language->id);
             $attr = new Attribute($item['id_attribute'], $this->context->language->id);
-            $image_id = getProductAttributeImage($item['id'], $item['id_attribute'], $this->context->language->id) ? getProductAttributeImage($item['id'], $item['id_attribute'], $this->context->language->id) : $itemp->id;
+            $image_id = getProductAttributeImage($item['id'], $item['id_attribute'], $this->context->language->id)
+                ? getProductAttributeImage($item['id'], $item['id_attribute'], $this->context->language->id)
+                : $itemp->id;
             $product_arr[] = array(
-                'id' => $itemp->id,
-                'attr' => $attr->name,
-                'name' => $itemp->name,
-                'image' => $this->context->link->getImageLink($itemp->link_rewrite[$this->context->language->id], $image_id, 'cart_default'),
-                'link' => $this->context->link->getProductLink($itemp, $itemp->link_rewrite, $itemp->category, null, null, $itemp->id_shop, $item['id_product_attribute']),
-                'quantity' => $item['quantity'],
-                'unit_price' => Tools::displayPrice(Tools::ps_round($itemp->getPriceStatic($itemp->id, true, $item['id_attribute'], 6),2), $this->context->currency),
-                'total' => Tools::displayPrice(Tools::ps_round(($itemp->getPriceStatic($itemp->id, true, $item['id_attribute'], 6) * (int)$item['quantity']),2), $this->context->currency),
+                'id'         => $itemp->id,
+                'attr'       => $attr->name,
+                'name'       => $itemp->name,
+                'image'      => $this->context->link->getImageLink($itemp->link_rewrite[$this->context->language->id], $image_id, 'cart_default'),
+                'link'       => $this->context->link->getProductLink($itemp, $itemp->link_rewrite, $itemp->category, null, null, $itemp->id_shop, $item['id_product_attribute']),
+                'quantity'   => $item['quantity'],
+                'unit_price' => Tools::displayPrice(Tools::ps_round($itemp->getPriceStatic($itemp->id, true, $item['id_attribute'], 6), 2), $this->context->currency),
+                'total'      => Tools::displayPrice(Tools::ps_round(($itemp->getPriceStatic($itemp->id, true, $item['id_attribute'], 6) * (int)$item['quantity']), 2), $this->context->currency),
             );
             $price = $price + (float)($itemp->getPriceStatic($itemp->id, true, $item['id_attribute'], 6) * (int)$item['quantity']);
         }
         $out['quote_total'] = array(
             'quote_static' => $price,
-            'quote_normal' => Tools::displayPrice(Tools::ps_round($price,2), $this->context->currency)
+            'quote_normal' => Tools::displayPrice(Tools::ps_round($price, 2), $this->context->currency)
         );
 
         $out['products'] = $product_arr;
         $out[] = $result[0];
+
         return $out;
     }
 

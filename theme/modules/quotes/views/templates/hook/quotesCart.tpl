@@ -145,7 +145,7 @@
                     </strong>
 					<span class="ajax_block_cart_total">
 						{if $total_count > 0}
-                            {$total}
+                            {$total|intval}
                         {/if}
 					</span>
                 </div>-->

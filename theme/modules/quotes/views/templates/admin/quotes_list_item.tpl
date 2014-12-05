@@ -31,7 +31,7 @@
     <td class="text-center">{$quote.date_add|escape:'html':'UTF-8'}</td>
     <td class="text-center">{if $quote.submited == 1}<i class="icon-ok-circle color-green"></i>{elseif $quote.submited == 0}<i class="icon-remove color-red"></i>{else}<i class="icon-mail-forward color-green"></i>{/if}</td>
     <td class="text-center">
-        <form action="{$index}" method="post" class="action_form">
+        <form action="{$index|escape:'html':'UTF-8'}" method="post" class="action_form">
             <input type="hidden" name="id_customer" value="{$quote.customer.id|intval}" />
             <input type="hidden" name="id_quote" value="{$quote.id_quote|intval}" />
             <input type="hidden" name="action" value="view" />
