@@ -464,11 +464,7 @@ class Quotes extends Module
 
         $this->context->smarty->assign('isLogged', $customer);
 
-        $product_count = 0;
-        foreach($products as $key => $value)
-            if(is_numeric($key))
-                $product_count++;
-        $this->context->smarty->assign('cartTotalProducts', $product_count);
+        $this->context->smarty->assign('cartTotalProducts', (int)count($products));
         $this->context->smarty->assign('quotesCart',$this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
 
         if (Configuration::get('MAIN_STATE'))

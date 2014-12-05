@@ -66,10 +66,9 @@ class AdminQuotesController extends ModuleAdminController
     }
     public function postProcess()
     {
-        global $currentIndex;
         if(Tools::getIsset('action')) {
             if(Tools::getValue('action') == 'view') {
-                Tools::redirect($currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
+                Tools::redirectAdmin($this->context->link->getAdminLink('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
             }
             if(Tools::getValue('action') == 'delete') {
                 die(Tools::jsonEncode(array('data' => $this->processDeleteAdmin(Tools::getValue('item')))));
@@ -77,7 +76,7 @@ class AdminQuotesController extends ModuleAdminController
         }
         if (Tools::isSubmit('addClientBargain')) {
             $this->addAdminBargain(Tools::getValue('id_quote'));
-            Tools::redirect($currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
+            Tools::redirectAdmin($this->context->link->getAdminLink('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
         }
 
         if (Tools::getValue('actionBargainDelete'))
@@ -85,7 +84,7 @@ class AdminQuotesController extends ModuleAdminController
 
         if (Tools::isSubmit('transformQuote')) {
             $this->transormQuote(Tools::getValue('id_cart'), 1, Tools::getValue('total_products'));
-            Tools::redirect(.$currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
+            Tools::redirectAdmin($this->context->link->getAdminLink('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
         }
     }
 
@@ -105,10 +104,8 @@ class AdminQuotesController extends ModuleAdminController
     }
 
     protected function assign() {
-        global $currentIndex;
         if(!Tools::getValue('id_customer') AND !Tools::getValue('id_quote')) {
             $this->context->smarty->assign(array(
-                'index' => $currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes'),
                 'quotes' => $this->squotes->getAllQuotes(),
                 'totalQuotes' => count($this->squotes->getAllQuotes())
             ));
@@ -116,7 +113,6 @@ class AdminQuotesController extends ModuleAdminController
         }
         else {
             $this->context->smarty->assign(array(
-                'index' => $currentIndex.'&token='.Tools::getAdminTokenLite('AdminQuotes'),
                 'quote' => $this->squotes->getQuoteById(pSQL(Tools::getValue('id_quote')), pSQL(Tools::getValue('id_customer'))),
                 'id_quote' => Tools::getValue('id_quote'),
                 'id_customer' => Tools::getValue('id_customer'),
@@ -254,7 +250,7 @@ class AdminQuotesController extends ModuleAdminController
             $this->currentOrderReference = $reference;
 
             $discount = $amount_paid - Tools::getValue('bargain_price');
-            if(!$discount)
+            if($discount < 0 || !$discount)
                 $discount = 0;
 
             $order_creation_failed = false;
@@ -353,9 +349,9 @@ class AdminQuotesController extends ModuleAdminController
                     $order->total_discounts_tax_excl = (float)abs($this->context->cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS, $order->product_list, $id_carrier));
                     $order->total_discounts_tax_incl = (float)abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS, $order->product_list, $id_carrier));
 
-                    $order->total_discounts_tax_incl = $discount;
+                    $order->total_discounts_tax_incl = (float)$discount;
 
-                    $order->total_discounts = $order->total_discounts_tax_incl;
+                    $order->total_discounts = (float)$order->total_discounts_tax_incl;
 
                     $order->total_shipping_tax_excl = (float)$this->context->cart->getPackageShippingCost((int)$id_carrier, false, null, $order->product_list);
                     $order->total_shipping_tax_incl = (float)$this->context->cart->getPackageShippingCost((int)$id_carrier, true, null, $order->product_list);

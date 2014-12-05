@@ -52,15 +52,15 @@
             </thead>
             <tbody>
             {foreach from=$quotes item=quote}
-                <tr class="item quote_{$quote.id_quote}">
-                    <td>{$quote.reference}</td>
-                    <td data-value="{$quote.id_quote}" class="quote_name"><i class="icon-pencil"></i>{$quote.quote_name}</td>
+                <tr class="item quote_{$quote.id_quote|escape:'intval'}">
+                    <td>{$quote.reference|escape:'html':'UTF-8'}</td>
+                    <td data-value="{$quote.id_quote|escape:'html':'UTF-8'}" class="quote_name"><i class="icon-pencil"></i>{$quote.quote_name|escape:'html':'UTF-8'}</td>
                     <td data-value="{$quote.date_add|regex_replace:"/[\-\:\ ]/":""}" class="">
                         {dateFormat date=$quote.date_add full=0}
                     </td>
                     <td>
                         <span class="price">
-                            {$quote.price}
+                            {$quote.price|escape:'html':'UTF-8'}
                         </span>
                     </td>
                     <td>
@@ -68,13 +68,13 @@
                             {if $quote.bargain_price ==0}
                                 --
                             {else}
-                                {l  s='Current offer:' mod='quotes'} <span class="color-green2">{$quote.bargain_price}</span>
+                                {l  s='Current offer:' mod='quotes'} <span class="color-green2">{$quote.bargain_price|escape:'html':'UTF-8'}</span>
                             {/if}
                         </span>
                     </td>
                     <td class="text-center">{if $quote.submited == 1}<i class="icon-ok-circle color-green"></i>{elseif $quote.submited == 0}<i class="icon-remove color-red"></i>{else}<i class="icon-mail-forward color-green2"></i>{/if}</td>
                     <td class="table_link">
-                        <a class="show_quote_details" data-id="{$quote.id_quote}" href="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}"><i class="icon-eye-open"></i> {l s='view' mod='quotes'}</a>
+                        <a class="show_quote_details" data-id="{$quote.id_quote|escape:'html':'UTF-8'}" href="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}"><i class="icon-eye-open"></i> {l s='view' mod='quotes'}</a>
                     </td>
                 </tr>
             {/foreach}
@@ -95,7 +95,7 @@
         </a>
     </li>
     <li>
-        <a class="btn btn-default button button-small" href="{$base_dir}">
+        <a class="btn btn-default button button-small" href="{$base_dir|escape:'html':'UTF-8'}">
             <span><i class="icon-chevron-left"></i> {l s='Home' mod='quotes'}</span>
         </a>
     </li>

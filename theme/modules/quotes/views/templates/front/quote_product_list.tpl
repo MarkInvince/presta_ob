@@ -38,7 +38,7 @@
         <tbody>
         {foreach $products as $key=>$product}
             {if is_numeric($key)}
-                <tr id="product_{$product.id}_{$product.id_attribute}">
+                <tr id="product_{$product.id|escape:'intval'}_{$product.id_attribute|escape:'intval'}">
                     <td class="quotes_cart_product">
                         <a href="{$product.link|escape:'html':'UTF-8'}">
                             <img src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'cart_default')|escape:'html':'UTF-8'}" alt="{$product.title|escape:'html':'UTF-8'}" />
@@ -50,26 +50,26 @@
                         </p>
                     </td>
                     <td class="quotes_cart_unit">
-                        {$product.unit_price}
+                        {$product.unit_price|escape:'html':'UTF-8'}
                     </td>
                     <td class="quotes_cart_quantity">
                         <div class="row">
                             <div class="col-lg-8">
-                                <input size="3" maxlength="3" rel="{$product.id}_{$product.id_attribute}" type="text" onkeypress="if(this.value.match(/\D/)) this.value=this.value.replace(/\D/g,'')" onkeyup="if(this.value.match(/\D/)) this.value=this.value.replace(/\D/g,'')" autocomplete="off" class="cart_quantity_input form-control grey" value="{$product.quantity}"  name="quantity_{$product.id}_{$product.id_attribute}" />
+                                <input size="3" maxlength="3" rel="{$product.id|escape:'intval'}_{$product.id_attribute|escape:'intval'}" type="text" onkeypress="if(this.value.match(/\D/)) this.value=this.value.replace(/\D/g,'')" onkeyup="if(this.value.match(/\D/)) this.value=this.value.replace(/\D/g,'')" autocomplete="off" class="cart_quantity_input form-control grey" value="{$product.quantity|escape:'intval'}"  name="quantity_{$product.id|escape:'intval'}_{$product.id_attribute|escape:'intval'}" />
                             </div>
                             <div class="col-lg-2">
                                 <div class="quantity-block">
-                                    <a href="javascript:void(0);" class="quote-plus-button btn btn-default" rel="{$product.id}_{$product.id_attribute}"><i class="icon-chevron-up"></i></a>
-                                    <a href="javascript:void(0);" class="quote-minus-button btn btn-default" rel="{$product.id}_{$product.id_attribute}"><i class="icon-chevron-down"></i></a>
+                                    <a href="javascript:void(0);" class="quote-plus-button btn btn-default" rel="{$product.id|escape:'intval'}_{$product.id_attribute|escape:'intval'}"><i class="icon-chevron-up"></i></a>
+                                    <a href="javascript:void(0);" class="quote-minus-button btn btn-default" rel="{$product.id|escape:'intval'}_{$product.id_attribute|escape:'intval'}"><i class="icon-chevron-down"></i></a>
                                 </div>
                             </div>
                         </div>
                     </td>
                     <td class="quotes_cart_total">
-                        {$product.total_price}
+                        {$product.total_price|escape:'html':'UTF-8'}
                     </td>
                     <td class="quotes_cart_delete">
-                        <a href="javascript:void(0);" rel="{$product.id}_{$product.id_attribute}" class="remove_quote"><i class="icon-remove"></i></a>
+                        <a href="javascript:void(0);" rel="{$product.id|escape:'intval'}_{$product.id_attribute|escape:'intval'}" class="remove_quote"><i class="icon-remove"></i></a>
                     </td>
                 </tr>
             {/if}
@@ -80,7 +80,7 @@
             <td></td>
             <td></td>
             <td></td>
-            <td>{$cart.total}</td>
+            <td>{$cart.total|escape:'html':'UTF-8'}</td>
         </tr>
         </tbody>
     </table>

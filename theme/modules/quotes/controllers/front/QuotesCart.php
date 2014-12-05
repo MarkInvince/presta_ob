@@ -659,7 +659,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController {
 
                 if ($addresses_type == 'address_invoice')
                     foreach($_POST as $key => &$post)
-                        if (isset(Tools::getValue($key.'_invoice')))
+                        if (Tools::getIsset($key.'_invoice'))
                             $post = Tools::getValue($key.'_invoice');
 
                 $this->errors = array_unique(array_merge($this->errors, $$addresses_type->validateController()));

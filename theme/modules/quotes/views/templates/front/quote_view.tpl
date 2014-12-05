@@ -37,7 +37,7 @@
     </tr>
     {foreach from=$quote.products item=product}
 
-        <tr id="product_{$product.id}_{$product.id_attribute}">
+        <tr id="product_{$product.id|escape:'intval'}_{$product.id_attribute|escape:'intval'}">
             <td class="quotes_cart_product">
                 <a href="{$product.link|escape:'html':'UTF-8'}">
                     <img src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'cart_default')|escape:'html':'UTF-8'}" alt="{$product.name|escape:'html':'UTF-8'}" />
@@ -49,13 +49,13 @@
                 </p>
             </td>
             <td class="quotes_cart_unit">
-                {$product.price}
+                {$product.price|escape:'intval'}
             </td>
             <td class="quotes_cart_quantity">
-                {$product.quantity}
+                {$product.quantity|escape:'intval'}
             </td>
             <td class="quotes_cart_total">
-                {$product.price_total}
+                {$product.price_total|escape:'intval'}
             </td>
 
         </tr>
@@ -64,7 +64,7 @@
 
 {if $MESSAGING_ENABLED}
     <form action="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" method="post" id="client_bargain_txt" class="std">
-        <input type="hidden" id="id_quote" name="id_quote" value="{$id_quote}" />
+        <input type="hidden" id="id_quote" name="id_quote" value="{$id_quote|escape:'html':'UTF-8'}" />
         <input type="hidden" name="action" value="addClientBargain" />
         <fieldset>
             <div class="box">
@@ -96,10 +96,10 @@
                                 <p class="bargain_whos">{l s='Your bargain message:' mod='quotes'}</p>
                             </div>
                             <div class="date col-xs-3">
-                                <strong>{l s='Added:' mod='quotes'}</strong> {$bargain.date_add}
+                                <strong>{l s='Added:' mod='quotes'}</strong> {$bargain.date_add|escape:'html':'UTF-8'}
                             </div>
                         </div>
-                        <div class="bargain_message col-xs-12 box">{$bargain.bargain_text}</div>
+                        <div class="bargain_message col-xs-12 box">{$bargain.bargain_text|escape:'html':'UTF-8'}</div>
                     </div>
                 </li>
             {else}
@@ -110,46 +110,46 @@
                                 <p class="bargain_whos">{l s='Administrator bargain message:' mod='quotes'}</p>
                             </div>
                             <div class="date col-xs-3">
-                                <strong>{l s='Added:' mod='quotes'}</strong> {$bargain.date_add}
+                                <strong>{l s='Added:' mod='quotes'}</strong> {$bargain.date_add|escape:'html':'UTF-8'}
                             </div>
                         </div>
                         {if $bargain.bargain_text}
-                            <div class="bargain_message col-xs-12 box">{$bargain.bargain_text}</div>
+                            <div class="bargain_message col-xs-12 box">{$bargain.bargain_text|escape:'html':'UTF-8'}</div>
                         {/if}
                         {if $bargain.bargain_price != 0}
                             <div class="col-xs-6 bargain_price_container clearfix">
                                 <table class="table">
                                     <tr>
                                         <td>{l s='Admins price' mod="quotes"}</td>
-                                        <td class="price">{$bargain.bargain_price_display}</td>
+                                        <td class="price">{$bargain.bargain_price_display|escape:'html':'UTF-8'}</td>
                                     </tr>
                                     {if $bargain.bargain_price_text}
                                         <tr>
                                             <td>{l s='The offer' mod="quotes"}</td>
-                                            <td>{$bargain.bargain_price_text}</td>
+                                            <td>{$bargain.bargain_price_text|escape:'html':'UTF-8'}</td>
                                         </tr>
                                     {/if}
                                 </table>
                                 {if !$bargain.bargain_customer_confirm}
                                     <form  action="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}" method="post" class="burgainSubmitForm std">
                                         <fieldset>
-                                            <a  data-action="reject" data-id="{$bargain.id_bargain}" data-quote="{$id_quote}" class="btn btn-default button button-medium rejectBargainOffer">
+                                            <a  data-action="reject" data-id="{$bargain.id_bargain}" data-quote="{$id_quote|escape:'intval'}" class="btn btn-default button button-medium rejectBargainOffer">
                                                 <span>{l s='Reject offer' mod='quotes'}</span>
                                             </a>
-                                            <a  data-action="accept" data-id="{$bargain.id_bargain}" data-quote="{$id_quote}" class="btn btn-default button button-medium acceptBargainOffer">
+                                            <a  data-action="accept" data-id="{$bargain.id_bargain}" data-quote="{$id_quote|escape:'intval'}" class="btn btn-default button button-medium acceptBargainOffer">
                                                 <span>{l s='Accept offer' mod='quotes'}</span>
                                             </a>
                                         </fieldset>
                                     </form>
                                 {/if}
                                 <div class="bargain_alerts">
-                                    <div id="success_bargain_{$bargain.id_bargain}" {if $bargain.bargain_customer_confirm == 1}style="display: block"{/if} class="alert alert-success">
+                                    <div id="success_bargain_{$bargain.id_bargain|escape:'intval'}" {if $bargain.bargain_customer_confirm == 1}style="display: block"{/if} class="alert alert-success">
                                         {l s='Bargain offer accepted' mod='quotes'}
                                     </div>
-                                    <div id="reject_bargain_{$bargain.id_bargain}" {if $bargain.bargain_customer_confirm == 2}style="display: block"{/if} class="alert alert-warning">
+                                    <div id="reject_bargain_{$bargain.id_bargain|escape:'intval'}" {if $bargain.bargain_customer_confirm == 2}style="display: block"{/if} class="alert alert-warning">
                                         {l s='Bargain offer rejected' mod='quotes'}
                                     </div>
-                                    <div id="danger_bargain_{$bargain.id_bargain}" class="alert alert-danger">
+                                    <div id="danger_bargain_{$bargain.id_bargain|escape:'intval'}" class="alert alert-danger">
                                         {l s='Submit error, try again' mod='quotes'}
                                     </div>
                                     <div {if $quote.submited == 2}style="display: block"{/if} class="alert alert-success">

@@ -87,7 +87,7 @@
                             {*{/if}*}
                             <ol>
                                 {foreach from=$authentification_error item=v}
-                                    <li>{$v}</li>
+                                    <li>{$v|escape:'html':'UTF-8'}</li>
                                 {/foreach}
                             </ol>
                         </div>
