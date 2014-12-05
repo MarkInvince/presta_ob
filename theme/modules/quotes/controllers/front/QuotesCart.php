@@ -115,7 +115,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController
 				$this->context->smarty->assign('cart', $cart);
 
 				$product_count = 0;
-                foreach ($products as $key => $value) {
+                foreach ($products as $value) {
                     $product_count = $product_count + (int)$value['quantity'];
                 }
 				$this->context->smarty->assign('cartTotalProducts', $product_count);
@@ -185,7 +185,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController
 					$this->context->smarty->assign('guestInformations', $this->_getGuestInformations());
 
 				$product_count = 0;
-                foreach ($products as $key => $value) {
+                foreach ($products as $value) {
                     $product_count = $product_count + (int)$value['quantity'];
                 }
 				$this->context->smarty->assign('cartTotalProducts', $product_count);
@@ -250,7 +250,7 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController
 					$this->context->smarty->assign('guestInformations', $this->_getGuestInformations());
 
 				$product_count = 0;
-                foreach ($products as $key => $value) {
+                foreach ($products as $value) {
                     $product_count = $product_count + (int)$value['quantity'];
                 }
 				$this->context->smarty->assign('cartTotalProducts', $product_count);
@@ -679,11 +679,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController
 				$$addresses_type = new Address();
 				$$addresses_type->id_customer = 1;
 
-				if ($addresses_type == 'address_invoice')
-					foreach ($_POST as $key => &$post)
-						if (Tools::getIsset($key . '_invoice'))
-							$post = Tools::getValue($key . '_invoice');
-
 				$this->errors = array_unique(array_merge($this->errors, $$addresses_type->validateController()));
 				if ($addresses_type == 'address_invoice')
 					$_POST = $post_back;
@@ -738,10 +733,6 @@ class quotesQuotesCartModuleFrontController extends ModuleFrontController
 				else {
 					foreach ($addresses_types as $addresses_type) {
 						$$addresses_type->id_customer = (int)$customer->id;
-						if ($addresses_type == 'address_invoice')
-							foreach ($_POST as $key => &$post)
-								if (Tools::getValue($key . '_invoice'))
-									$post = Tools::getValue($key . '_invoice');
 
 						$this->errors = array_unique(array_merge($this->errors, $$addresses_type->validateController()));
 						if ($addresses_type == 'address_invoice')

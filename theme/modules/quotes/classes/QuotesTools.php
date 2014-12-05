@@ -54,15 +54,15 @@ function quoteNum($id_customer)
 	return $result;
 }
 
-function quotesMailConfirm($to, $message, $subject)
+function quotesMailConfirm($template ,$to, $message, $subject)
 {
-	$headers = array();
+	/*$headers = array();
 	$headers[] = "MIME-Version: 1.0";
 	$headers[] = "Content-type: text/html; charset=utf-8";
 	$headers[] = "From: " . Configuration::get('PS_SHOP_NAME') . " <" . Configuration::get('PS_SHOP_EMAIL') . ">";
-	$headers[] = "Reply-To: " . Configuration::get('PS_SHOP_NAME') . " <" . Configuration::get('PS_SHOP_EMAIL') . ">";
+	$headers[] = "Reply-To: " . Configuration::get('PS_SHOP_NAME') . " <" . Configuration::get('PS_SHOP_EMAIL') . ">";*/
 
-	if (mail($to, $subject, $message, implode("\r\n", $headers)))
+	if(Mail::Send($this->context->language->id, $template, $subject, array('{discount}' => $code), $to, null, null, null, null, null, dirname(__FILE__).'/mails/', false, $this->context->shop->id))
 		return true;
 
 	return false;

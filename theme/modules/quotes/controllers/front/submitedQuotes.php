@@ -220,6 +220,31 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController
 					$customer = new Customer($quote['id_customer']);
 
 					$subject = $this->module->l("Accepted offer by customer");
+					$tpl_message_vars = array(
+						'{s_accept_title}' => $this->module->l("Accepted offer"),
+						'{s_accepr_title_information}' => $this->module->l("Accepted quote information"),
+						'{s_quote_id}' => $this->module->l("Quote ID"),
+						'{s_quote_name}' => $this->module->l("Quote name"),
+						'{s_quote_reference}' => $this->module->l("Reference"),
+						'{s_quote_burgain_offer}' => $this->module->l("Burgain offer"),
+						'{s_quote_date_add}' => $this->module->l("Date add"),
+						'{quote_id}' => $quote['id_quote'],
+						'{quote_name}' => $quote['quote_name'],
+						'{quote_reference}' => $quote['reference'],
+						'{quote_burgain}' => $quote['burgain_price'],
+						'{quote_date_add}' => $quote['date_add'],
+						'{s_user_info}' => $this->module->l("User information"),
+						'{s_user_id}' => $this->module->l("user ID"),
+						'{s_firstname}' => $this->module->l("firstname"),
+						'{s_lastname}' => $this->module->l("lastname"),
+						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
+						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
+						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
+						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
+						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
+						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
+						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
+					);
 					$message = '
 							<html>
 							<head>
@@ -259,9 +284,10 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController
 							</html>
 					';
 					// Send e-mail to admin
-					$to = Configuration::get('PS_SHOP_EMAIL');
+					//$to = Configuration::get('PS_SHOP_EMAIL');
 					if (Configuration::get('MAIN_MAILS'))
-						$to .= ', ' . Configuration::get('MAIN_MAILS');
+							$to = Configuration::get('MAIN_MAILS');
+						//$to .= ', ' . Configuration::get('MAIN_MAILS');
 					quotesMailConfirm($to, $message, $subject);
 				}
 
