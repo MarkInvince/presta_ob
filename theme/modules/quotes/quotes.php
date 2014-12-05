@@ -523,7 +523,8 @@ class Quotes extends Module
 		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
 		$this->context->smarty->assign('isLogged', $customer);
 		$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
-        $categories = !empty(Configuration::get('CATEGORY_BOX')) ? explode(',',Configuration::get('CATEGORY_BOX')) : false;
+		$category_box = Configuration::get('CATEGORY_BOX');
+        $categories = !empty($category_box) ? explode(',',$category_box) : false;
         $this->context->smarty->assign('categories', $categories);
 		$this->context->smarty->assign('present_on_product_list',Configuration::get('MAIN_PRODUCT_LIST'));
 		$this->smarty->assign('product', $params['product']);
