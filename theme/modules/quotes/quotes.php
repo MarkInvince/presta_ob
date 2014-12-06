@@ -105,14 +105,13 @@ class Quotes extends Module
 		$tab = new Tab(Configuration::get('MODULE_TAB_ID'));
 		$tab->delete();
 
-		return parent::uninstall() and Configuration::deleteByName('MAIN_STATE') and
-		Configuration::deleteByName('MODULE_TAB_ID') and Configuration::deleteByName('MAIN_QUANTITY_FIELDS') and
-		Configuration::deleteByName('MAIN_ANIMATE') and Configuration::deleteByName('MAIN_TERMS_AND_COND') and
-		Configuration::deleteByName('MAIN_CMS_PAGE') and Configuration::deleteByName('PS_GUEST_QUOTES_ENABLED') and
-		Configuration::deleteByName('ADDRESS_ENABLED') and Configuration::deleteByName('MESSAGING_ENABLED') and
-		Configuration::deleteByName('MAIN_PRODUCT_STATUS') and Configuration::
-			deleteByName('MAIN_PRODUCT_PAGE') and Configuration::deleteByName('MAIN_PRODUCT_LIST') and
-		Configuration::deleteByName('MAIN_MAILS') and Configuration::deleteByName('MESSAGING_ENABLED') and
+		return parent::uninstall() && Configuration::deleteByName('MAIN_STATE') &&
+		Configuration::deleteByName('MODULE_TAB_ID') && Configuration::deleteByName('MAIN_QUANTITY_FIELDS') &&
+		Configuration::deleteByName('MAIN_ANIMATE') && Configuration::deleteByName('MAIN_TERMS_AND_COND') &&
+		Configuration::deleteByName('MAIN_CMS_PAGE') && Configuration::deleteByName('PS_GUEST_QUOTES_ENABLED') &&
+		Configuration::deleteByName('ADDRESS_ENABLED') && Configuration::deleteByName('MESSAGING_ENABLED') &&
+		Configuration::deleteByName('MAIN_PRODUCT_STATUS') && Configuration::deleteByName('MAIN_PRODUCT_PAGE') && Configuration::deleteByName('MAIN_PRODUCT_LIST') &&
+		Configuration::deleteByName('MAIN_MAILS') && Configuration::deleteByName('MESSAGING_ENABLED') &&
 		Configuration::deleteByName('CATEGORY_BOX');
 	}
 
@@ -133,7 +132,8 @@ class Quotes extends Module
 		/**
 		 * If values have been submitted in the form, process.
 		 */
-		if (Tools::getValue('submitMainSettings')) {
+		if (Tools::getValue('submitMainSettings'))
+		{
 			Configuration::updateValue('MAIN_STATE', Tools::getValue('MAIN_STATE'));
 			Configuration::updateValue('MAIN_QUANTITY_FIELDS', Tools::getValue('MAIN_QUANTITY_FIELDS'));
 			Configuration::updateValue('MAIN_ANIMATE', Tools::getValue('MAIN_ANIMATE'));
@@ -147,7 +147,7 @@ class Quotes extends Module
 			Configuration::updateValue('MAIN_PRODUCT_LIST', Tools::getValue('MAIN_PRODUCT_LIST'));
 			Configuration::updateValue('CATEGORY_BOX', implode(',', Tools::getValue('CATEGORY_BOX')));
 
-			if(Validate::isEmail(Tools::getValue('MAIN_MAILS')))
+			if (Validate::isEmail(Tools::getValue('MAIN_MAILS')))
 				Configuration::updateValue('MAIN_MAILS', Tools::getValue('MAIN_MAILS'));
 			else
 				$output .= $this->displayError($this->l('Wrong email format. Please try again'));
@@ -225,7 +225,8 @@ class Quotes extends Module
 							'id' => 'off',
 							'value' => 0,
 							'label' => $this->l('No')),
-					)),
+					)
+				),
 				array(
 					'type' => 'switch',
 					'label' => $this->l('Required terms and conditions'),
@@ -239,7 +240,8 @@ class Quotes extends Module
 							'id' => 'off',
 							'value' => 0,
 							'label' => $this->l('No')),
-					)),
+					)
+				),
 				array(
 					'title' => $this->l('Please select CMS Page with Terms and Conditions'),
 					'label' => $this->l('Select CMS Page with Terms and Rules'),
@@ -265,7 +267,8 @@ class Quotes extends Module
 							'id' => 'off',
 							'value' => 0,
 							'label' => $this->l('No')),
-					)),
+					)
+				),
 				array(
 					'type' => 'switch',
 					'label' => $this->l('User messaging'),
@@ -280,7 +283,8 @@ class Quotes extends Module
 							'id' => 'off',
 							'value' => 0,
 							'label' => $this->l('No')),
-					)),
+					)
+				),
 				array(
 					'type' => 'switch',
 					'label' => $this->l('Filtered on product status'),
@@ -295,7 +299,8 @@ class Quotes extends Module
 							'id' => 'off',
 							'value' => 0,
 							'label' => $this->l('No')),
-					)),
+					)
+				),
 				array(
 					'type' => 'switch',
 					'label' => $this->l('Button on product page'),
@@ -309,7 +314,8 @@ class Quotes extends Module
 							'id' => 'off',
 							'value' => 0,
 							'label' => $this->l('No')),
-					)),
+					)
+				),
 				array(
 					'type' => 'switch',
 					'label' => $this->l('Button on product list'),
@@ -323,12 +329,14 @@ class Quotes extends Module
 							'id' => 'off',
 							'value' => 0,
 							'label' => $this->l('No')),
-					)),
+					)
+				),
 				array(
 					'type' => 'text',
 					'label' => $this->l('Email addresses:'),
 					'name' => 'MAIN_MAILS',
-					'desc' => 'Enter the email addresses separated by a comma (",") where you need submitted quotes to be sent'),
+					'desc' => 'Enter the email addresses separated by a comma (",") where you need submitted quotes to be sent'
+				),
 				array(
 					'type' => 'categories',
 					'name' => 'CATEGORY_BOX',
@@ -337,7 +345,10 @@ class Quotes extends Module
 						'title' => $this->l('Filter on category base'),
 						'use_search' => 1,
 						'use_checkbox' => 1,
-						'selected_categories' => explode(',', Configuration::get('CATEGORY_BOX'))))),
+						'selected_categories' => explode(',', Configuration::get('CATEGORY_BOX'))
+					)
+				)
+			),
 			'bottom' => '<script type="text/javascript">showBlock(element);hideBlock(element);</script>',
 			'submit' => array('title' => $this->l('Save'), )), );
 
@@ -348,9 +359,7 @@ class Quotes extends Module
 		$helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
 		$helper->identifier = $this->identifier;
 		$helper->submit_action = 'submitMainSettings';
-		$helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) .
-			'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->
-				name;
+		$helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
 		$helper->token = Tools::getAdminTokenLite('AdminModules');
 		$helper->tpl_vars = array(
 			'fields_value' => $this->getConfigFormValues(),
@@ -407,7 +416,8 @@ class Quotes extends Module
 
 		$products = array();
 		// check for user cart session. Defined in QuotesCart if user add product to quote box
-		if ($this->context->cookie->__isset('request_id')) {
+		if ($this->context->cookie->__isset('request_id'))
+		{
 			$quote_obj->id_quote = $this->context->cookie->__get('request_id');
 			list($products, $cart) = $quote_obj->getProducts();
 		}
@@ -417,18 +427,16 @@ class Quotes extends Module
 		$this->context->smarty->assign('cart', $cart);
 		$this->context->smarty->assign('active_overlay', 0);
 
-		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->
-			id_customer : 0);
+		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
 
 		$this->context->smarty->assign('isLogged', $customer);
 
 		$product_count = 0;
-		for($i = 0; $i < count($products); $i++) {
+		$array_count = count($products);
+		for ($i = 0; $i < $array_count; $i++)
 			$product_count = $product_count + (int)$products[$i]['quantity'];
-		}
 		$this->context->smarty->assign('cartTotalProducts', (int)$product_count);
-		$this->context->smarty->assign('quotesCart', $this->context->link->
-			getModuleLink($this->name, 'QuotesCart', array(), true));
+		$this->context->smarty->assign('quotesCart', $this->context->link->getModuleLink($this->name, 'QuotesCart', array(), true));
 
 		if (Configuration::get('MAIN_STATE'))
 			return $this->display(__file__, 'quotesCart.tpl');
@@ -439,11 +447,9 @@ class Quotes extends Module
 	 */
 	public function hookextraRight()
 	{
-		$product = new Product(Tools::getValue('id_product'), (int)$this->context->
-			language->id, true);
+		$product = new Product(Tools::getValue('id_product'), (int)$this->context->language->id, true);
 
-		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->
-			id_customer : 0);
+		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
 
 		$this->context->smarty->assign('isLogged', $customer);
 		$this->context->smarty->assign('product', $product);
@@ -461,30 +467,13 @@ class Quotes extends Module
 	/**
 	 * Add ask to quote button to product
 	 */
-		/*public function hookdisplayProductButtons()
-		{
-			$product = new Product(Tools::getValue('id_product'), (int)$this->context->language->id, true);
-
-			$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
-
-			$this->context->smarty->assign('isLogged', $customer);
-			$this->context->smarty->assign('product', $product);
-			$this->context->smarty->assign('enableAnimation',Configuration::get('MAIN_ANIMATE'));
-
-			$linkCore = new Link;
-			$this->context->smarty->assign('plink', $linkCore->getProductLink($product->id, $product->link_rewrite, $product->id_category_default));
-
-			if (Configuration::get('MAIN_STATE'))
-				return $this->display(__FILE__, 'extraRight.tpl');
-		}*/
 
 	/**
 	 * Add ask to quote button to product list
 	 */
 	public function hookdisplayProductListFunctionalButtons($params)
 	{
-		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->
-			id_customer : 0);
+		$customer = (($this->context->cookie->logged) ? (int)$this->context->cookie->id_customer : 0);
 		$this->context->smarty->assign('isLogged', $customer);
 		$this->context->smarty->assign('enableAnimation', Configuration::get('MAIN_ANIMATE'));
 		$category_box = Configuration::get('CATEGORY_BOX');
@@ -521,18 +510,19 @@ class Quotes extends Module
 	{
 		$pages = CMS::getCMSPages((int)$this->context->language->id, null, true);
 		$out = array();
-		if (!empty($pages)) {
-			foreach ($pages as $page) {
+		if (!empty($pages))
+		{
+			foreach ($pages as $page)
+			{
 				$out[] = array(
 					'id' => $page['id_cms'],
 					'value' => $page['id_cms'],
 					'name' => $page['meta_title']);
 			}
-		} else
+		}
+		else
 			$out[] = array('name' => $this->l('No cms pages found'));
 
 		return $out;
 	}
-
-
 }

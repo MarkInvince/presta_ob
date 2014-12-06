@@ -34,8 +34,7 @@ class QuotesObj
 		if (!$id_customer)
 			return false;
 
-		$sql = "SELECT * FROM `" . _DB_PREFIX_ . "quotes` WHERE `id_customer` = " . $id_customer . " ORDER BY `id_quote` DESC";
-
+		$sql = 'SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `id_customer` = '.$id_customer.' ORDER BY `id_quote` DESC';
 		return Db::getInstance()->executeS($sql);
 
 	}
@@ -45,19 +44,19 @@ class QuotesObj
 		if (!$id_quote)
 			return false;
 
-		$sql = "SELECT * FROM `" . _DB_PREFIX_ . "quotes` WHERE `id_quote` = " . $id_quote;
+		$sql = 'SELECT * FROM `'._DB_PREFIX_.'quotes` WHERE `id_quote` = '.$id_quote;
 
 		return Db::getInstance()->executeS($sql);
 	}
 
-	public function renameQuote($id_quote = false, $quoteName)
+	public function renameQuote($id_quote = false, $quote_name)
 	{
 		if (!$id_quote)
 			return false;
 
-		$sql = "UPDATE `" . _DB_PREFIX_ . "quotes` SET
-					`quote_name` = '" . $quoteName . "'
-						WHERE `id_quote`=" . $id_quote;
+		$sql = 'UPDATE `'._DB_PREFIX_.'quotes` SET
+					`quote_name` = "'.$quote_name.'"
+						WHERE `id_quote`='.$id_quote;
 
 		return Db::getInstance()->execute($sql);
 	}
@@ -66,7 +65,7 @@ class QuotesObj
 	{
 		if (!$id_quote)
 			return false;
-		$sql = "SELECT * FROM `" . _DB_PREFIX_ . "quotes_bargains` WHERE `id_quote`=" . $id_quote . " ORDER BY `id_bargain` DESC";
+		$sql = 'SELECT * FROM `'._DB_PREFIX_.'quotes_bargains` WHERE `id_quote`='.$id_quote.' ORDER BY `id_bargain` DESC';
 
 		return Db::getInstance()->executeS($sql);
 	}
@@ -76,20 +75,20 @@ class QuotesObj
 		if (!$id_quote)
 			return false;
 		$date_add = date('Y-m-d H:i:s', time());
-		$sql = "INSERT INTO `" . _DB_PREFIX_ . "quotes_bargains` SET
-					`id_quote` = " . $id_quote . ",
-					`bargain_whos` = '" . $whos . "',
-					`bargain_text` = '" . $text . "',
-					`date_add` = '" . $date_add . "',
-					`bargain_price` = " . $price . ",
-					`bargain_price_text` = '" . $price_text . "',
-					`bargain_customer_confirm` = 0
-		";
+		$sql = 'INSERT INTO `'._DB_PREFIX_.'quotes_bargains` SET
+					`id_quote` = '.$id_quote.',
+					`bargain_whos` = "'.$whos.'",
+					`bargain_text` = "'.$text.'",
+					`date_add` = "'.$date_add.'",
+					`bargain_price` = '.$price.',
+					`bargain_price_text` = "'.$price_text.'",
+					`bargain_customer_confirm` = 0';
 
 		$result = Db::getInstance()->execute($sql);
 
-		if ($result) {
-			$sql = "UPDATE `" . _DB_PREFIX_ . "quotes` SET `burgain_price` = " . $price . " WHERE `id_quote`=" . $id_quote;
+		if ($result)
+		{
+			$sql = 'UPDATE `'._DB_PREFIX_.'quotes` SET `burgain_price` = '.$price.' WHERE `id_quote`='.$id_quote;
 			if (Db::getInstance()->execute($sql))
 				return true;
 		}
@@ -101,7 +100,7 @@ class QuotesObj
 	{
 		if (!$id_bargain)
 			return false;
-		$sql = "DELETE FROM `" . _DB_PREFIX_ . "quotes_bargains` WHERE `id_bargain`=" . $id_bargain;
+		$sql = 'DELETE FROM `'._DB_PREFIX_.'quotes_bargains` WHERE `id_bargain`='.$id_bargain;
 
 		return Db::getInstance()->execute($sql);
 	}
@@ -111,21 +110,23 @@ class QuotesObj
 		if (!$id_bargain)
 			return false;
 
-		if ($action == 'reject') {
-			$sql = "UPDATE `" . _DB_PREFIX_ . "quotes_bargains` SET
-					`bargain_customer_confirm` = 2
-						WHERE `id_bargain`=" . $id_bargain;
+		if ($action == 'reject')
+		{
+			$sql = 'UPDATE `'._DB_PREFIX_.'quotes_bargains` SET
+					`bargain_customer_confirm` = 2 WHERE `id_bargain`='.$id_bargain;
 
 			return Db::getInstance()->execute($sql);
 		}
-		elseif ($action == 'accept') {
-			$sql = "UPDATE `" . _DB_PREFIX_ . "quotes_bargains` SET
+		elseif ($action == 'accept')
+		{
+			$sql = 'UPDATE `'._DB_PREFIX_.'quotes_bargains` SET
 				`bargain_customer_confirm` = 1
-					WHERE `id_bargain`=" . $id_bargain;
-			if (Db::getInstance()->execute($sql)) {
-				$sql = "UPDATE `" . _DB_PREFIX_ . "quotes` SET
+					WHERE `id_bargain`='.$id_bargain;
+			if (Db::getInstance()->execute($sql))
+			{
+				$sql = 'UPDATE `'._DB_PREFIX_.'quotes` SET
 				`submited` = 1
-					WHERE `id_quote`=" . $id_quote;
+					WHERE `id_quote`='.$id_quote;
 				if (Db::getInstance()->execute($sql))
 					return true;
 			}
@@ -138,9 +139,9 @@ class QuotesObj
 	{
 		if (!$id_quote)
 			return false;
-		$sql = "UPDATE `" . _DB_PREFIX_ . "quotes` SET
+		$sql = 'UPDATE `'._DB_PREFIX_.'quotes` SET
 				`submited` = 2
-					WHERE `id_quote`=" . $id_quote;
+					WHERE `id_quote`='.$id_quote;
 		if (Db::getInstance()->execute($sql))
 			return true;
 
