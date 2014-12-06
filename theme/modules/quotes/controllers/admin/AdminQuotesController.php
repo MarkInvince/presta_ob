@@ -33,7 +33,6 @@ class AdminQuotesController extends ModuleAdminController
 	{
 		$this->bootstrap = true;
 		$this->context = Context::getContext();
-		$this->_defaultorderWay = 'DESC';
 
 		$this->squotes = new QuotesSubmitCore;
 
@@ -72,14 +71,16 @@ class AdminQuotesController extends ModuleAdminController
 		if (Tools::getIsset('action'))
 		{
 			if (Tools::getValue('action') == 'view')
-				Tools::redirectAdmin($this->context->link->getAdminLink('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
+				Tools::redirectAdmin($this->context->link->getAdminLink('AdminQuotes').
+					'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
 			if (Tools::getValue('action') == 'delete')
 				die(Tools::jsonEncode(array('data' => $this->processDeleteAdmin(Tools::getValue('item')))));
 		}
 		if (Tools::isSubmit('addClientBargain'))
 		{
 			$this->addAdminBargain(Tools::getValue('id_quote'));
-			Tools::redirectAdmin($this->context->link->getAdminLink('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
+			Tools::redirectAdmin($this->context->link->getAdminLink('AdminQuotes').'&id_quote='.
+				Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
 		}
 
 		if (Tools::getValue('actionBargainDelete'))
@@ -88,7 +89,8 @@ class AdminQuotesController extends ModuleAdminController
 		if (Tools::isSubmit('transformQuote'))
 		{
 			$this->transormQuote(Tools::getValue('id_cart'), 1, Tools::getValue('total_products'));
-			Tools::redirectAdmin($this->context->link->getAdminLink('AdminQuotes').'&id_quote='.Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
+			Tools::redirectAdmin($this->context->link->getAdminLink('AdminQuotes').'&id_quote='.
+				Tools::getValue('id_quote').'&id_customer='.Tools::getValue('id_customer'));
 		}
 	}
 
@@ -268,7 +270,7 @@ class AdminQuotesController extends ModuleAdminController
 			$count = Order::getByReference($reference)->count();
 			while ($count);
 
-			$this->currentOrderReference = $reference;
+			$this->current_order_reference = $reference;
 
 			$discount = $amount_paid - Tools::getValue('bargain_price');
 			if ($discount < 0 || !$discount)
@@ -282,7 +284,8 @@ class AdminQuotesController extends ModuleAdminController
 					foreach ($data['package_list'] as $id_package)
 					{
 						// Rewrite the id_warehouse
-						$package_list[$id_address][$id_package]['id_warehouse'] = (int)$this->context->cart->getPackageIdWarehouse($package_list[$id_address][$id_package], (int)$id_carrier);
+						$package_list[$id_address][$id_package]['id_warehouse'] =
+							(int)$this->context->cart->getPackageIdWarehouse($package_list[$id_address][$id_package], (int)$id_carrier);
 						$package_list[$id_address][$id_package]['id_carrier'] = $id_carrier;
 					}
 			// Make sure CarRule caches are empty
@@ -295,7 +298,8 @@ class AdminQuotesController extends ModuleAdminController
 					if ($error = $rule->checkValidity($this->context, true, true))
 					{
 						$this->context->cart->removeCartRule((int)$rule->id);
-						if (isset($this->context->cookie) && isset($this->context->cookie->id_customer) && $this->context->cookie->id_customer && !empty($rule->code))
+						if (isset($this->context->cookie) && isset($this->context->cookie->id_customer) &&
+							$this->context->cookie->id_customer && !empty($rule->code))
 						{
 							if (Configuration::get('PS_ORDER_PROCESS_TYPE') == 1)
 								Tools::redirect('index.php?controller=order-opc&submitAddDiscount=1&discount_name='.urlencode($rule->code));
@@ -303,16 +307,19 @@ class AdminQuotesController extends ModuleAdminController
 						}
 						else
 						{
-							$rule_name = isset($rule->name[(int)$this->context->cart->id_lang]) ? $rule->name[(int)$this->context->cart->id_lang] : $rule->code;
-							$error = Tools::displayError(sprintf('CartRule ID %1s (%2s) used in this cart is not valid and has been withdrawn from cart', (int)$rule->id, $rule_name));
+							$rule_name = isset($rule->name[(int)$this->context->cart->id_lang]) ?
+								$rule->name[(int)$this->context->cart->id_lang] : $rule->code;
+							$error = Tools::displayError(
+								sprintf('CartRule ID %1s (%2s) used in this cart is not valid and has been withdrawn from cart',
+									(int)$rule->id, $rule_name));
 							PrestaShopLogger::addLog($error, 3, '0000002', 'Cart', (int)$this->context->cart->id);
 						}
 					}
 				}
 			}
 
-			foreach ($package_list as $id_address => $packageByAddress)
-				foreach ($packageByAddress as $id_package => $package)
+			foreach ($package_list as $id_address => $package_by_address)
+				foreach ($package_by_address as $id_package => $package)
 				{
 					$order = new Order();
 					$order->product_list = $package['product_list'];
@@ -364,47 +371,58 @@ class AdminQuotesController extends ModuleAdminController
 					$amount_paid = !$dont_touch_amount ? Tools::ps_round((float)$amount_paid, 2) : $amount_paid;
 					$order->total_paid_real = 0;
 
-					$order->total_products = (float)$this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS, $order->product_list, $id_carrier);
-					$order->total_products_wt = (float)$this->context->cart->getOrderTotal(true, Cart::ONLY_PRODUCTS, $order->product_list, $id_carrier);
+					$order->total_products = (float)$this->context->cart->getOrderTotal(false,
+						Cart::ONLY_PRODUCTS, $order->product_list, $id_carrier);
+					$order->total_products_wt = (float)$this->context->cart->getOrderTotal(true,
+						Cart::ONLY_PRODUCTS, $order->product_list, $id_carrier);
 
-					$order->total_discounts_tax_excl = (float)abs($this->context->cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS, $order->product_list, $id_carrier));
-					$order->total_discounts_tax_incl = (float)abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS, $order->product_list, $id_carrier));
+					$order->total_discounts_tax_excl = (float)abs($this->context->cart->getOrderTotal(false,
+						Cart::ONLY_DISCOUNTS, $order->product_list, $id_carrier));
+					$order->total_discounts_tax_incl = (float)abs($this->context->cart->getOrderTotal(true,
+						Cart::ONLY_DISCOUNTS, $order->product_list, $id_carrier));
 
 					$order->total_discounts_tax_incl = (float)$discount;
 
 					$order->total_discounts = (float)$order->total_discounts_tax_incl;
 
-					$order->total_shipping_tax_excl = (float)$this->context->cart->getPackageShippingCost((int)$id_carrier, false, null, $order->product_list);
-					$order->total_shipping_tax_incl = (float)$this->context->cart->getPackageShippingCost((int)$id_carrier, true, null, $order->product_list);
+					$order->total_shipping_tax_excl = (float)$this->context->cart->getPackageShippingCost((int)$id_carrier,
+						false, null, $order->product_list);
+					$order->total_shipping_tax_incl = (float)$this->context->cart->getPackageShippingCost((int)$id_carrier,
+						true, null, $order->product_list);
 					$order->total_shipping = $order->total_shipping_tax_incl;
 
 					if (!is_null($carrier) && Validate::isLoadedObject($carrier))
-						$order->carrier_tax_rate = $carrier->getTaxesRate(new Address($this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
+						$order->carrier_tax_rate =
+							$carrier->getTaxesRate(
+								new Address($this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
 
-					$order->total_wrapping_tax_excl = (float)abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $id_carrier));
-					$order->total_wrapping_tax_incl = (float)abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $id_carrier));
+					$order->total_wrapping_tax_excl =
+						(float)abs($this->context->cart->getOrderTotal(false,
+							Cart::ONLY_WRAPPING, $order->product_list, $id_carrier));
+					$order->total_wrapping_tax_incl =
+						(float)abs($this->context->cart->getOrderTotal(true,
+							Cart::ONLY_WRAPPING, $order->product_list, $id_carrier));
 					$order->total_wrapping = $order->total_wrapping_tax_incl;
 
-					$order->total_paid_tax_excl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $id_carrier), 2);
-
+					$order->total_paid_tax_excl =
+						(float)Tools::ps_round((float)$this->context->cart->getOrderTotal(false,
+							Cart::BOTH, $order->product_list, $id_carrier), 2);
 					$oredr_total = Tools::getValue('bargain_price');
 					if ($oredr_total)
 						$order->total_paid_tax_incl = (float)Tools::ps_round((float)$oredr_total);
 					else
-						$order->total_paid_tax_incl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $id_carrier), 2);
-
+						$order->total_paid_tax_incl =
+							(float)Tools::ps_round((float)$this->context->cart->getOrderTotal(true,
+								Cart::BOTH, $order->product_list, $id_carrier), 2);
 					$order->total_paid = $order->total_paid_tax_incl;
-
 					$order->invoice_date = '0000-00-00 00:00:00';
 					$order->delivery_date = '0000-00-00 00:00:00';
-
-
 					// Creating order
 					$result = $order->add();
-
 					if (!$result)
 					{
-						PrestaShopLogger::addLog('PaymentModule::validateOrder - Order cannot be created', 3, null, 'Cart', (int)$id_cart, true);
+						PrestaShopLogger::addLog('PaymentModule::validateOrder - Order cannot be created',
+							3, null, 'Cart', (int)$id_cart, true);
 						throw new PrestaShopException('Can\'t save Order');
 					}
 					else
@@ -414,23 +432,15 @@ class AdminQuotesController extends ModuleAdminController
 						));
 						$this->bargains->submitTransformQuote(Tools::getValue('id_quote'));
 					}
-
-					// Amount paid by customer is not the right one -> Status = payment error
-					// We don't use the following condition to avoid the float precision issues : http://www.php.net/manual/en/language.types.float.php
-					// if ($order->total_paid != $order->total_paid_real)
-					// We use number_format in order to compare two string
 					if ($order_status->logable && number_format($cart_total_paid, 2) != number_format($amount_paid, 2))
 						$id_order_state = Configuration::get('PS_OS_ERROR');
 
 					$order_list[] = $order;
-
-
 					// Insert new Order detail list using cart for the current order
 					$order_detail = new OrderDetail(null, null, $this->context);
-					$order_detail->createList($order, $this->context->cart, $id_order_state, $order->product_list, 0, true, $package_list[$id_address][$id_package]['id_warehouse']);
+					$order_detail->createList($order, $this->context->cart, $id_order_state,
+						$order->product_list, 0, true, $package_list[$id_address][$id_package]['id_warehouse']);
 					$order_detail_list[] = $order_detail;
-
-
 					// Adding an entry in order_carrier table
 					if (!is_null($carrier))
 					{
@@ -508,10 +518,12 @@ class AdminQuotesController extends ModuleAdminController
 					{
 						$price = Product::getPriceStatic((int)$product['id_product'], false, ($product['id_product_attribute']
 							? (int)$product['id_product_attribute']
-							: null), 6, null, false, true, $product['cart_quantity'], false, (int)$order->id_customer, (int)$order->id_cart, (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
+							: null), 6, null, false, true, $product['cart_quantity'], false,
+							(int)$order->id_customer, (int)$order->id_cart, (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
 						$price_wt = Product::getPriceStatic((int)$product['id_product'], true, ($product['id_product_attribute']
 							? (int)$product['id_product_attribute']
-							: null), 2, null, false, true, $product['cart_quantity'], false, (int)$order->id_customer, (int)$order->id_cart, (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
+							: null), 2, null, false, true, $product['cart_quantity'], false, (int)$order->id_customer,
+							(int)$order->id_cart, (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
 
 						$product_price = Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2)
 							: $price_wt;
@@ -561,8 +573,10 @@ class AdminQuotesController extends ModuleAdminController
 					$product_list_html = '';
 					if (count($product_var_tpl_list) > 0)
 					{
-						$product_list_txt = $this->getEmailTemplateContent('order_conf_product_list.txt', Mail::TYPE_TEXT, $product_var_tpl_list);
-						$product_list_html = $this->getEmailTemplateContent('order_conf_product_list.tpl', Mail::TYPE_HTML, $product_var_tpl_list);
+						$product_list_txt = $this->getEmailTemplateContent('order_conf_product_list.txt',
+							Mail::TYPE_TEXT, $product_var_tpl_list);
+						$product_list_html = $this->getEmailTemplateContent('order_conf_product_list.tpl',
+							Mail::TYPE_HTML, $product_var_tpl_list);
 					}
 
 					$cart_rules_list = array();
@@ -593,7 +607,8 @@ class AdminQuotesController extends ModuleAdminController
 						** The voucher is cloned with a new value corresponding to the remainder
 						*/
 
-						if (count($order_list) == 1 && $values['tax_incl'] > ($order->total_products_wt - $total_reduction_value_ti) && $cart_rule['obj']->partial_use == 1 && $cart_rule['obj']->reduction_amount > 0)
+						if (count($order_list) == 1 && $values['tax_incl'] > ($order->total_products_wt - $total_reduction_value_ti) &&
+							$cart_rule['obj']->partial_use == 1 && $cart_rule['obj']->reduction_amount > 0)
 						{
 							// Create a new voucher from the original
 							$voucher = new CartRule($cart_rule['obj']->id); // We need to instantiate the CartRule without lang parameter to allow saving it
@@ -661,7 +676,9 @@ class AdminQuotesController extends ModuleAdminController
 
 						$order->addCartRule($cart_rule['obj']->id, $cart_rule['obj']->name, $values, 0, $cart_rule['obj']->free_shipping);
 
-						if ($id_order_state != Configuration::get('PS_OS_ERROR') && $id_order_state != Configuration::get('PS_OS_CANCELED') && !in_array($cart_rule['obj']->id, $cart_rule_used))
+						if ($id_order_state != Configuration::get('PS_OS_ERROR') &&
+							$id_order_state != Configuration::get('PS_OS_CANCELED') &&
+							!in_array($cart_rule['obj']->id, $cart_rule_used))
 						{
 							$cart_rule_used[] = $cart_rule['obj']->id;
 
@@ -750,7 +767,8 @@ class AdminQuotesController extends ModuleAdminController
 					$order = new Order($order->id);
 
 					// Send an e-mail to customer (one order = one email)
-					if ($id_order_state != Configuration::get('PS_OS_ERROR') && $id_order_state != Configuration::get('PS_OS_CANCELED') && $this->context->customer->id)
+					if ($id_order_state != Configuration::get('PS_OS_ERROR') &&
+						$id_order_state != Configuration::get('PS_OS_CANCELED') && $this->context->customer->id)
 					{
 						$invoice = new Address($order->id_address_invoice);
 						$delivery = new Address($order->id_address_delivery);
@@ -761,13 +779,13 @@ class AdminQuotesController extends ModuleAdminController
 							'{firstname}'			=> $this->context->customer->firstname,
 							'{lastname}'			 => $this->context->customer->lastname,
 							'{email}'				=> $this->context->customer->email,
-							'{delivery_block_txt}'   => $this->_getFormatedAddress($delivery, "\n"),
-							'{invoice_block_txt}'	=> $this->_getFormatedAddress($invoice, "\n"),
-							'{delivery_block_html}'  => $this->_getFormatedAddress($delivery, '<br />', array(
+							'{delivery_block_txt}'   => $this->getFormatedAddress($delivery, "\n"),
+							'{invoice_block_txt}'	=> $this->getFormatedAddress($invoice, "\n"),
+							'{delivery_block_html}'  => $this->getFormatedAddress($delivery, '<br />', array(
 									'firstname' => '<span style="font-weight:bold;">%s</span>',
 									'lastname'  => '<span style="font-weight:bold;">%s</span>'
 								)),
-							'{invoice_block_html}'   => $this->_getFormatedAddress($invoice, '<br />', array(
+							'{invoice_block_html}'   => $this->getFormatedAddress($invoice, '<br />', array(
 									'firstname' => '<span style="font-weight:bold;">%s</span>',
 									'lastname'  => '<span style="font-weight:bold;">%s</span>'
 								)),
@@ -804,11 +822,17 @@ class AdminQuotesController extends ModuleAdminController
 							'{discounts}'			=> $cart_rules_list_html,
 							'{discounts_txt}'		=> $cart_rules_list_txt,
 							'{total_paid}'		   => Tools::displayPrice($order->total_paid, $this->context->currency, false),
-							'{total_products}'	   => Tools::displayPrice($order->total_paid - $order->total_shipping - $order->total_wrapping + $order->total_discounts, $this->context->currency, false),
+							'{total_products}'	   =>
+								Tools::displayPrice($order->total_paid - $order->total_shipping -
+									$order->total_wrapping + $order->total_discounts,
+									$this->context->currency, false),
 							'{total_discounts}'	  => Tools::displayPrice($order->total_discounts, $this->context->currency, false),
 							'{total_shipping}'	   => Tools::displayPrice($order->total_shipping, $this->context->currency, false),
 							'{total_wrapping}'	   => Tools::displayPrice($order->total_wrapping, $this->context->currency, false),
-							'{total_tax_paid}'	   => Tools::displayPrice(($order->total_products_wt - $order->total_products) + ($order->total_shipping_tax_incl - $order->total_shipping_tax_excl), $this->context->currency, false)
+							'{total_tax_paid}'	   =>
+								Tools::displayPrice(($order->total_products_wt - $order->total_products) +
+									($order->total_shipping_tax_incl - $order->total_shipping_tax_excl),
+									$this->context->currency, false)
 						);
 
 						if (is_array($extra_vars))
@@ -820,7 +844,8 @@ class AdminQuotesController extends ModuleAdminController
 						{
 							$pdf = new PDF($order->getInvoicesCollection(), PDF::TEMPLATE_INVOICE, $this->context->smarty);
 							$file_attachement['content'] = $pdf->render(false);
-							$file_attachement['name'] = Configuration::get('PS_INVOICE_PREFIX', (int)$order->id_lang, null, $order->id_shop).sprintf('%06d', $order->invoice_number).'.pdf';
+							$file_attachement['name'] = Configuration::get('PS_INVOICE_PREFIX', (int)$order->id_lang,
+									null, $order->id_shop).sprintf('%06d', $order->invoice_number).'.pdf';
 							$file_attachement['mime'] = 'application/pdf';
 						}
 
@@ -884,7 +909,8 @@ class AdminQuotesController extends ModuleAdminController
 		if ($email_configuration != $mail_type && $email_configuration != Mail::TYPE_BOTH)
 			return '';
 
-		$theme_template_path = _PS_THEME_DIR_.'mails'.DIRECTORY_SEPARATOR.$this->context->language->iso_code.DIRECTORY_SEPARATOR.$template_name;
+		$theme_template_path = _PS_THEME_DIR_.'mails'.DIRECTORY_SEPARATOR.
+			$this->context->language->iso_code.DIRECTORY_SEPARATOR.$template_name;
 		$default_mail_template_path = _PS_MAIL_DIR_.$this->context->language->iso_code.DIRECTORY_SEPARATOR.$template_name;
 
 		if (Tools::file_exists_cache($theme_template_path))
@@ -905,7 +931,7 @@ class AdminQuotesController extends ModuleAdminController
 	 * @return String the txt formated address block
 	 */
 
-	protected function _getFormatedAddress(Address $the_address, $line_sep, $fields_style = array())
+	protected function getFormatedAddress(Address $the_address, $line_sep, $fields_style = array())
 	{
 		return AddressFormat::generateAddress($the_address, array('avoid' => array()), $line_sep, ' ', $fields_style);
 	}

@@ -79,11 +79,11 @@ class Quotes extends Module
 		Configuration::updateValue('ADDRESS_ENABLED', '0');
 		Configuration::updateValue('MESSAGING_ENABLED', '1');
 		Configuration::updateValue('MAIN_PRODUCT_STATUS', '0');
+		Configuration::updateValue('MAIN_POP_SUBMIT', '0');
 		Configuration::updateValue('MAIN_PRODUCT_PAGE', '1');
 		Configuration::updateValue('MAIN_PRODUCT_LIST', '1');
 		Configuration::updateValue('MAIN_MAILS', Configuration::get('PS_SHOP_EMAIL'));
 		Configuration::updateValue('CATEGORY_BOX', '');
-
 
 		return parent::install() && $this->registerHook('header')
 		&& $this->registerHook('extraRight')
@@ -110,7 +110,8 @@ class Quotes extends Module
 		Configuration::deleteByName('MAIN_ANIMATE') && Configuration::deleteByName('MAIN_TERMS_AND_COND') &&
 		Configuration::deleteByName('MAIN_CMS_PAGE') && Configuration::deleteByName('PS_GUEST_QUOTES_ENABLED') &&
 		Configuration::deleteByName('ADDRESS_ENABLED') && Configuration::deleteByName('MESSAGING_ENABLED') &&
-		Configuration::deleteByName('MAIN_PRODUCT_STATUS') && Configuration::deleteByName('MAIN_PRODUCT_PAGE') && Configuration::deleteByName('MAIN_PRODUCT_LIST') &&
+		Configuration::deleteByName('MAIN_PRODUCT_STATUS') && Configuration::deleteByName('MAIN_PRODUCT_PAGE') &&
+		Configuration::deleteByName('MAIN_PRODUCT_LIST') && Configuration::deleteByName('MAIN_POP_SUBMIT') &&
 		Configuration::deleteByName('MAIN_MAILS') && Configuration::deleteByName('MESSAGING_ENABLED') &&
 		Configuration::deleteByName('CATEGORY_BOX');
 	}
@@ -145,6 +146,7 @@ class Quotes extends Module
 			Configuration::updateValue('MAIN_PRODUCT_STATUS', Tools::getValue('MAIN_PRODUCT_STATUS'));
 			Configuration::updateValue('MAIN_PRODUCT_PAGE', Tools::getValue('MAIN_PRODUCT_PAGE'));
 			Configuration::updateValue('MAIN_PRODUCT_LIST', Tools::getValue('MAIN_PRODUCT_LIST'));
+			Configuration::updateValue('MAIN_POP_SUBMIT', Tools::getValue('MAIN_POP_SUBMIT'));
 			Configuration::updateValue('CATEGORY_BOX', implode(',', Tools::getValue('CATEGORY_BOX')));
 
 			if (Validate::isEmail(Tools::getValue('MAIN_MAILS')))
@@ -163,7 +165,7 @@ class Quotes extends Module
 	 */
 	protected function renderForm()
 	{
-		$options = $this->_generateCMS();
+		$options = $this->generateCMS();
 		$fields_form = array('form' => array(
 			'legend' => array('title' => $this->l('Settings'), 'icon' => 'icon-cogs'),
 			'input' => array(
@@ -201,6 +203,21 @@ class Quotes extends Module
 					'type' => 'switch',
 					'label' => $this->l('Animate product to fly to cart (else popup option)'),
 					'name' => 'MAIN_ANIMATE',
+					'values' => array(
+						array(
+							'id' => 'on',
+							'value' => 1,
+							'label' => $this->l('Yes')),
+						array(
+							'id' => 'off',
+							'value' => 0,
+							'label' => $this->l('No')),
+					),
+				),
+				array(
+					'type' => 'switch',
+					'label' => $this->l('Enable Submit Quotes from popup'),
+					'name' => 'MAIN_POP_SUBMIT',
 					'values' => array(
 						array(
 							'id' => 'on',
@@ -356,10 +373,12 @@ class Quotes extends Module
 		$helper->show_toolbar = false;
 		$lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
 		$helper->default_form_language = $lang->id;
-		$helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+		$helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ?
+			Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
 		$helper->identifier = $this->identifier;
 		$helper->submit_action = 'submitMainSettings';
-		$helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+		$helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).
+			'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
 		$helper->token = Tools::getAdminTokenLite('AdminModules');
 		$helper->tpl_vars = array(
 			'fields_value' => $this->getConfigFormValues(),
@@ -386,6 +405,7 @@ class Quotes extends Module
 			'CATEGORY_BOX' => explode(',', Configuration::get('CATEGORY_BOX')),
 			'MAIN_PRODUCT_STATUS' => Configuration::get('MAIN_PRODUCT_STATUS'),
 			'MAIN_PRODUCT_PAGE' => Configuration::get('MAIN_PRODUCT_PAGE'),
+			'MAIN_POP_SUBMIT' => Configuration::get('MAIN_POP_SUBMIT'),
 			'MAIN_PRODUCT_LIST' => Configuration::get('MAIN_PRODUCT_LIST'),
 			'MAIN_MAILS' => Configuration::get('MAIN_MAILS'));
 	}
@@ -506,7 +526,7 @@ class Quotes extends Module
 	/**
 	 * Add ask to quote button to product list
 	 */
-	private function _generateCMS()
+	private function generateCMS()
 	{
 		$pages = CMS::getCMSPages((int)$this->context->language->id, null, true);
 		$out = array();

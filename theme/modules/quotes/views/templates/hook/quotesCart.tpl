@@ -98,81 +98,49 @@
     </div>
 
 {elseif $active_overlay == 1}
-    <div id="quotes_layer_cart">
-        <div class="clearfix">
-            <div class="quotes_layer_cart_product col-xs-12 col-md-6">
-                <span class="cross" title="{l s='Close window' mod='quotes'}"></span>
-                <h2>
-                    <i class="icon-ok-circle"></i>{l s='Product successfully added to your shopping cart' mod='quotes'}
-                </h2>
-                <!--<div class="product-image-container layer_cart_img">
-                </div>
-                <div class="quotes_layer_cart_product_info">
-                    <span id="quotes_layer_cart_product_title" class="product-name"></span>
-                    <span id="quotes_layer_cart_product_attributes"></span>
-                    <div>
-                        <strong class="dark">{l s='Quantity' mod='quotes'}</strong>
-                        <span id="quotes_layer_cart_product_quantity"></span>
-                    </div>
-                    <div>
-                        <strong class="dark">{l s='Total' mod='quotes'}</strong>
-                        <span id="layer_cart_product_price"></span>
-                    </div>
-                </div>-->
-            </div>
-            <div class="quotes_layer_cart_cart col-xs-12 col-md-6">
-                <!--<h2>
-					<span class="ajax_cart_product_txt_s {if $total_count < 2} unvisible{/if}">
-						{l s='There are [1]%d[/1] items in your cart.' mod='quotes' sprintf=[$total_count] tags=['<span class="ajax_cart_quantity">']}
-					</span>
-					<span class="ajax_cart_product_txt {if $total_count > 1} unvisible{/if}">
-						{l s='There is 1 item in your cart.' mod='quotes'}
-					</span>
-                </h2>-->
-                <br/>
-                <hr/>
-                <!--<div class="layer_cart_row">
-                    <strong class="dark">
-                        {l s='Total' mod='quotes'}
-                    </strong>
-					<span class="ajax_block_products_total">
-						ok2
-					</span>
-                </div>
-                <div class="layer_cart_row">
-                    <strong class="dark">
-                        {l s='Total' mod='quotes'}
-                    </strong>
-					<span class="ajax_block_cart_total">
-						{if $total_count > 0}
-                            {$total|intval}
-                        {/if}
-					</span>
-                </div>-->
-                <div class="button-container">
+	<div id="quotes_layer_cart">
+		<div class="clearfix">
+			<div class="quotes_layer_cart_product col-xs-12 col-md-6">
+				<span class="cross" title="{l s='Close window' mod='quotes'}"></span>
+				<h2>
+					<i class="icon-ok-circle"></i>{l s='Product successfully added to your shopping cart' mod='quotes'}
+				</h2>
+			</div>
+			<div class="quotes_layer_cart_cart col-xs-12 col-md-6">
+				<br/>
+				<hr/>
+				<div class="button-container">
 					<span class="continue btn btn-default button exclusive-medium" title="{l s='Continue shopping' mod='quotes'}">
 						<span>
 							<i class="icon-chevron-left left"></i>{l s='Continue shopping' mod='quotes'}
 						</span>
 					</span>
-                    <a class="btn btn-default button button-medium"	href="{$link->getModuleLink('quotes','QuotesCart')|escape:'html':'UTF-8'}" title="{l s='Proceed to checkout' mod='quotes'}" rel="nofollow">
-						<span>
-							{l s='Proceed to checkout' mod='quotes'}<i class="icon-chevron-right right"></i>
-						</span>
-                    </a>
-                </div>
-                <hr/>
-            </div>
-        </div>
-        <div class="crossseling"></div>
-    </div> <!-- #layer_cart -->
-    <div class="quotes_layer_cart_overlay"></div>
+					{if $enablePopSubmit == 1}
+						<a id="button_order_cart" class="btn btn-default button button-medium submit_quote" href="javascript:void(0);" title="{l s='Submit quote' mod='quotes'}" rel="nofollow">
+							<span>
+								{l s='Submit now' mod='quotes'}<i class="icon-chevron-right right"></i>
+							</span>
+						</a>
+					{else}
+						<a class="btn btn-default button button-medium"	href="{$link->getModuleLink('quotes','QuotesCart')|escape:'html':'UTF-8'}" title="{l s='Proceed to checkout' mod='quotes'}" rel="nofollow">
+							<span>
+								{l s='Proceed to checkout' mod='quotes'}<i class="icon-chevron-right right"></i>
+							</span>
+						</a>
+					{/if}
+				</div>
+				<hr/>
+			</div>
+		</div>
+		<div class="crossseling"></div>
+	</div> <!-- #layer_cart -->
+	<div class="quotes_layer_cart_overlay"></div>
 {/if}
 <!-- /MODULE Quotes cart -->
 {strip}
-    {addJsDef messagingEnabled=$MESSAGING_ENABLED|intval}
-    {addJsDef quotesCart=$actionAddQuotes|escape:'html':'UTF-8'}
-    {addJsDef catalogMode=$PS_CATALOG_MODE|intval}
+	{addJsDef messagingEnabled=$MESSAGING_ENABLED|intval}
+	{addJsDef quotesCart=$actionAddQuotes|escape:'html':'UTF-8'}
+	{addJsDef catalogMode=$PS_CATALOG_MODE|intval}
 {/strip}
 
 {*<script type="text/javascript">*}

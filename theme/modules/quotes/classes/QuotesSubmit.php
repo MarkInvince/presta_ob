@@ -81,7 +81,7 @@ class QuotesSubmitCore extends ObjectModel
 
 	public function add()
 	{
-		$return parent::add();
+		$return = parent::add();
 		return $return;
 	}
 

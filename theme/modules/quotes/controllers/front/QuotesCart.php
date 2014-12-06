@@ -82,6 +82,10 @@ class QuotesQuotesCartModuleFrontController extends ModuleFrontController
 			if (Tools::getValue('action') == 'popup')
 			{
 				$this->context->smarty->assign('active_overlay', '1');
+				if(Configuration::get('MAIN_POP_SUBMIT') == 1)
+					$this->context->smarty->assign('enablePopSubmit','1');
+				else
+					$this->context->smarty->assign('enablePopSubmit','0');
 				$this->context->smarty->assign('total', 0);
 				$this->context->smarty->assign('total_count', 0);
 
@@ -131,7 +135,8 @@ class QuotesQuotesCartModuleFrontController extends ModuleFrontController
 				if (!Tools::getIsset('button') && !Tools::getValue('button'))
 					$value = (int)pSQL(Tools::getValue('value'));
 
-				$this->quote->recountProductByValue((int)pSQL($items[0]), (int)pSQL($items[1]), $value, pSQL(Tools::getValue('method')), pSQL($this->context->cookie->__get('request_id')));
+				$this->quote->recountProductByValue((int)pSQL($items[0]), (int)pSQL($items[1]),
+					$value, pSQL(Tools::getValue('method')), pSQL($this->context->cookie->__get('request_id')));
 
 				list($products, $cart) = $this->quote->getProducts();
 				$this->context->smarty->assign('products', $products);
@@ -180,7 +185,7 @@ class QuotesQuotesCartModuleFrontController extends ModuleFrontController
 
 				/* Load guest informations */
 				if ($this->context->cookie->is_guest)
-					$this->context->smarty->assign('guestInformations', $this->_getGuestInformations());
+					$this->context->smarty->assign('guestInformations', $this->getGuestInformations());
 
 				$product_count = 0;
 				foreach ($products as $value)
@@ -246,7 +251,7 @@ class QuotesQuotesCartModuleFrontController extends ModuleFrontController
 
 				/* Load guest informations */
 				if ($this->context->cookie->is_guest)
-					$this->context->smarty->assign('guestInformations', $this->_getGuestInformations());
+					$this->context->smarty->assign('guestInformations', $this->getGuestInformations());
 
 				$product_count = 0;
 				foreach ($products as $value)
@@ -457,7 +462,7 @@ class QuotesQuotesCartModuleFrontController extends ModuleFrontController
 
 		/* Load guest informations */
 		if ($this->context->cookie->is_guest)
-			$this->context->smarty->assign('guestInformations', $this->_getGuestInformations());
+			$this->context->smarty->assign('guestInformations', $this->getGuestInformations());
 
 		$this->setTemplate('quotes_cart.tpl');
 	}
@@ -852,12 +857,13 @@ class QuotesQuotesCartModuleFrontController extends ModuleFrontController
 		}
 	}
 
-	protected function _getGuestInformations()
+	protected function getGuestInformations()
 	{
 		$customer = $this->context->customer;
 		$address_delivery = new Address($this->context->cart->id_address_delivery);
 
-		$id_address_invoice = $this->context->cart->id_address_invoice != $this->context->cart->id_address_delivery ? (int)$this->context->cart->id_address_invoice : 0;
+		$id_address_invoice = $this->context->cart->id_address_invoice != $this->context->cart->id_address_delivery ?
+			(int)$this->context->cart->id_address_invoice : 0;
 		$address_invoice = new Address($id_address_invoice);
 
 		if ($customer->birthday)

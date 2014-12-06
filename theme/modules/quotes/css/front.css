@@ -797,6 +797,8 @@
 
 ul.product_list.grid > li .product-container .functional-buttons div.ask_offer {
 	width: 100%;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 .ajax_add_to_quote_cart_button, .fly_to_quote_cart_button {

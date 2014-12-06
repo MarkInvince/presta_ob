@@ -144,13 +144,15 @@ class QuotesSubmitedQuotesModuleFrontController extends ModuleFrontController
 					{
 						$product_obj = new Product($product['id'], true, $this->context->language->id);
 
-						$quote_in[$key][$k]['name'] = $productObj->name;
+						$quote_in[$key][$k]['name'] = $product_obj->name;
 
 						$prod_price = Product::getPriceStatic($product['id'], true, null, 6);
-						$quote_in[$key][$k]['price_total'] = Tools::displayPrice(Tools::ps_round($prod_price * $product['quantity'], 2), $this->context->currency);
+						$quote_in[$key][$k]['price_total'] = Tools::displayPrice(
+							Tools::ps_round($prod_price * $product['quantity'], 2), $this->context->currency);
 						$quote_in[$key][$k]['price'] = Tools::displayPrice(Tools::ps_round($prod_price, 2), $this->context->currency);
 						$quote_in[$key][$k]['link_rewrite'] = $product_obj->link_rewrite;
-						$quote_in[$key][$k]['link'] = $this->context->link->getProductLink($product_obj, $product_obj->link_rewrite, $product_obj->category, null, null);
+						$quote_in[$key][$k]['link'] = $this->context->link->getProductLink($product_obj,
+							$product_obj->link_rewrite, $product_obj->category, null, null);
 
 						if ($product['id_attribute'] != 0)
 						{
