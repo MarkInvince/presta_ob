@@ -265,12 +265,6 @@ class AdminQuotesController extends ModuleAdminController
 			$order_list = array();
 			$order_detail_list = array();
 
-			do
-			$reference = Order::generateReference();
-			$count = Order::getByReference($reference)->count();
-			while ($count);
-
-			$this->current_order_reference = $reference;
 
 			$discount = $amount_paid - Tools::getValue('bargain_price');
 			if ($discount < 0 || !$discount)
