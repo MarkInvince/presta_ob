@@ -1,9 +1,0 @@
-{firstname} {lastname} a depus o ofertă la data de {date}.
-
-Detalii oferta
-	
-	{products}
-	
-	Total produse: {total_products}
-	
-{shop_url} powered by PrestaShop™

@@ -1,9 +1,0 @@
-{firstname} {lastname} árajánlatot igényelt ekkor: {date}
-
-Igénylés részletek
-	
-	{products}
-	
-	Összesen {total_products} termék
-	
-{shop_url} powered by PrestaShop™
