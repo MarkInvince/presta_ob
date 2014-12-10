@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-        <module>
-            <name>askforaquote</name>
-            <displayName><![CDATA[Ask for a quote Module]]></displayName>
-            <version><![CDATA[3.2]]></version>
-            <description><![CDATA[Clients can ask for product quotes and bargain for a price]]></description>
-            <author><![CDATA[Presta FABRIQUE]]></author>
-            <tab><![CDATA[front_office_features]]></tab>
-            <is_configurable>1</is_configurable>
-            <need_instance>1</need_instance>
-	<limited_countries></limited_countries>
-        </module>
+<module>
+	<name>askforaquote</name>
+	<displayName><![CDATA[Ask for quotes]]></displayName>
+	<version><![CDATA[1.0.0]]></version>
+	<description><![CDATA[Ask for quotes module]]></description>
+	<author><![CDATA[RCS]]></author>
+	<tab><![CDATA[front_office_features]]></tab>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+</module>
