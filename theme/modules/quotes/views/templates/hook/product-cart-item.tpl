@@ -36,9 +36,12 @@
                     <div class="product-name">
                         <span class="quantity-formated"><span class="quantity">{$product.quantity|intval}</span>&nbsp;x&nbsp;</span><a class="cart_block_product_name" href="{$product.link|escape:'html':'UTF-8'}" title="{$product.title|escape:'html':'UTF-8'}">{$product.title|truncate:20:'...'|escape:'html':'UTF-8'}</a>
                     </div>
-                        <span class="price">
-                            {$product.unit_price|escape:'html':'UTF-8'}
-                        </span>
+                    <div class="product-attr">
+                        <small>{$product.combinations|escape:'html':'UTF-8'}</small>
+                    </div>
+                    <span class="price">
+                        {$product.unit_price|escape:'html':'UTF-8'}
+                    </span>
                     <div class="remove-wrap">
                         <hr/>
                         <a href="javascript:void(0);" rel="{$product.id|intval}_{$product.id_attribute|intval}" class="remove-quote">{l s="Remove" mod='quotes'}</a>

@@ -24,10 +24,10 @@
  *  International Registered Trademark & Property of PrestaShop SA
  */
 
-include_once(_PS_MODULE_DIR_ . 'quotes/classes/QuotesObj.php');
-include_once(_PS_MODULE_DIR_ . 'quotes/classes/QuotesTools.php');
+include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesObj.php');
+include_once(_PS_MODULE_DIR_.'quotes/classes/QuotesTools.php');
 
-class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController
+class QuotesSubmitedQuotesModuleFrontController extends ModuleFrontController
 {
 
 	public $ssl = true;
@@ -45,9 +45,8 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController
 		$this->id_quote = 0;
 		$this->id_customer = (int)$this->context->cookie->id_customer;
 
-		if (!$this->context->customer->isLogged()) {
+		if (!$this->context->customer->isLogged())
 			Tools::redirect('authentication.php');
-		}
 	}
 
 	public function setMedia()
@@ -58,27 +57,23 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController
 
 	public function postProcess()
 	{
-
-		if (Tools::getValue('action') == 'showQuoteDetails') {
+		if (Tools::getValue('action') == 'showQuoteDetails')
 			$this->showQuoteDetails();
-		}
 
-		if (Tools::getValue('action') == 'addClientBargain') {
+		if (Tools::getValue('action') == 'addClientBargain')
 			$this->addClientBargain(Tools::getValue('id_quote'));
-		}
 
-		if (Tools::getValue('actionSubmitBargain')) {
+		if (Tools::getValue('actionSubmitBargain'))
 			$this->bargainCustomerSubmit();
-		}
-		if (Tools::getValue('quoteRename')) {
+
+		if (Tools::getValue('quoteRename'))
 			$this->quoteRename(Tools::getValue('id_quote'));
-		}
 	}
 
 	public function initContent()
 	{
 		// Send noindex to avoid ghost carts by bots
-		header("X-Robots-Tag: noindex, nofollow", true);
+		header('X-Robots-Tag: noindex, nofollow', true);
 
 		parent::initContent();
 
@@ -107,28 +102,26 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController
 	{
 		$this->id_quote = Tools::getValue('id_quote');
 
-		$quoteInfo = $this->quote->getQuoteInfo($this->id_quote);
+		$quote_info = $this->quote->getQuoteInfo($this->id_quote);
 
-		$quoteInfo = $this->foreachQuotes($quoteInfo);
-		foreach ($quoteInfo as $quoteInf) {
-			$quoteInfo = $quoteInf;
-		}
+		$quote_info = $this->foreachQuotes($quote_info);
+		foreach ($quote_info as $quote_inf)
+			$quote_info = $quote_inf;
 		//$this->context->smarty->assign('quote', $quoteInfo);
 
 		$bargains = $this->quote->getBargains($this->id_quote);
-		foreach ($bargains as $key => $bargain) {
+		foreach ($bargains as $key => $bargain)
 			$bargains[$key]['bargain_price_display'] = Tools::displayPrice(Tools::ps_round($bargain['bargain_price'], 2), $this->context->currency);
-		}
 
 		$this->context->smarty->assign(array(
 			'id_quote'		  => $this->id_quote,
 			'bargains'		  => $bargains,
-			'quote'			 => $quoteInfo,
+			'quote'			 => $quote_info,
 			'MESSAGING_ENABLED' => Configuration::get('MESSAGING_ENABLED')
 		));
 
 		die(Tools::jsonEncode(array(
-			'details' => $this->context->smarty->fetch(_PS_MODULE_DIR_ . "quotes/views/templates/front/quote_view.tpl")
+			'details' => $this->context->smarty->fetch(_PS_MODULE_DIR_.'quotes/views/templates/front/quote_view.tpl')
 		)));
 	}
 
@@ -137,46 +130,51 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController
 	 */
 	protected function foreachQuotes($quotes)
 	{
-		foreach ($quotes as $firstkey => $quoteInfo) {
+		foreach ($quotes as $firstkey => $quote_info)
+		{
 			$quote_total_price = 0;
-			$quoteIn = array();
-			foreach ($quoteInfo as $key => $field) {
+			$quote_in = array();
+			foreach ($quote_info as $key => $field)
+			{
 				//$currency = new Currency($quoteInfo['id_currency'], null, $this->context->shop->id);
-				if ($key == 'products') {
-					$quoteIn[$key] = Tools::unSerialize($field);
-					foreach ($quoteIn[$key] as $k => $product) {
-						$productObj = new Product($product['id'], true, $this->context->language->id);
+				if ($key == 'products')
+				{
+					$quote_in[$key] = Tools::unSerialize($field);
+					foreach ($quote_in[$key] as $k => $product)
+					{
+						$product_obj = new Product($product['id'], true, $this->context->language->id);
 
-						$quoteIn[$key][$k]['name'] = $productObj->name;
+						$quote_in[$key][$k]['name'] = $product_obj->name;
 
 						$prod_price = Product::getPriceStatic($product['id'], true, null, 6);
-						$quoteIn[$key][$k]['price_total'] = Tools::displayPrice(Tools::ps_round($prod_price * $product['quantity'], 2), $this->context->currency);
-						$quoteIn[$key][$k]['price'] = Tools::displayPrice(Tools::ps_round($prod_price, 2), $this->context->currency);
-						$quoteIn[$key][$k]['link_rewrite'] = $productObj->link_rewrite;
-						$quoteIn[$key][$k]['link'] = $this->context->link->getProductLink($productObj, $productObj->link_rewrite, $productObj->category, null, null);
+						$quote_in[$key][$k]['price_total'] = Tools::displayPrice(
+							Tools::ps_round($prod_price * $product['quantity'], 2), $this->context->currency);
+						$quote_in[$key][$k]['price'] = Tools::displayPrice(Tools::ps_round($prod_price, 2), $this->context->currency);
+						$quote_in[$key][$k]['link_rewrite'] = $product_obj->link_rewrite;
+						$quote_in[$key][$k]['link'] = $this->context->link->getProductLink($product_obj,
+							$product_obj->link_rewrite, $product_obj->category, null, null);
 
-						if ($product['id_attribute'] != 0) {
-							$id_image = getProductAttributeImage($productObj->id, $product['id_attribute'], $this->context->language->id);
+						if ($product['id_attribute'] != 0)
+						{
+							$id_image = getProductAttributeImage($product_obj->id, $product['id_attribute'], $this->context->language->id);
 							if ($id_image)
-								$quoteIn[$key][$k]['id_image'] = $id_image;
+								$quote_in[$key][$k]['id_image'] = $id_image;
 							else
-								$quoteIn[$key][$k]['id_image'] = $productObj->getCover($productObj->id)['id_image'];
+								$quote_in[$key][$k]['id_image'] = $product_obj->getCover($product_obj->id)['id_image'];
 						}
-						else {
-							$quoteIn[$key][$k]['id_image'] = $productObj->getCover($productObj->id)['id_image'];
-						}
+						else
+							$quote_in[$key][$k]['id_image'] = $product_obj->getCover($product_obj->id)['id_image'];
 
 						$quote_total_price = $quote_total_price + $prod_price * $product['quantity'];
 					}
-					$quoteIn['price'] = Tools::displayPrice(Tools::ps_round($quote_total_price, 2), $this->context->currency);
+					$quote_in['price'] = Tools::displayPrice(Tools::ps_round($quote_total_price, 2), $this->context->currency);
 				}
-				elseif ($key == 'burgain_price') {
-					$quoteIn['bargain_price'] = Tools::displayPrice(Tools::ps_round($field, 2), $this->context->currency);
-				}
+				elseif ($key == 'burgain_price')
+					$quote_in['bargain_price'] = Tools::displayPrice(Tools::ps_round($field, 2), $this->context->currency);
 				else
-					$quoteIn[$key] = $field;
+					$quote_in[$key] = $field;
 			}
-			$quotes[$firstkey] = $quoteIn;
+			$quotes[$firstkey] = $quote_in;
 		}
 
 		return $quotes;
@@ -193,7 +191,8 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController
 		if (!Tools::getValue('bargain_text'))
 			$this->errors[] = Tools::displayError('You can not add empty message.');
 
-		if (!count($this->errors)) {
+		if (!count($this->errors))
+		{
 			if ($this->quote->addQuoteBargain(pSQL($id_quote), pSQL(Tools::getValue('bargain_text'))))
 				die(Tools::jsonEncode(array('errors' => false)));
 		}
@@ -208,87 +207,51 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController
 	{
 		$action = Tools::getValue('actionSubmitBargain');
 
-		if ($this->quote->submitBargain(Tools::getValue('id_bargain'), $action, Tools::getValue('id_quote'))) {
-			if ($action == 'accept') {
-				$quoteInfo = $this->quote->getQuoteInfo(Tools::getValue('id_quote'));
-				if ($quoteInfo) {
+		if ($this->quote->submitBargain(Tools::getValue('id_bargain'), $action, Tools::getValue('id_quote')))
+		{
+			if ($action == 'accept')
+			{
+				$quote_info = $this->quote->getQuoteInfo(Tools::getValue('id_quote'));
+				if ($quote_info)
+				{
 
-					foreach ($quoteInfo as $quoteInf) {
-						$quote = $quoteInf;
-					}
+					foreach ($quote_info as $quote_inf)
+						$quote = $quote_inf;
 
 					$customer = new Customer($quote['id_customer']);
 
-					$subject = $this->module->l("Accepted offer by customer");
 					$tpl_message_vars = array(
-						'{s_accept_title}' => $this->module->l("Accepted offer"),
-						'{s_accepr_title_information}' => $this->module->l("Accepted quote information"),
-						'{s_quote_id}' => $this->module->l("Quote ID"),
-						'{s_quote_name}' => $this->module->l("Quote name"),
-						'{s_quote_reference}' => $this->module->l("Reference"),
-						'{s_quote_burgain_offer}' => $this->module->l("Burgain offer"),
-						'{s_quote_date_add}' => $this->module->l("Date add"),
+						'{s_accept_title}' => $this->module->l('Accepted offer'),
+						'{s_accepr_title_information}' => $this->module->l('Accepted quote information'),
+						'{s_quote_id}' => $this->module->l('Quote ID'),
+						'{s_quote_name}' => $this->module->l('Quote name'),
+						'{s_quote_reference}' => $this->module->l('Reference'),
+						'{s_quote_burgain_offer}' => $this->module->l('Burgain offer'),
+						'{s_quote_date_add}' => $this->module->l('Date add'),
 						'{quote_id}' => $quote['id_quote'],
 						'{quote_name}' => $quote['quote_name'],
 						'{quote_reference}' => $quote['reference'],
 						'{quote_burgain}' => $quote['burgain_price'],
 						'{quote_date_add}' => $quote['date_add'],
-						'{s_user_info}' => $this->module->l("User information"),
-						'{s_user_id}' => $this->module->l("user ID"),
-						'{s_firstname}' => $this->module->l("firstname"),
-						'{s_lastname}' => $this->module->l("lastname"),
-						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
-						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
-						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
-						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
-						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
-						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
-						'{accepr_title_information}' => $this->module->l("Accepted quote information"),
+						'{s_user_info}' => $this->module->l('User information'),
+						'{s_user_id}' => $this->module->l('user ID'),
+						'{s_user_firstname}' => $this->module->l('firstname'),
+						'{s_user_lastname}' => $this->module->l('lastname'),
+						'{s_user_email}' => $this->module->l('Email'),
+						'{user_id}' => $customer->id,
+						'{user_firstname}' => $customer->firstname,
+						'{user_lastname}' => $customer->lastname,
+						'{user_email}' => $customer->email,
 					);
-					$message = '
-							<html>
-							<head>
-							  <title>' . $this->module->l("Accepted offer") . '</title>
-							</head>
-							<body>
-								<h2>' . $this->module->l("Accepted quote information") . '</h2>
-								  <table>
-									<tr>
-									  <th>' . $this->module->l("Quote ID") . '</th>
-									  <th>' . $this->module->l("Quote name") . '</th>
-									  <th>' . $this->module->l("Reference") . '</th>
-									  <th>' . $this->module->l("Burgain offer") . '</th>
-									  <th>' . $this->module->l("Date add") . '</th>
-									</tr>
-									<tr>
-									  <td>' . $quote['id_quote'] . '</td>
-									  <td>' . $quote['quote_name'] . '</td>
-									  <td>' . $quote['reference'] . '</td>
-									  <td>' . $quote['burgain_price'] . '</td>
-									  <td>' . $quote['date_add'] . '</td>
-									</tr>
-								  </table>
-								<h2>' . $this->module->l("User information") . '</h2>
-								  <table>
-									<tr>
-									  <th>' . $this->module->l("user ID") . '</th><th>' . $this->module->l("firstname") . '</th><th>' . $this->module->l("lastname") . '</th><th>' . $this->module->l("Email") . '</th>
-									</tr>
-									<tr>
-									  <td>' . $customer->id . '</td>
-									  <td>' . $customer->firstname . '</td>
-									  <td>' . $customer->lastname . '</td>
-									  <td>' . $customer->email . '</td>
-									</tr>
-								  </table>
-							</body>
-							</html>
-					';
+
 					// Send e-mail to admin
 					//$to = Configuration::get('PS_SHOP_EMAIL');
 					if (Configuration::get('MAIN_MAILS'))
-							$to = Configuration::get('MAIN_MAILS');
-						//$to .= ', ' . Configuration::get('MAIN_MAILS');
-					quotesMailConfirm($to, $message, $subject);
+						$to = Configuration::get('MAIN_MAILS');
+					//$to .= ', ' . Configuration::get('MAIN_MAILS');
+					quotesMailConfirm ('quotes_notify', $to, $tpl_message_vars, $this->module->l('Accepted offer by customer'),
+						$_SERVER['DOCUMENT_ROOT'].__PS_BASE_URI__.'modules/'.$this->module->name.'/mails/',
+						$this->context->language->id, $this->context->shop->id);
 				}
 
 			}
@@ -303,20 +266,18 @@ class quotesSubmitedQuotesModuleFrontController extends ModuleFrontController
 	 */
 	protected function quoteRename($id_quote = false)
 	{
-		if (Tools::getValue('quoteName')) {
-			$quoteName = Tools::getValue('quoteName');
-			if (!Validate::isString($quoteName))
+		if (Tools::getValue('quoteName'))
+		{
+			$quote_name = Tools::getValue('quoteName');
+			if (!Validate::isString($quote_name))
 				die(Tools::jsonEncode(array('hasError' => true, 'message' => $this->module->l('Wrong quote name'))));
 		}
 		else
 			die(Tools::jsonEncode(array('hasError' => true, 'message' => $this->module->l('Name is empty'))));
 
-		if ($this->quote->renameQuote(pSQL($id_quote), pSQL($quoteName))) {
-			die(Tools::jsonEncode(array('renamed' => $quoteName)));
-		}
+		if ($this->quote->renameQuote(pSQL($id_quote), pSQL($quote_name)))
+			die(Tools::jsonEncode(array('renamed' => $quote_name)));
 		else
 			die(Tools::jsonEncode(array('hasError' => true, 'message' => $this->module->l('Cannot rename quote'))));
 	}
-
-
 }

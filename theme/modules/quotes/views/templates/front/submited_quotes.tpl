@@ -74,7 +74,7 @@
                     </td>
                     <td class="text-center">{if $quote.submited == 1}<i class="icon-ok-circle color-green"></i>{elseif $quote.submited == 0}<i class="icon-remove color-red"></i>{else}<i class="icon-mail-forward color-green2"></i>{/if}</td>
                     <td class="table_link">
-                        <a class="show_quote_details" data-id="{$quote.id_quote|escape:'html':'UTF-8'}" href="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}"><i class="icon-eye-open"></i> {l s='view' mod='quotes'}</a>
+                        <a class="show_quote_details" data-id="{$quote.id_quote|escape:'html':'UTF-8'}" href="{$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)}"><i class="icon-eye-open"></i> {l s='view' mod='quotes'}</a>
                     </td>
                 </tr>
             {/foreach}
@@ -102,7 +102,7 @@
 </ul>
 
 {strip}
-    {addJsDef submitedQuotes=$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)|escape:'html':'UTF-8'}
+    {addJsDef submitedQuotes=$link->getModuleLink('quotes', 'SubmitedQuotes', array(), true)}
     {addJsDefL name=your_msg}{l s='Your bargain message:' mod='quotes' js=1|escape:'html':'UTF-8'}{/addJsDefL}
     {addJsDefL name=added}{l s='Added:' mod='quotes' js=1|escape:'html':'UTF-8'}{/addJsDefL}
 {/strip}

@@ -27,24 +27,47 @@
 function getProductAttributeImage($id_product, $id_product_attribute, $id_lang)
 {
 	$mysql = '  SELECT pa.`id_product_attribute` , pa.`id_product` , pa.`price` , pac.`id_attribute` , al.`name` , paimg.`id_image`
-				FROM  `' . _DB_PREFIX_ . 'product_attribute` pa
-				LEFT JOIN  `' . _DB_PREFIX_ . 'product_attribute_combination` pac ON ( pa.`id_product_attribute` = pac.`id_product_attribute` )
-				LEFT JOIN  `' . _DB_PREFIX_ . 'product_attribute_image` paimg ON ( pac.`id_product_attribute` = paimg.`id_product_attribute` )
-				LEFT JOIN  `' . _DB_PREFIX_ . 'attribute` a ON ( pac.`id_attribute` = a.`id_attribute` )
-				LEFT JOIN  `' . _DB_PREFIX_ . 'attribute_lang` al ON ( al.`id_attribute` = a.`id_attribute` )
-				WHERE pa.`id_product_attribute` = ' . pSQL($id_product_attribute) . '
-				AND pa.`id_product` = ' . pSQL($id_product) . '
-				AND  `id_lang` = ' . pSQL($id_lang) . ' ORDER BY pa.`id_product_attribute` LIMIT 1';
+				FROM  `'._DB_PREFIX_.'product_attribute` pa
+				LEFT JOIN  `'._DB_PREFIX_.'product_attribute_combination` pac ON ( pa.`id_product_attribute` = pac.`id_product_attribute` )
+				LEFT JOIN  `'._DB_PREFIX_.'product_attribute_image` paimg ON ( pac.`id_product_attribute` = paimg.`id_product_attribute` )
+				LEFT JOIN  `'._DB_PREFIX_.'attribute` a ON ( pac.`id_attribute` = a.`id_attribute` )
+				LEFT JOIN  `'._DB_PREFIX_.'attribute_lang` al ON ( al.`id_attribute` = a.`id_attribute` )
+				WHERE pa.`id_product_attribute` = '.pSQL($id_product_attribute).'
+				AND pa.`id_product` = '.pSQL($id_product).'
+				AND  `id_lang` = '.pSQL($id_lang).' ORDER BY pa.`id_product_attribute` LIMIT 1';
 	$row = Db::getInstance()->executeS($mysql);
 	if (!$row)
 		return array();
 
 	return $row[0]['id_image'];
 }
-
+function getProductAttributesSmall($id_attribute, $id_lang) {
+    $mysql = '  SELECT al.`name` AS attribute_name
+    			FROM `'._DB_PREFIX_.'product_attribute_combination` pac
+    			LEFT JOIN `'._DB_PREFIX_.'attribute` a ON a.`id_attribute` = pac.`id_attribute`
+    			LEFT JOIN `'._DB_PREFIX_.'attribute_group` ag ON ag.`id_attribute_group` = a.`id_attribute_group`
+    			LEFT JOIN `'._DB_PREFIX_.'attribute_lang` al ON (
+    				a.`id_attribute` = al.`id_attribute`
+    				AND al.`id_lang` = '.$id_lang.'
+    			)
+    			LEFT JOIN `'._DB_PREFIX_.'attribute_group_lang` agl ON (
+    				ag.`id_attribute_group` = agl.`id_attribute_group`
+    				AND agl.`id_lang` = '.$id_lang.'
+    			)
+    			WHERE pac.`id_product_attribute` IN ('.$id_attribute.')
+    			ORDER BY agl.`public_name` ASC';
+    $row = Db::getInstance()->executeS($mysql);
+    if (!$row)
+		return '';
+        
+    $output = array();
+    foreach($row as $item)
+    $output[]= $item['attribute_name'];
+    return implode(', ', $output);
+}
 function quoteNum($id_customer)
 {
-	$sql = 'SELECT COUNT(`id_quote`) FROM `' . _DB_PREFIX_ . 'quotes` WHERE `id_customer`=' . $id_customer;
+	$sql = 'SELECT COUNT(`id_quote`) FROM `'._DB_PREFIX_.'quotes` WHERE `id_customer`='.$id_customer;
 	$result = Db::getInstance()->getValue($sql);
 	if ($result)
 		$result++;
@@ -54,16 +77,10 @@ function quoteNum($id_customer)
 	return $result;
 }
 
-function quotesMailConfirm($template ,$to, $message, $subject)
+function quotesMailConfirm($template, $to, $message_vars, $subject, $module_path, $lang_id, $shop_id )
 {
-	/*$headers = array();
-	$headers[] = "MIME-Version: 1.0";
-	$headers[] = "Content-type: text/html; charset=utf-8";
-	$headers[] = "From: " . Configuration::get('PS_SHOP_NAME') . " <" . Configuration::get('PS_SHOP_EMAIL') . ">";
-	$headers[] = "Reply-To: " . Configuration::get('PS_SHOP_NAME') . " <" . Configuration::get('PS_SHOP_EMAIL') . ">";*/
-
-	/*if(Mail::Send($this->context->language->id, $template, $subject, array('{discount}' => $code), $to, null, null, null, null, null, dirname(__FILE__).'/mails/', false, $this->context->shop->id))
-		return true;*/
+	if (Mail::Send($lang_id, $template, $subject, $message_vars, $to, null, null, null, null, null, $module_path, false, $shop_id))
+		return true;
 
 	return true;
 }

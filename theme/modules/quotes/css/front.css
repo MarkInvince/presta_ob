@@ -797,6 +797,8 @@
 
 ul.product_list.grid > li .product-container .functional-buttons div.ask_offer {
 	width: 100%;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 .ajax_add_to_quote_cart_button, .fly_to_quote_cart_button {
@@ -892,4 +894,8 @@ ul.product_list.grid > li .product-container .functional-buttons div.ask_offer {
 	background-image: linear-gradient(#007ab7, #009ad0);
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#007ab7', endColorstr='#009ad0',GradientType=0 );
 	background-position: 0 0;
+}
+.product-attr {
+    position: relative;
+    top: -5px;
 }

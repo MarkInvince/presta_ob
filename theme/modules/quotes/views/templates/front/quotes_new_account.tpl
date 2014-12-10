@@ -166,7 +166,7 @@
                             {elseif $field_name eq "address1"}
                                 <div class="required text form-group">
                                     <label for="address1">{l s='Address' mod='quotes'} <sup>*</sup></label>
-                                    <input type="text" class="text form-control validate" name="address1" id="address1" data-validate="isAddress" value="{if isset($guestInformations) && isset($guestInformations.address1) && isset($guestInformations) && isset($guestInformations.address1|escape:'html':'UTF-8') && $guestInformations.address1|escape:'html':'UTF-8'}{$guestInformations.address1}{else}{$post.address1|escape:'html':'UTF-8'}{/if}" />
+                                    <input type="text" class="text form-control validate" name="address1" id="address1" data-validate="isAddress" value="{if isset($guestInformations) && isset($guestInformations.address1)}{$guestInformations.address1}{else}{$post.address1|escape:'html':'UTF-8'}{/if}" />
                                 </div>
                             {elseif $field_name eq "postcode"}
                                 {$postCodeExist = true}
@@ -177,7 +177,7 @@
                             {elseif $field_name eq "city"}
                                 <div class="required text form-group">
                                     <label for="city">{l s='City' mod='quotes'} <sup>*</sup></label>
-                                    <input type="text" class="text form-control validate" name="city" id="city" data-validate="isCityName" value="{if isset($guestInformations) && isset($guestInformations.city) && $guestInformations.city|escape:'html':'UTF-8'}{$guestInformations.city|escape:'html':'UTF-8'}{else}{$post.city}{/if}" />
+                                    <input type="text" class="text form-control validate" name="city" id="city" data-validate="isCityName" value="{if isset($guestInformations) && isset($guestInformations.city)}{$guestInformations.city|escape:'html':'UTF-8'}{else}{$post.city}{/if}" />
                                 </div>
                             {elseif $field_name eq "country" || $field_name eq "Country:name"}
                                 <div class="required select form-group">
@@ -245,8 +245,6 @@
 
 
                     </div>
-
-                    <!-- END Account -->
                 </div>
             </div>
         </fieldset>
